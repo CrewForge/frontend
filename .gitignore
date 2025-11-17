@@ -1,0 +1,88 @@
+# -------------------------------------------------
+# General OS / Editor / IDE artifacts
+# -------------------------------------------------
+# macOS
+.DS_Store
+.ApleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# VS Code
+.vscode/
+.history/
+
+# JetBrains (IntelliJ, WebStorm, etc.)
+.idea/
+*.iml
+
+# Vim/Neovim swap files
+*.swp
+*.swo
+
+# -----------------------------------------------
+# Node / npm / Yarn / pnpm
+# -------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store/
+.pnpm-workspace.yaml
+
+# Optional: local env files (never commit secrets!)
+.env
+.env.*   # e.g. .env.development, .env.production
+
+# -------------------------------------------------
+# Vite / Build output
+# -------------------------------------------------
+dist/
+.build/
+.cache/
+.vite/
+vite.config.ts.cache
+
+# -------------------------------------------------
+# React / JSX / Testing artefacts
+# -------------------------------------------------
+coverage/
+*.js.map
+*.css.map
+
+# Jest / Vitest
+/jest/
+/vitest/
+/__tests__/
+/test-results/
+jest.config.js
+vitest.config.ts
+*.snap
+
+# Cypress / Playwright
+cypress/screenshots/
+cypress/videos/
+playwright-report/
+test-results/
+
+# -------------------------------------------------
+# Miscellaneous generated files
+# -------------------------------------------------
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+*.tgz
