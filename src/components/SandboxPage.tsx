@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ChessBoard, BoardState } from './ChessBoard';
 import { AgentFlowChart } from './AgentFlowChart';
 import { GameResultsDialog } from './GameResultsDialog';
 import { Agent } from './AgentCard';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
 import { Card } from './ui/card';
 import { 
-  Play, Pause, RotateCcw, ChevronLeft, ChevronRight, 
-  User, Cpu, Settings 
+  Play, Pause, RotateCcw, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Chess } from 'chess.js';
+import { authHeaders, streamChessAutoUrl } from '../lib/api';
 
 interface SandboxPageProps {
   environment: string;
+  token: string;
   onBack: () => void;
 }
 
@@ -79,31 +79,65 @@ const agents: Agent[] = [
   }
 ];
 
-// Helper function to create initial chess board
-const createInitialBoard = (): BoardState => {
-  const board: BoardState = Array(8).fill(null).map(() => 
-    Array(8).fill(null).map(() => ({ piece: null }))
-  );
-  const backRow: ('rook' | 'knight' | 'bishop' | 'queen' | 'king')[] = 
-    ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
-  
-  for (let i = 0; i < 8; i++) {
-    board[0][i] = { piece: { type: backRow[i], color: 'black' } };
-    board[1][i] = { piece: { type: 'pawn', color: 'black' } };
-    board[6][i] = { piece: { type: 'pawn', color: 'white' } };
-    board[7][i] = { piece: { type: backRow[i], color: 'white' } };
-  }
-  return board;
+const pieceTypeMap: Record<string, 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'> = {
+  k: 'king',
+  q: 'queen',
+  r: 'rook',
+  b: 'bishop',
+  n: 'knight',
+  p: 'pawn',
 };
 
-export function SandboxPage({ environment, onBack }: SandboxPageProps) {
-  const [mode, setMode] = useState<'user' | 'stockfish'>('stockfish');
+const buildBoardState = (game: Chess, lastMove?: string | null): BoardState => {
+  const boardRepresentation = game.board();
+  const boardState: BoardState = boardRepresentation.map((row) =>
+    row.map((square) => {
+      if (!square) {
+        return { piece: null };
+      }
+      return {
+        piece: {
+          type: pieceTypeMap[square.type],
+          color: square.color === 'w' ? 'white' : 'black',
+        },
+      };
+    }),
+  );
+
+  if (lastMove && lastMove.length >= 4) {
+    const squares = [lastMove.slice(0, 2), lastMove.slice(2, 4)];
+    squares.forEach((coord) => {
+      const file = coord.charCodeAt(0) - 97;
+      const rank = 8 - Number(coord[1]);
+      if (boardState[rank]?.[file]) {
+        boardState[rank][file] = {
+          ...boardState[rank][file],
+          highlight: 'lastMove',
+        };
+      }
+    });
+  }
+
+  return boardState;
+};
+
+const createInitialBoard = () => buildBoardState(new Chess());
+
+export function SandboxPage({ environment, token, onBack }: SandboxPageProps) {
+  const mode: 'user' | 'stockfish' = 'stockfish';
+  const environmentLabel = environment === 'chess' ? 'Chess Strategy Environment' : environment;
   const [isPlaying, setIsPlaying] = useState(false);
   const [board, setBoard] = useState<BoardState>(createInitialBoard());
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(false);
   const [moveCount, setMoveCount] = useState(0);
+  const [moveLogEntries, setMoveLogEntries] = useState<Array<{ ply: number; uci: string; player: string; reasoning?: string }>>([]);
+  const [systemLog, setSystemLog] = useState<string[]>([]);
+  const [autoError, setAutoError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState('Awaiting start');
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const chessRef = useRef(new Chess());
   
   // Flow chart data
   const [flowNodes, setFlowNodes] = useState([
@@ -168,70 +202,225 @@ export function SandboxPage({ environment, onBack }: SandboxPageProps) {
     ]
   };
 
-  // Auto-play in Stockfish mode
-  useEffect(() => {
-    if (isPlaying && mode === 'stockfish') {
-      const timer = setTimeout(() => {
-        setMoveCount(prev => prev + 1);
-        
-        // Simulate agent activity
-        const activeNodeIdx = moveCount % flowNodes.length;
-        setFlowNodes(nodes => nodes.map((node, idx) => ({
-          ...node,
-          status: idx === activeNodeIdx ? 'thinking' : 'idle',
-          currentThought: idx === activeNodeIdx 
-            ? `Analyzing move ${moveCount + 1}...` 
-            : node.currentThought
-        })));
-
-        // Simulate connections
-        setFlowConnections(conns => conns.map((conn, idx) => ({
-          ...conn,
-          active: idx === (moveCount % conns.length)
-        })));
-
-        // End game after 30 moves
-        if (moveCount >= 30) {
-          setIsPlaying(false);
-          setResultsOpen(true);
-        }
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isPlaying, mode, moveCount, flowNodes.length]);
-
-  const handleModeChange = (checked: boolean) => {
-    setMode(checked ? 'stockfish' : 'user');
+  const resetBoardState = useCallback(() => {
+    chessRef.current = new Chess();
+    setBoard(buildBoardState(chessRef.current));
     setMoveCount(0);
-    setIsPlaying(false);
-    setBoard(createInitialBoard());
-  };
-
-  const handleStartGame = () => {
-    setIsPlaying(true);
-    setMoveCount(0);
-    if (mode === 'stockfish') {
-      // Auto-start in stockfish mode
-      setFlowNodes(nodes => nodes.map(node => ({
-        ...node,
-        status: 'active'
-      })));
-    }
-  };
-
-  const handleRematch = () => {
-    setResultsOpen(false);
-    setMoveCount(0);
-    setBoard(createInitialBoard());
-    setIsPlaying(false);
+    setMoveLogEntries([]);
+    setSystemLog([]);
+    setAutoError(null);
+    setStatusMessage('Awaiting start');
     setFlowNodes(nodes => nodes.map(node => ({
       ...node,
       status: 'idle',
-      currentThought: node.agent.isMetaAgent 
+      currentThought: node.agent.isMetaAgent
         ? 'Initializing team coordination...'
-        : `Ready to assist`
+        : 'Ready to assist',
     })));
-  };
+    setFlowConnections(conns => conns.map(conn => ({ ...conn, active: false })));
+  }, []);
+
+  const appendSystemLog = useCallback((entry: string) => {
+    setSystemLog((prev) => [entry, ...prev].slice(0, 60));
+  }, []);
+
+  const processPayload = useCallback(
+    (payload: Record<string, any>) => {
+      if (!payload || typeof payload !== 'object') {
+        appendSystemLog('Received unknown payload');
+        return false;
+      }
+
+      if (payload.type === 'event' && payload.uci) {
+        try {
+          chessRef.current.move(payload.uci, { sloppy: true });
+          setBoard(buildBoardState(chessRef.current, payload.uci));
+          setMoveCount((prev) => prev + 1);
+          setMoveLogEntries((prev) => [
+            ...prev.slice(-49),
+            {
+              ply: typeof payload.ply === 'number' ? payload.ply : prev.length,
+              uci: payload.uci,
+              player: payload.player || 'agent',
+              reasoning: payload.reasoning,
+            },
+          ]);
+          setFlowNodes((nodes) =>
+            nodes.map((node, idx) => ({
+              ...node,
+              status: idx === 0 ? 'thinking' : 'idle',
+              currentThought:
+                idx === 0
+                  ? `Analyzing ${payload.uci.toUpperCase()}`
+                  : node.currentThought,
+            })),
+          );
+          setFlowConnections((connections) =>
+            connections.map((conn, idx) => ({
+              ...conn,
+              active:
+                connections.length === 0
+                  ? false
+                  : idx === ((typeof payload.ply === 'number' ? payload.ply : 0) % connections.length),
+            })),
+          );
+          setStatusMessage(`Last move: ${payload.uci.toUpperCase()} (${payload.player || 'agent'})`);
+        } catch (err) {
+          appendSystemLog(`Invalid move received: ${payload.uci}`);
+        }
+        return false;
+      }
+
+      if (payload.type === 'log') {
+        appendSystemLog(payload.message || 'Log event');
+        return false;
+      }
+
+      if (payload.type === 'end') {
+        setStatusMessage('Environment complete');
+        setResultsOpen(true);
+        return true;
+      }
+
+      if (payload.type === 'engine_ack' || payload.type === 'user_turn' || payload.type === 'user_move_echo') {
+        appendSystemLog(`Control event: ${payload.type}`);
+        return false;
+      }
+
+      appendSystemLog(JSON.stringify(payload));
+      return false;
+    },
+    [appendSystemLog],
+  );
+
+  const processLine = useCallback(
+    (line: string) => {
+      try {
+        const payload = JSON.parse(line);
+        return processPayload(payload);
+      } catch (err) {
+        appendSystemLog(line);
+        return false;
+      }
+    },
+    [appendSystemLog, processPayload],
+  );
+
+  const startAutoStream = useCallback(async () => {
+    if (!token) {
+      setAutoError('Missing authentication token.');
+      return;
+    }
+
+    abortControllerRef.current?.abort();
+    resetBoardState();
+    setResultsOpen(false);
+    setIsPlaying(true);
+    setStatusMessage('Connecting to environment…');
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    try {
+      const response = await fetch(streamChessAutoUrl(), {
+        method: 'GET',
+        headers: {
+          Accept: 'application/x-ndjson',
+          ...authHeaders(token),
+        },
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error('Unable to start chess environment.');
+      }
+
+      setStatusMessage('Streaming live game');
+      setFlowNodes(nodes => nodes.map((node, idx) => ({
+        ...node,
+        status: idx === 0 ? 'active' : 'idle',
+        currentThought: idx === 0 ? 'Coordinating live match' : node.currentThought,
+      })));
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      const flushBuffer = () => {
+        let idx: number;
+        let shouldStop = false;
+        while ((idx = buffer.indexOf('\n')) !== -1) {
+          const line = buffer.slice(0, idx).trim();
+          buffer = buffer.slice(idx + 1);
+          if (!line) continue;
+          if (processLine(line)) {
+            shouldStop = true;
+            break;
+          }
+        }
+        return shouldStop;
+      };
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (value) {
+          buffer += decoder.decode(value, { stream: true });
+          if (flushBuffer()) {
+            break;
+          }
+        }
+        if (done) {
+          buffer += decoder.decode();
+          flushBuffer();
+          break;
+        }
+      }
+
+      setStatusMessage('Environment complete');
+    } catch (error) {
+      const err = error as Error;
+      if (err.name === 'AbortError') {
+        appendSystemLog('Stream aborted.');
+        setStatusMessage('Stream paused');
+      } else {
+        setAutoError(err.message || 'Failed to stream environment.');
+        setStatusMessage('Stream error');
+      }
+    } finally {
+      setIsPlaying(false);
+      abortControllerRef.current = null;
+    }
+  }, [appendSystemLog, processLine, resetBoardState, token]);
+
+  const handleStopStream = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsPlaying(false);
+    setStatusMessage('Stream paused');
+  }, []);
+
+  const handleResetBoard = useCallback(() => {
+    handleStopStream();
+    resetBoardState();
+    setResultsOpen(false);
+  }, [handleStopStream, resetBoardState]);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  const handleStartGame = useCallback(() => {
+    void startAutoStream();
+  }, [startAutoStream]);
+
+  const handleRematch = useCallback(() => {
+    setResultsOpen(false);
+    void startAutoStream();
+  }, [startAutoStream]);
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -243,45 +432,34 @@ export function SandboxPage({ environment, onBack }: SandboxPageProps) {
               ← Back to Dashboard
             </Button>
             <div className="h-6 w-px bg-border" />
-            <h3>Chess Strategy Environment</h3>
+            <h3>{environmentLabel}</h3>
             <Badge variant="secondary">Sandbox</Badge>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Mode Toggle */}
-            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-muted">
-              <User className={`w-4 h-4 ${mode === 'user' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <Label htmlFor="mode-toggle" className="text-sm">User Mode</Label>
-              <Switch 
-                id="mode-toggle"
-                checked={mode === 'stockfish'}
-                onCheckedChange={handleModeChange}
-              />
-              <Label htmlFor="mode-toggle" className="text-sm">Stockfish Mode</Label>
-              <Cpu className={`w-4 h-4 ${mode === 'stockfish' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-muted text-sm">
+              <span className="text-muted-foreground">Mode</span>
+              <Badge variant="secondary">AI vs Stockfish</Badge>
+              <span className="text-muted-foreground">(auto)</span>
             </div>
 
             {/* Controls */}
             <div className="flex items-center gap-2">
               {!isPlaying ? (
-                <Button onClick={handleStartGame}>
+                <Button onClick={handleStartGame} disabled={!token}>
                   <Play className="w-4 h-4 mr-2" />
                   Start Game
                 </Button>
               ) : (
-                <Button onClick={() => setIsPlaying(false)} variant="outline">
+                <Button onClick={handleStopStream} variant="outline">
                   <Pause className="w-4 h-4 mr-2" />
-                  Pause
+                  Stop Stream
                 </Button>
               )}
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => {
-                  setBoard(createInitialBoard());
-                  setMoveCount(0);
-                  setIsPlaying(false);
-                }}
+                onClick={handleResetBoard}
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -303,11 +481,17 @@ export function SandboxPage({ environment, onBack }: SandboxPageProps) {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground">Status:</span>
-            <Badge variant={isPlaying ? 'default' : 'outline'}>
-              {isPlaying ? 'In Progress' : 'Ready'}
+            <Badge variant={autoError ? 'destructive' : isPlaying ? 'default' : 'outline'}>
+              {autoError ? 'Error' : isPlaying ? 'Streaming' : 'Idle'}
             </Badge>
+            <span className="text-muted-foreground">{statusMessage}</span>
           </div>
         </div>
+        {autoError && (
+          <div className="mt-2 text-sm text-destructive">
+            {autoError}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -365,10 +549,35 @@ export function SandboxPage({ environment, onBack }: SandboxPageProps) {
               <div className="p-4 border-t">
                 <Card className="p-4">
                   <h4 className="mb-3">Move Log</h4>
-                  <div className="text-sm font-mono space-y-1 max-h-32 overflow-auto">
-                    <div>1. e4 e5</div>
-                    <div>2. Nf3 Nc6</div>
-                    <div>3. Bb5 a6</div>
+                  <div className="text-sm font-mono space-y-1 max-h-48 overflow-auto">
+                    {moveLogEntries.length === 0 ? (
+                      <div className="text-muted-foreground">No moves streamed yet.</div>
+                    ) : (
+                      moveLogEntries.map((entry, idx) => (
+                        <div key={`${entry.ply}-${entry.uci}-${idx}`} className="flex flex-col">
+                          <span>
+                            {entry.ply + 1}. {entry.uci.toUpperCase()} — {entry.player}
+                          </span>
+                          {entry.reasoning && (
+                            <span className="text-xs text-muted-foreground">
+                              {entry.reasoning}
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Card>
+                <Card className="p-4 mt-4">
+                  <h4 className="mb-3">Engine Output</h4>
+                  <div className="text-xs font-mono space-y-1 max-h-32 overflow-auto">
+                    {systemLog.length === 0 ? (
+                      <div className="text-muted-foreground">Waiting for stream…</div>
+                    ) : (
+                      systemLog.map((entry, idx) => (
+                        <div key={`${entry}-${idx}`}>{entry}</div>
+                      ))
+                    )}
                   </div>
                 </Card>
               </div>

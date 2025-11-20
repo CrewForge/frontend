@@ -4,24 +4,54 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
 import { Checkbox } from './ui/checkbox';
+import { loginUser, registerUser, ApiError } from '../lib/api';
+import type { AuthSession } from '../lib/api';
 
 interface LoginScreenProps {
-  onLogin: (username: string) => void;
+  onLoginSuccess: (session: AuthSession) => void;
 }
 
-export function LoginScreen({ onLogin }: LoginScreenProps) {
+export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && password) {
-      if (isCreatingAccount && !agreedToTerms) {
-        return;
+    setError(null);
+    setInfo(null);
+
+    if (!username || !password) {
+      setError('Username and password are required.');
+      return;
+    }
+
+    if (isCreatingAccount && !agreedToTerms) {
+      setError('You must agree to the terms to create an account.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (isCreatingAccount) {
+        await registerUser(username, password);
+        setInfo('Account created. Signing you in...');
       }
-      onLogin(username);
+
+      const session = await loginUser(username, password);
+      onLoginSuccess(session);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Unexpected error. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -45,6 +75,16 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="rounded-md bg-destructive/10 border border-destructive px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+          {info && !error && (
+            <div className="rounded-md bg-primary/10 border border-primary/30 px-3 py-2 text-sm text-primary">
+              {info}
+            </div>
+          )}
           <div>
             <Label htmlFor="username">Username or Email</Label>
             <Input
@@ -115,9 +155,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <Button 
             type="submit" 
             className="w-full"
-            disabled={isCreatingAccount && !agreedToTerms}
+            disabled={(isCreatingAccount && !agreedToTerms) || isSubmitting}
           >
-            {isCreatingAccount ? 'Create Account' : 'Sign In'}
+            {isSubmitting ? 'Please wait…' : isCreatingAccount ? 'Create Account' : 'Sign In'}
           </Button>
 
           <div className="text-center text-sm">
