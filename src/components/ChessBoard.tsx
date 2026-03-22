@@ -40,7 +40,7 @@ export function ChessBoard({ board, onSquareClick }: ChessBoardProps) {
         {files.map((file) => (
           <div
             key={`top-${file}`}
-            className="flex h-5 items-center justify-center text-[10px] font-medium text-[#d8c2a1] sm:h-6 sm:text-xs"
+            className="flex h-5 items-center justify-center text-[10px] font-medium text-white sm:h-6 sm:text-xs"
           >
             {file}
           </div>
@@ -50,7 +50,7 @@ export function ChessBoard({ board, onSquareClick }: ChessBoardProps) {
         {board.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>
             {/* Rank label */}
-            <div className="flex w-5 items-center justify-center text-[10px] font-medium text-[#d8c2a1] sm:w-6 sm:text-xs">
+            <div className="flex w-5 items-center justify-center text-[10px] font-medium text-white sm:w-6 sm:text-xs">
               {ranks[rowIndex]}
             </div>
             
