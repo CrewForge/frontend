@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Gamepad2, Users, Boxes, LogOut } from 'lucide-react';
+import { Gamepad2, Users, Boxes, LogOut, Code2 } from 'lucide-react';
 
 interface DashboardPageProps {
   username: string;
@@ -37,7 +37,7 @@ export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }
       <div className="dashboard-shell">
         <h2 className="mb-8 text-center text-xl font-semibold sm:mb-12 sm:text-2xl">Environments</h2>
         <p className="mx-auto mb-8 max-w-3xl text-center text-sm text-muted-foreground">
-          The current release includes one active environment. Additional environments are staged and will unlock in future updates.
+          Strategy and EvalPlus workspaces are available. Additional environments are staged for future updates.
         </p>
 
         <div className="dashboard-env-grid">
@@ -57,6 +57,35 @@ export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }
                 <div className="dashboard-meta-row">
                   <span className="font-medium text-muted-foreground">Type</span>
                   <span>Structured environment</span>
+                </div>
+                <div className="dashboard-meta-row">
+                  <span className="font-medium text-muted-foreground">Complexity</span>
+                  <Badge variant="destructive" className="text-xs">High</Badge>
+                </div>
+                <div className="dashboard-meta-row">
+                  <span className="font-medium text-muted-foreground">Status</span>
+                  <Badge variant="default" className="text-xs">Available</Badge>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="dashboard-env-card group cursor-pointer p-6 transition-all hover:scale-[1.01] hover:border-primary/50 hover:shadow-lg"
+            onClick={() => onEnvironmentSelect('evalplus')}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                <Code2 className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="dashboard-env-title mb-2">EvalPlus workspace</h2>
+              <p className="dashboard-env-description mb-4">
+                Replay experiment JSON from CrewForge runs: code submissions, line diffs between steps, and pass@k from the environment result.
+              </p>
+              <div className="flex w-full flex-col gap-2">
+                <div className="dashboard-meta-row">
+                  <span className="font-medium text-muted-foreground">Type</span>
+                  <span>Code benchmark</span>
                 </div>
                 <div className="dashboard-meta-row">
                   <span className="font-medium text-muted-foreground">Complexity</span>

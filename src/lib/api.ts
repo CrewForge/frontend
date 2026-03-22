@@ -122,3 +122,8 @@ export function streamChessAutoUrl() {
   const base = getApiBaseUrl();
   return `${base}/run/chess?mode=auto`;
 }
+
+export function streamEvalPlusAutoUrl() {
+  const base = getApiBaseUrl();
+  return `${base}/run/evalplus?mode=auto`;
+}
