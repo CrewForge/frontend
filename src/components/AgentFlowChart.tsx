@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
@@ -26,6 +26,24 @@ interface AgentFlowChartProps {
 
 export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const compactConnections = useMemo(
+    () =>
+      connections
+        .map((conn) => {
+          const fromNode = nodes.find((node) => node.id === conn.from);
+          const toNode = nodes.find((node) => node.id === conn.to);
+          if (!fromNode || !toNode) return null;
+          return {
+            key: `${conn.from}-${conn.to}`,
+            from: fromNode.agent.name,
+            to: toNode.agent.name,
+            label: conn.label ?? 'Signal',
+            active: Boolean(conn.active),
+          };
+        })
+        .filter((value): value is { key: string; from: string; to: string; label: string; active: boolean } => Boolean(value)),
+    [connections, nodes],
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -56,94 +74,20 @@ export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="p-4 border-b">
-        <h3>Agent Interaction Flow</h3>
+        <h3>Agent activity view</h3>
         <p className="text-sm text-muted-foreground">
-          Real-time visualization of agent communication and decision-making
+          Compact view of the active coordination roles in this workspace
         </p>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-6 relative" style={{ minHeight: '800px' }}>
-          <svg
-            className="absolute inset-0 pointer-events-none"
-            style={{ width: '100%', height: '100%' }}
-          >
-            <defs>
-              <marker
-                id="arrowhead"
-                markerWidth="10"
-                markerHeight="10"
-                refX="9"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 10 3, 0 6" fill="#94a3b8" />
-              </marker>
-              <marker
-                id="arrowhead-active"
-                markerWidth="10"
-                markerHeight="10"
-                refX="9"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 10 3, 0 6" fill="#22c55e" />
-              </marker>
-            </defs>
-
-            {/* Draw connections */}
-            {connections.map((conn, idx) => {
-              const fromNode = nodes.find((n) => n.id === conn.from);
-              const toNode = nodes.find((n) => n.id === conn.to);
-              if (!fromNode || !toNode) return null;
-
-              const x1 = fromNode.position.x + 140;
-              const y1 = fromNode.position.y + 50;
-              const x2 = toNode.position.x + 140;
-              const y2 = toNode.position.y + 50;
-
-              const midX = (x1 + x2) / 2;
-              const midY = (y1 + y2) / 2;
-
-              return (
-                <g key={idx}>
-                  <path
-                    d={`M ${x1} ${y1} Q ${midX} ${midY - 20} ${x2} ${y2}`}
-                    stroke={conn.active ? '#22c55e' : '#94a3b8'}
-                    strokeWidth={conn.active ? 2 : 1}
-                    fill="none"
-                    markerEnd={conn.active ? 'url(#arrowhead-active)' : 'url(#arrowhead)'}
-                    strokeDasharray={conn.active ? '0' : '5,5'}
-                  />
-                  {conn.label && (
-                    <text
-                      x={midX}
-                      y={midY - 25}
-                      textAnchor="middle"
-                      className="text-xs fill-muted-foreground"
-                    >
-                      {conn.label}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Draw nodes */}
-          {nodes.map((node) => (
-            <div
-              key={node.id}
-              className="absolute"
-              style={{
-                left: `${node.position.x}px`,
-                top: `${node.position.y}px`,
-                width: '280px',
-              }}
-            >
+        <div className="space-y-4 p-4 sm:p-6">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {nodes.map((node) => (
               <Card
+                key={node.id}
                 className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
-                  selectedNode === node.id ? 'ring-2' : ''
+                  selectedNode === node.id ? 'ring-2 shadow-lg' : ''
                 }`}
                 style={{
                   borderColor: selectedNode === node.id ? node.agent.color : undefined,
@@ -191,9 +135,7 @@ export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
                   >
                     {getStatusLabel(node.status)}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {node.agent.confidence}% confident
-                  </span>
+                  <span className="text-xs text-muted-foreground">Illustrative view</span>
                 </div>
 
                 {node.currentThought && (
@@ -202,14 +144,44 @@ export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
                   </div>
                 )}
               </Card>
+            ))}
+          </div>
+
+          <Card className="p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-medium">Communication paths</h4>
+                <p className="text-xs text-muted-foreground">
+                  Illustrative coordination links for the workspace layout
+                </p>
+              </div>
+              <Badge variant="outline">{compactConnections.length} links</Badge>
             </div>
-          ))}
+            <div className="grid gap-2 md:grid-cols-2">
+              {compactConnections.map((connection) => (
+                <div
+                  key={connection.key}
+                  className="flex items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm"
+                >
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">
+                      {connection.from} → {connection.to}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{connection.label}</div>
+                  </div>
+                  <Badge variant={connection.active ? 'default' : 'outline'}>
+                    {connection.active ? 'Live' : 'Idle'}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </ScrollArea>
 
       {/* Legend */}
       <div className="p-4 border-t bg-muted/30">
-        <div className="flex items-center gap-6 text-xs">
+        <div className="flex flex-wrap items-center gap-4 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }} />
             <span>Analyzing</span>

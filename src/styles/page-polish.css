@@ -1,0 +1,290 @@
+.landing-shell {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.landing-hero-title {
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.landing-hero-copy {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.landing-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.landing-note-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.landing-hero-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  border-radius: 1rem;
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--card) 94%, var(--primary) 6%) 0%,
+    color-mix(in oklab, var(--card) 98%, var(--muted) 2%) 45%,
+    color-mix(in oklab, var(--card) 94%, var(--primary) 6%) 100%
+  );
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  padding: clamp(1.2rem, 2.4vw, 2.2rem);
+}
+
+.landing-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-page-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.landing-section {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 5vw, 5rem);
+}
+
+.landing-feature-card {
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--card) 96%, var(--muted));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+  padding: 1rem 1.1rem;
+}
+
+.landing-note-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--card) 96%, var(--muted));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+}
+
+.landing-note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  border-radius: 0.8rem;
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+  padding: 0.8rem 0.9rem;
+}
+
+.dashboard-shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.dashboard-header-card {
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--card) 95%, var(--muted));
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.dashboard-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-header-copy {
+  min-width: 0;
+  max-width: 42rem;
+}
+
+.dashboard-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard-env-card {
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--card) 96%, var(--muted));
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.045);
+}
+
+.dashboard-env-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-env-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.dashboard-env-description {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+.dashboard-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-radius: 0.7rem;
+  background: color-mix(in oklab, var(--card) 82%, var(--muted));
+  padding: 0.6rem 0.75rem;
+  font-size: 0.86rem;
+}
+
+.sandbox-shell {
+  width: min(1200px, calc(100% - 1.5rem));
+  margin: 0 auto;
+}
+
+.sandbox-top-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.sandbox-main-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 500px) minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.sandbox-header-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+.sandbox-controls-panel {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--card) 92%, var(--muted));
+  padding: 0.65rem;
+  min-width: 18rem;
+}
+
+.sandbox-controls-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.sandbox-controls-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sandbox-log-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  border-radius: 0.8rem;
+  background: color-mix(in oklab, var(--card) 94%, var(--muted));
+  padding: 0.85rem;
+}
+
+.sandbox-collapsible-summary {
+  border-radius: 0.75rem;
+  border: 1px dashed color-mix(in oklab, var(--border) 82%, transparent);
+  padding: 0.85rem;
+  font-size: 0.84rem;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--card) 90%, var(--muted));
+}
+
+.sandbox-log-title {
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.sandbox-log-subtitle {
+  font-size: 0.82rem;
+  color: var(--muted-foreground);
+}
+
+.sandbox-move-item {
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--card) 86%, var(--muted));
+  padding: 0.75rem;
+}
+
+.sandbox-move-uci {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.sandbox-move-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.95rem;
+  font-size: 0.76rem;
+  color: var(--muted-foreground);
+}
+
+.sandbox-reasoning {
+  margin-top: 0.45rem;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--foreground) 86%, var(--muted-foreground));
+}
+
+.sandbox-backend-log-body {
+  max-height: 11rem;
+  overflow: auto;
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  padding: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1080px) {
+  .sandbox-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sandbox-header-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sandbox-controls-panel {
+    min-width: 0;
+  }
+
+  .sandbox-controls-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 860px) {
+  .landing-header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
