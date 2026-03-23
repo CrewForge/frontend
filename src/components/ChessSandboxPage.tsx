@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { ChessBoard, BoardState } from './ChessBoard';
+import { ChessBoard, BoardState, type BoardMoveAnimation } from './ChessBoard';
 import { AgentFlowChart } from './AgentFlowChart';
 import { GameResultsDialog } from './GameResultsDialog';
 import { Agent } from './AgentCard';
@@ -7,13 +7,15 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Play, Pause, RotateCcw } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { Chess } from 'chess.js';
 import { ApiError, authHeaders, streamChessAutoUrl, throwIfResponseNotOk } from '../lib/api';
+import { capturedPiecesFromGame } from '../lib/chessCaptures';
 import { formatCentipawnDelta, formatEvalPawns } from '../lib/chessEval';
 import type { GameResultsSummary } from './GameResultsDialog';
 import { ChessEvalBar } from './ChessEvalBar';
 import { ChessMoveList } from './ChessMoveList';
+import { ChessMaterial } from './ChessMaterial';
 
 export interface ChessSandboxPageProps {
   token: string;
@@ -176,7 +178,13 @@ const pieceTypeMap: Record<string, 'king' | 'queen' | 'rook' | 'bishop' | 'knigh
   p: 'pawn',
 };
 
-const buildBoardState = (game: Chess, lastMove?: string | null): BoardState => {
+function algebraicToRC(sq: string): { row: number; col: number } {
+  const file = sq.charCodeAt(0) - 97;
+  const rank = 8 - Number(sq[1]);
+  return { row: rank, col: file };
+}
+
+const buildBoardState = (game: Chess, lastMove?: { from: string; to: string } | null): BoardState => {
   const boardRepresentation = game.board();
   const boardState: BoardState = boardRepresentation.map((row) =>
     row.map((square) => {
@@ -192,24 +200,24 @@ const buildBoardState = (game: Chess, lastMove?: string | null): BoardState => {
     }),
   );
 
-  if (lastMove && lastMove.length >= 4) {
-    const squares = [lastMove.slice(0, 2), lastMove.slice(2, 4)];
-    squares.forEach((coord) => {
-      const file = coord.charCodeAt(0) - 97;
-      const rank = 8 - Number(coord[1]);
-      if (boardState[rank]?.[file]) {
-        boardState[rank][file] = {
-          ...boardState[rank][file],
-          highlight: 'lastMove',
-        };
-      }
-    });
+  if (lastMove) {
+    const apply = (sq: string, kind: 'lastFrom' | 'lastTo') => {
+      const { row, col } = algebraicToRC(sq);
+      if (row < 0 || row > 7 || col < 0 || col > 7) return;
+      const cur = boardState[row][col];
+      boardState[row][col] = {
+        piece: cur.piece ?? null,
+        highlight: kind,
+      };
+    };
+    apply(lastMove.from, 'lastFrom');
+    apply(lastMove.to, 'lastTo');
   }
 
   return boardState;
 };
 
-const createInitialBoard = () => buildBoardState(new Chess());
+const createInitialBoard = () => buildBoardState(new Chess(), null);
 
 export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDataSource, onAuthFailure }: ChessSandboxPageProps) {
   const mode: 'user' | 'stockfish' = 'stockfish';
@@ -227,12 +235,15 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   const [statusMessage, setStatusMessage] = useState('Awaiting start');
   const abortControllerRef = useRef<AbortController | null>(null);
   const chessRef = useRef(new Chess());
+  const animTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamStartedAtRef = useRef<number | null>(null);
   const sawEndEventRef = useRef(false);
   const autoStartedSampleRef = useRef(false);
   const [showFlowChart, setShowFlowChart] = useState(false);
   const [showMoveLog, setShowMoveLog] = useState(true);
   const [showBackendLog, setShowBackendLog] = useState(false);
+  const [moveAnim, setMoveAnim] = useState<BoardMoveAnimation | null>(null);
+  const prefersReducedMotion = useReducedMotion();
   
   // Flow chart data
   const [flowNodes, setFlowNodes] = useState([
@@ -282,8 +293,13 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   ]);
 
   const resetBoardState = useCallback(() => {
+    if (animTimeoutRef.current) {
+      clearTimeout(animTimeoutRef.current);
+      animTimeoutRef.current = null;
+    }
+    setMoveAnim(null);
     chessRef.current = new Chess();
-    setBoard(buildBoardState(chessRef.current));
+    setBoard(buildBoardState(chessRef.current, null));
     setMoveCount(0);
     moveLogRef.current = [];
     setMoveLogEntries([]);
@@ -353,12 +369,50 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
 
       if (payload.type === 'event' && payload.uci) {
         try {
+          const fenBefore = chessRef.current.fen();
           const played = chessRef.current.move(payload.uci, { sloppy: true });
           if (!played) {
             appendSystemLog(`Illegal move in stream: ${payload.uci}`);
             return false;
           }
-          setBoard(buildBoardState(chessRef.current, payload.uci));
+          const lastHighlight = { from: played.from, to: played.to };
+          const usePieceAnim =
+            !prefersReducedMotion &&
+            !played.isKingsideCastle() &&
+            !played.isQueensideCastle();
+
+          if (animTimeoutRef.current) {
+            clearTimeout(animTimeoutRef.current);
+            animTimeoutRef.current = null;
+          }
+
+          if (usePieceAnim) {
+            const beforeGame = new Chess(fenBefore);
+            setBoard(buildBoardState(beforeGame, null));
+            const victimFly = played.isCapture() && !played.isEnPassant();
+            setMoveAnim({
+              from: played.from,
+              to: played.to,
+              pieceType: pieceTypeMap[played.piece],
+              pieceColor: played.color === 'w' ? 'white' : 'black',
+              capturedType: played.captured ? pieceTypeMap[played.captured] : undefined,
+              capturedColor: played.captured
+                ? played.color === 'w'
+                  ? 'black'
+                  : 'white'
+                : undefined,
+              victimFly,
+            });
+            animTimeoutRef.current = window.setTimeout(() => {
+              setBoard(buildBoardState(chessRef.current, lastHighlight));
+              setMoveAnim(null);
+              animTimeoutRef.current = null;
+            }, 460);
+          } else {
+            setMoveAnim(null);
+            setBoard(buildBoardState(chessRef.current, lastHighlight));
+          }
+
           setMoveCount((prev) => prev + 1);
           const nextEntry: MoveLogEntry = {
             ply: typeof payload.ply === 'number' ? payload.ply : moveLogRef.current.length,
@@ -426,7 +480,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
       appendSystemLog(JSON.stringify(payload));
       return false;
     },
-    [appendSystemLog, buildResultsSummary],
+    [appendSystemLog, buildResultsSummary, prefersReducedMotion],
   );
 
   const processLine = useCallback(
@@ -622,6 +676,10 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
+      if (animTimeoutRef.current) {
+        clearTimeout(animTimeoutRef.current);
+        animTimeoutRef.current = null;
+      }
     };
   }, []);
 
@@ -654,6 +712,8 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     }
     return null;
   }, [moveLogEntries]);
+
+  const material = useMemo(() => capturedPiecesFromGame(chessRef.current), [moveCount]);
 
   const handleStartGame = useCallback(() => {
     if (dataSource === 'sample') {
@@ -771,21 +831,24 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                 </div>
                 <div className="p-3 sm:p-5">
                   <div className="chess-board-workspace">
-                    <div className="chess-board-and-eval">
-                      <ChessEvalBar
-                        centipawnsTotal={latestMove?.centipawnsTotal ?? null}
-                        evalDeltaCp={evalDeltaCp}
-                      />
-                      <motion.div
-                        className="chess-board-and-eval__board"
-                        key={moveCount}
-                        initial={{ opacity: 0.9, scale: 0.992 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChessBoard board={board} />
-                      </motion.div>
-                    </div>
+                    <ChessMaterial takenByWhite={material.byWhite} takenByBlack={material.byBlack}>
+                      <div className="chess-board-and-eval">
+                        <ChessEvalBar
+                          centipawnsTotal={latestMove?.centipawnsTotal ?? null}
+                          evalDeltaCp={evalDeltaCp}
+                          moveKey={moveCount}
+                        />
+                        <motion.div
+                          className="chess-board-and-eval__board"
+                          key={moveCount}
+                          initial={{ opacity: 0.9, scale: 0.992 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <ChessBoard board={board} moveAnim={moveAnim} />
+                        </motion.div>
+                      </div>
+                    </ChessMaterial>
                     <ChessMoveList
                       entries={moveLogEntries.map((e) => ({
                         ply: e.ply,

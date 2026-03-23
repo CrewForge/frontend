@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import {
   centipawnsToWhiteShare,
   formatCentipawnDelta,
-  formatEvalPawns,
+  formatEvalRich,
   formatPawnDelta,
 } from '../lib/chessEval';
 
@@ -12,10 +12,17 @@ export interface ChessEvalBarProps {
   centipawnsTotal?: number | null;
   /** Change in evaluation vs previous position (centipawns). */
   evalDeltaCp?: number | null;
+  /** Bumps motion/labels when the position changes (e.g. half-move index). */
+  moveKey?: number;
   className?: string;
 }
 
-export function ChessEvalBar({ centipawnsTotal, evalDeltaCp, className = '' }: ChessEvalBarProps) {
+export function ChessEvalBar({
+  centipawnsTotal,
+  evalDeltaCp,
+  moveKey = 0,
+  className = '',
+}: ChessEvalBarProps) {
   const reduceMotion = useReducedMotion();
 
   const whiteShare = useMemo(
@@ -24,26 +31,33 @@ export function ChessEvalBar({ centipawnsTotal, evalDeltaCp, className = '' }: C
     [centipawnsTotal],
   );
 
+  const rich = useMemo(() => formatEvalRich(centipawnsTotal ?? undefined), [centipawnsTotal]);
+
   const delta = typeof evalDeltaCp === 'number' ? evalDeltaCp : null;
   const deltaTone =
     delta === null ? 'neutral' : delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral';
 
+  const barKey = `${moveKey}-${centipawnsTotal ?? 'na'}`;
+
   return (
     <div
       className={`chess-eval-bar ${className}`.trim()}
-      aria-label={`Engine evaluation ${formatEvalPawns(centipawnsTotal ?? undefined)} pawns`}
+      aria-label={`Engine evaluation ${rich.pawns} pawns`}
     >
       <div className="chess-eval-bar__readout">
         <motion.div
-          className="chess-eval-bar__main"
-          key={centipawnsTotal ?? 'empty'}
-          initial={reduceMotion ? false : { opacity: 0.85, y: 4 }}
+          className="chess-eval-bar__main-block"
+          key={barKey}
+          initial={reduceMotion ? false : { opacity: 0.88, y: 3 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 320, damping: 28 }}
         >
-          {formatEvalPawns(centipawnsTotal ?? undefined)}
+          <span className="chess-eval-bar__main">{rich.pawns}</span>
+          {rich.centipawns ? (
+            <span className="chess-eval-bar__sub cp-line">{rich.centipawns}</span>
+          ) : null}
+          <span className="chess-eval-bar__unit">pawns (White)</span>
         </motion.div>
-        <div className="chess-eval-bar__sub">pawns</div>
 
         <motion.div
           className={`chess-eval-bar__delta chess-eval-bar__delta--${deltaTone}`}
@@ -60,9 +74,7 @@ export function ChessEvalBar({ centipawnsTotal, evalDeltaCp, className = '' }: C
 
       <div className="chess-eval-bar__track" role="presentation">
         <div className="chess-eval-bar__track-inner">
-          {/* Black (bottom) */}
           <div className="chess-eval-bar__black" />
-          {/* White (top) — height animates with evaluation */}
           <motion.div
             className="chess-eval-bar__white"
             initial={false}

@@ -26,6 +26,25 @@ export function formatEvalPawns(cp: number | undefined | null): string {
   return `${rounded >= 0 ? '+' : ''}${rounded.toFixed(1)}`;
 }
 
+/**
+ * Primary readout: two decimal pawns so small eval changes are visible (avoids “stuck” +0.5).
+ * Secondary: integer centipawns (matches engine payloads).
+ */
+export function formatEvalRich(cp: number | undefined | null): { pawns: string; centipawns: string } {
+  if (cp === undefined || cp === null || Number.isNaN(cp)) {
+    return { pawns: '—', centipawns: '' };
+  }
+  const pawns = cp / 100;
+  const abs = Math.abs(pawns);
+  if (abs >= 99) {
+    return { pawns: pawns > 0 ? '+M' : '−M', centipawns: '' };
+  }
+  const pStr = `${pawns >= 0 ? '+' : ''}${pawns.toFixed(2)}`;
+  const cpRounded = Math.round(cp);
+  const cpStr = `${cpRounded >= 0 ? '+' : ''}${cpRounded}\u00a0cp`;
+  return { pawns: pStr, centipawns: cpStr };
+}
+
 export function formatCentipawnDelta(delta: number | undefined | null): string {
   if (delta === undefined || delta === null || Number.isNaN(delta)) return '—';
   const rounded = Math.round(delta);
