@@ -300,7 +300,42 @@
  * EvalPlus — Tokyo Night–inspired IDE surfaces (explicit CSS; Tailwind snapshot omits many hues).
  * Palette reference: Tokyo Night (dark UI / Neovim theme family).
  */
+/* Shared code typography + viewport height for diff + full solution */
+.evalplus-code-area,
+.evalplus-ide-panel .evalplus-ide-readonly {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: var(--evalplus-code-font-size);
+  line-height: var(--evalplus-code-line-height);
+}
+
+/* One scrollable “window” for both modes: same height, native scrollbar */
+.evalplus-code-area {
+  height: var(--evalplus-code-view-height);
+  min-height: 22rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+  background: var(--ide-bg-line);
+  border-radius: 0 0 0.45rem 0.45rem;
+}
+
+.evalplus-code-area .evalplus-ide-body {
+  padding-bottom: 0.5rem;
+}
+
+.evalplus-code-area .evalplus-ide-readonly,
+.evalplus-code-area .evalplus-ide-readonly--empty {
+  max-height: none;
+  min-height: 0;
+  overflow: visible;
+  background: transparent;
+}
+
 .evalplus-ide-panel {
+  --evalplus-code-font-size: 13px;
+  --evalplus-code-line-height: 1.6;
+  --evalplus-code-view-height: min(32rem, 68vh);
   --ide-bg: #16161e;
   --ide-bg-line: #1a1b26;
   --ide-bg-elevated: #24283b;
@@ -322,6 +357,8 @@
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   color: var(--ide-fg);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: var(--evalplus-code-font-size);
+  line-height: var(--evalplus-code-line-height);
 }
 
 .evalplus-ide-chrome {
@@ -362,6 +399,33 @@
   justify-content: flex-end;
   gap: 0.45rem;
   flex-shrink: 0;
+}
+
+.evalplus-ide-chrome--workspace {
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+}
+
+.evalplus-ide-chrome--workspace .evalplus-ide-chrome-trail {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.evalplus-diff-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.evalplus-diff-toggle-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ide-fg-dim);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .evalplus-copy-btn {
@@ -430,16 +494,18 @@
   color: var(--ide-fg-dim);
 }
 
-/* Full-file view (Current solution) */
+/* Full-file view (standalone panel — not merged into .evalplus-code-area) */
+.evalplus-ide-panel > .evalplus-ide-readonly {
+  max-height: var(--evalplus-code-view-height);
+  overflow: auto;
+}
+
+/* Full-file view — font from shared block; merged path scrolls on .evalplus-code-area parent */
 .evalplus-ide-readonly {
   margin: 0;
-  max-height: 20rem;
-  overflow: auto;
   padding: 0.85rem 1rem;
   background: var(--ide-bg-line);
   color: var(--ide-fg-muted);
-  font-size: 11px;
-  line-height: 1.65;
   tab-size: 4;
   /* Soft-wrap long lines (IDE-style) without breaking layout */
   white-space: pre-wrap;
@@ -500,9 +566,10 @@
   width: 1.35rem;
   flex-shrink: 0;
   user-select: none;
-  font-size: 10px;
+  font-size: var(--evalplus-code-font-size, 13px);
   font-weight: 700;
   font-family: inherit;
+  line-height: var(--evalplus-code-line-height, 1.6);
 }
 
 .evalplus-diff-gutter--same {
@@ -521,11 +588,12 @@
 .evalplus-diff-line-code {
   flex: 1 1 0%;
   min-width: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   /* Preserve indentation; wrap long lines like a modern IDE with word wrap on */
   white-space: pre-wrap;
   tab-size: 4;
-  line-height: 1.55;
   overflow-wrap: anywhere;
   word-break: break-word;
 }

@@ -16,7 +16,10 @@ import {
 } from '../lib/evalplusExperiment';
 import { EvalPlusCodeDiff } from './EvalPlusCodeDiff';
 import { IdeHighlightedCode } from './IdeHighlightedCode';
+import { CopyCodeButton } from './CopyCodeButton';
+import { Switch } from './ui/switch';
 import { EvalPlusResultsDialog, type EvalPlusResultsSummary } from './EvalPlusResultsDialog';
+import { detectLanguage } from '../lib/syntaxHighlight';
 
 type StreamPayload = {
   type?: string;
@@ -91,6 +94,7 @@ export function EvalPlusSandboxPage({
   const autoStartedSampleRef = useRef(false);
   const [showBackendLog, setShowBackendLog] = useState(false);
   const [systemLog, setSystemLog] = useState<string[]>([]);
+  const [showDiff, setShowDiff] = useState(true);
 
   const appendSystemLog = useCallback((entry: string) => {
     setSystemLog((prev) => [entry, ...prev].slice(0, 60));
@@ -380,6 +384,7 @@ export function EvalPlusSandboxPage({
     safeStep > 0 && moves[safeStep]?.task_label && moves[safeStep]?.task_label === moves[safeStep - 1]?.task_label;
 
   const currentMove = moves[safeStep];
+  const detectedLanguage = useMemo(() => detectLanguage(prevCode, currCode), [prevCode, currCode]);
   const avgLatency = useMemo(() => {
     const lat = moves.map((m) => m.latency_ms).filter((x): x is number => typeof x === 'number');
     if (!lat.length) return null;
@@ -470,13 +475,13 @@ export function EvalPlusSandboxPage({
             <div className="space-y-4">
               <Card className="overflow-hidden">
                 <div className="border-b px-4 py-3">
-                  <h3 className="text-base font-semibold">Code evolution</h3>
+                  <h3 className="text-base font-semibold">Code</h3>
                   <p className="text-sm text-muted-foreground">
-                    {sameTaskAsPrev
-                      ? 'Diff vs previous submission for the same task label.'
-                      : safeStep === 0
-                        ? 'First submission (diff compares against empty previous).'
-                        : 'New task or different label - diff vs previous step.'}
+                    {showDiff
+                      ? safeStep === 0
+                        ? 'First submission: the diff compares to an empty starting point. Copy still copies the full file.'
+                        : 'Compared to the previous step: green lines were added, red lines were removed. Copy copies the full solution only (not the diff).'
+                      : 'Full solution for this step. Turn on “Show diff” to see additions and removals vs. the previous step.'}
                   </p>
                 </div>
                 <div className="space-y-3 p-4 sm:p-6">
@@ -513,24 +518,40 @@ export function EvalPlusSandboxPage({
                       </span>
                     )}
                   </div>
-                  <motion.div
-                    key={safeStep}
-                    initial={{ opacity: 0.92, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.18 }}
-                  >
-                    <EvalPlusCodeDiff before={prevCode} after={currCode} />
-                  </motion.div>
-                </div>
-              </Card>
-
-              <Card className="overflow-hidden">
-                <div className="border-b px-4 py-3">
-                  <h3 className="text-base font-semibold">Current solution</h3>
-                  <p className="text-sm text-muted-foreground">Full submitted code for this step</p>
-                </div>
-                <div className="p-4 sm:p-6">
-                  <IdeHighlightedCode code={currCode} fileTab="solution.py" emptyLabel="—" />
+                  <div className="evalplus-ide-panel overflow-hidden">
+                    <div className="evalplus-ide-chrome evalplus-ide-chrome--workspace">
+                      <span className="evalplus-ide-chrome-label">{showDiff ? 'Diff' : 'solution.py'}</span>
+                      <div className="evalplus-ide-chrome-trail">
+                        <div className="evalplus-diff-toggle">
+                          <Switch
+                            id="evalplus-show-diff"
+                            checked={showDiff}
+                            onCheckedChange={setShowDiff}
+                            aria-label="Toggle diff view"
+                          />
+                          <label htmlFor="evalplus-show-diff" className="evalplus-diff-toggle-label">
+                            Show diff
+                          </label>
+                        </div>
+                        {(prevCode || currCode).trim() ? (
+                          <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>
+                        ) : null}
+                        <CopyCodeButton textToCopy={currCode} disabled={!currCode.trim()} />
+                      </div>
+                    </div>
+                    <motion.div
+                      key={`${safeStep}-${showDiff}`}
+                      initial={{ opacity: 0.92, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      {showDiff ? (
+                        <EvalPlusCodeDiff before={prevCode} after={currCode} contentOnly />
+                      ) : (
+                        <IdeHighlightedCode code={currCode} contentOnly emptyLabel="—" />
+                      )}
+                    </motion.div>
+                  </div>
                 </div>
               </Card>
             </div>

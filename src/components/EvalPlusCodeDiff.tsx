@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { diffLines, type DiffLine } from '../lib/lineDiff';
 import { detectLanguage, highlightLine } from '../lib/syntaxHighlight';
-import { CopyCodeButton } from './CopyCodeButton';
 
 type EvalPlusCodeDiffProps = {
   before: string;
   after: string;
   className?: string;
+  /** When true, render only the diff body (no outer panel, chrome, or copy). For use inside EvalPlusCodeWorkspace. */
+  contentOnly?: boolean;
 };
 
 function lineRowClass(d: DiffLine): string {
@@ -22,7 +23,7 @@ function gutterClass(d: DiffLine): string {
   return `${base} evalplus-diff-gutter--same`;
 }
 
-export function EvalPlusCodeDiff({ before, after, className }: EvalPlusCodeDiffProps) {
+export function EvalPlusCodeDiff({ before, after, className, contentOnly = false }: EvalPlusCodeDiffProps) {
   const lines = useMemo(() => diffLines(before, after), [before, after]);
   const detectedLanguage = useMemo(() => detectLanguage(before, after), [before, after]);
   const lineHtml = useMemo(
@@ -31,38 +32,37 @@ export function EvalPlusCodeDiff({ before, after, className }: EvalPlusCodeDiffP
   );
   const hasChanges = lines.some((d) => d.kind !== 'same');
   const showLang = (before || after).trim().length > 0;
-  const copyText = useMemo(
-    () =>
-      lines
-        .map((d) => {
-          const prefix = d.kind === 'add' ? '+' : d.kind === 'remove' ? '-' : ' ';
-          return `${prefix}${d.text ?? ''}`;
-        })
-        .join('\n'),
-    [lines],
+
+  const body = (
+    <div className={`evalplus-ide-body ${contentOnly ? 'evalplus-ide-body--merged' : ''}`}>
+      {!hasChanges && <div className="evalplus-ide-empty">No line changes in this iteration.</div>}
+      {lines.map((d, i) => (
+        <div key={i} className={lineRowClass(d)}>
+          <span className={gutterClass(d)}>{d.kind === 'add' ? '+' : d.kind === 'remove' ? '−' : '\u00a0'}</span>
+          <span
+            className="evalplus-diff-line-code"
+            dangerouslySetInnerHTML={{ __html: lineHtml[i] ?? '' }}
+          />
+        </div>
+      ))}
+    </div>
   );
 
+  if (contentOnly) {
+    return (
+      <div className={`evalplus-ide-diff evalplus-code-area text-left ${className ?? ''}`}>{body}</div>
+    );
+  }
+
   return (
-    <div className={`evalplus-ide-panel evalplus-ide-diff text-left text-[11px] leading-relaxed sm:text-xs ${className ?? ''}`}>
+    <div className={`evalplus-ide-panel evalplus-ide-diff evalplus-code-area text-left ${className ?? ''}`}>
       <div className="evalplus-ide-chrome">
         <span className="evalplus-ide-chrome-label">Diff</span>
         <div className="evalplus-ide-chrome-trail">
           {showLang && <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>}
-          <CopyCodeButton textToCopy={copyText} disabled={!copyText.trim()} />
         </div>
       </div>
-      <div className="evalplus-ide-body">
-        {!hasChanges && <div className="evalplus-ide-empty">No line changes in this iteration.</div>}
-        {lines.map((d, i) => (
-          <div key={i} className={lineRowClass(d)}>
-            <span className={gutterClass(d)}>{d.kind === 'add' ? '+' : d.kind === 'remove' ? '−' : '\u00a0'}</span>
-            <span
-              className="evalplus-diff-line-code"
-              dangerouslySetInnerHTML={{ __html: lineHtml[i] ?? '' }}
-            />
-          </div>
-        ))}
-      </div>
+      {body}
     </div>
   );
 }

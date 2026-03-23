@@ -10,6 +10,9 @@
 .evalplus-ide-panel code.hljs {
   display: block;
   width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
