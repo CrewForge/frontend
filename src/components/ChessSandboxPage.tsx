@@ -6,7 +6,7 @@ import { Agent } from './AgentCard';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import { SandboxPlaybackControls } from './SandboxPlaybackControls';
 import { motion, useReducedMotion } from 'motion/react';
 import { Chess } from 'chess.js';
 import { ApiError, authHeaders, streamChessAutoUrl, throwIfResponseNotOk } from '../lib/api';
@@ -59,22 +59,6 @@ function formatDuration(ms: number): string {
 }
 
 const INFERRED_NOTE = 'Inferred client-side from streamed moves.';
-
-function waitWithAbort(ms: number, signal: AbortSignal) {
-  return new Promise<void>((resolve, reject) => {
-    const id = window.setTimeout(() => {
-      cleanup();
-      resolve();
-    }, ms);
-    const onAbort = () => {
-      window.clearTimeout(id);
-      cleanup();
-      reject(new DOMException('The operation was aborted.', 'AbortError'));
-    };
-    const cleanup = () => signal.removeEventListener('abort', onAbort);
-    signal.addEventListener('abort', onAbort, { once: true });
-  });
-}
 
 function outcomeFromChess(game: Chess): { winner: 'white' | 'black' | 'draw'; summaryLine: string; pgnResult: string } {
   if (game.isCheckmate()) {
@@ -238,12 +222,16 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   const animTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamStartedAtRef = useRef<number | null>(null);
   const sawEndEventRef = useRef(false);
-  const autoStartedSampleRef = useRef(false);
   const [showFlowChart, setShowFlowChart] = useState(false);
   const [showMoveLog, setShowMoveLog] = useState(true);
   const [showBackendLog, setShowBackendLog] = useState(false);
   const [moveAnim, setMoveAnim] = useState<BoardMoveAnimation | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [replayPayloads, setReplayPayloads] = useState<StreamPayload[]>([]);
+  const replayPayloadsRef = useRef<StreamPayload[]>([]);
+  const [replayCursor, setReplayCursor] = useState(-1);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [samplePlaybackPlaying, setSamplePlaybackPlaying] = useState(false);
   
   // Flow chart data
   const [flowNodes, setFlowNodes] = useState([
@@ -310,6 +298,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     setGameResults(null);
     streamStartedAtRef.current = null;
     sawEndEventRef.current = false;
+    setReplayCursor(-1);
     setFlowNodes(nodes => nodes.map(node => ({
       ...node,
       status: 'idle',
@@ -361,7 +350,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   }, []);
 
   const processPayload = useCallback(
-    (payload: StreamPayload) => {
+    (payload: StreamPayload, options?: { suppressDialogs?: boolean }) => {
       if (!payload || typeof payload !== 'object') {
         appendSystemLog('Received unknown payload');
         return false;
@@ -467,8 +456,10 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
       if (payload.type === 'end') {
         sawEndEventRef.current = true;
         setStatusMessage('Environment complete');
-        setGameResults(buildResultsSummary());
-        setResultsOpen(true);
+        if (!options?.suppressDialogs) {
+          setGameResults(buildResultsSummary());
+          setResultsOpen(true);
+        }
         return true;
       }
 
@@ -602,72 +593,133 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     }
   }, [appendSystemLog, onAuthFailure, processLine, resetBoardState, token]);
 
-  const startSampleReplay = useCallback(async () => {
-    abortControllerRef.current?.abort();
-    resetBoardState();
-    setResultsOpen(false);
-    setIsPlaying(true);
-    setStatusMessage('Loading sample results…');
-
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    try {
-      const response = await fetch('/samples/chess-auto-sample.json', { signal: controller.signal });
-      if (!response.ok) {
-        throw new Error('Unable to load sample results.');
-      }
-
-      const payloads = (await response.json()) as StreamPayload[];
-      if (!Array.isArray(payloads)) {
-        throw new Error('Sample results are not in the expected array format.');
-      }
-
-      streamStartedAtRef.current = Date.now();
-      setStatusMessage('Replaying sample results');
-
-      for (const payload of payloads) {
-        if (controller.signal.aborted) {
-          throw new DOMException('The operation was aborted.', 'AbortError');
-        }
-        const shouldStop = processPayload(payload);
-        if (shouldStop) {
-          break;
-        }
-        await waitWithAbort(payload.type === 'event' ? 420 : 180, controller.signal);
-      }
-      if (!sawEndEventRef.current) {
-        setStatusMessage('Sample complete (no explicit end event)');
-        setGameResults(buildResultsSummary());
-        setResultsOpen(true);
-      }
-    } catch (error) {
-      const err = error as Error;
-      if (err.name === 'AbortError') {
-        appendSystemLog('Replay stopped.');
-        setStatusMessage('Replay paused');
-      } else {
-        setAutoError(err.message || 'Failed to load sample results.');
-        setStatusMessage('Sample error');
-      }
-    } finally {
-      setIsPlaying(false);
-      abortControllerRef.current = null;
-    }
-  }, [appendSystemLog, buildResultsSummary, processPayload, resetBoardState]);
-
   const handleStopStream = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
     setIsPlaying(false);
+    setSamplePlaybackPlaying(false);
     setStatusMessage('Stream paused');
   }, []);
+
+  useEffect(() => {
+    replayPayloadsRef.current = replayPayloads;
+  }, [replayPayloads]);
+
+  const loadChessSample = useCallback(async () => {
+    const response = await fetch('/samples/chess-auto-sample.json');
+    if (!response.ok) {
+      throw new Error('Unable to load sample results.');
+    }
+    const payloads = (await response.json()) as StreamPayload[];
+    if (!Array.isArray(payloads)) {
+      throw new Error('Sample results are not in the expected array format.');
+    }
+    setReplayPayloads(payloads);
+    replayPayloadsRef.current = payloads;
+    resetBoardState();
+    setReplayCursor(-1);
+    setResultsOpen(false);
+    setAutoError(null);
+    setSamplePlaybackPlaying(false);
+    setStatusMessage('Sample loaded — play, step, or adjust speed.');
+  }, [resetBoardState]);
+
+  const applyReplayUpTo = useCallback(
+    (endIndex: number) => {
+      const list = replayPayloadsRef.current;
+      if (endIndex < 0) {
+        resetBoardState();
+        setSamplePlaybackPlaying(false);
+        setStatusMessage('Replay reset');
+        return;
+      }
+      if (!list.length) return;
+      resetBoardState();
+      const max = Math.min(endIndex, list.length - 1);
+      for (let i = 0; i <= max; i += 1) {
+        processPayload(list[i], { suppressDialogs: true });
+      }
+      setReplayCursor(max);
+      setStatusMessage(max >= list.length - 1 ? 'Replay complete' : 'Sample replay');
+    },
+    [processPayload, resetBoardState],
+  );
+
+  const goReplayNext = useCallback(() => {
+    const list = replayPayloadsRef.current;
+    if (!list.length) return;
+    const next = replayCursor + 1;
+    if (next >= list.length) return;
+    const payload = list[next];
+    const suppress = payload.type !== 'end';
+    const stopped = processPayload(payload, { suppressDialogs: suppress });
+    setReplayCursor(next);
+    if (stopped) setSamplePlaybackPlaying(false);
+  }, [replayCursor, processPayload]);
+
+  const goReplayPrev = useCallback(() => {
+    if (replayCursor <= -1) return;
+    applyReplayUpTo(replayCursor - 1);
+  }, [replayCursor, applyReplayUpTo]);
+
+  useEffect(() => {
+    if (!samplePlaybackPlaying || dataSource !== 'sample') return;
+    const list = replayPayloadsRef.current;
+    if (!list.length) return;
+    if (replayCursor >= list.length - 1) {
+      setSamplePlaybackPlaying(false);
+      return;
+    }
+    const base = 400;
+    const delay = Math.max(50, base / playbackSpeed);
+    const id = window.setTimeout(() => {
+      goReplayNext();
+    }, delay);
+    return () => clearTimeout(id);
+  }, [samplePlaybackPlaying, replayCursor, playbackSpeed, dataSource, goReplayNext]);
+
+  const handlePlaybackPlay = useCallback(async () => {
+    if (dataSource === 'live') {
+      void startAutoStream();
+      return;
+    }
+    if (!replayPayloadsRef.current.length) {
+      try {
+        await loadChessSample();
+      } catch (err) {
+        setAutoError((err as Error).message || 'Failed to load sample results.');
+        setStatusMessage('Sample error');
+        return;
+      }
+    }
+    setSamplePlaybackPlaying(true);
+  }, [dataSource, loadChessSample, startAutoStream]);
+
+  const handlePlaybackPause = useCallback(() => {
+    if (dataSource === 'live') {
+      handleStopStream();
+      return;
+    }
+    setSamplePlaybackPlaying(false);
+  }, [dataSource, handleStopStream]);
+
+  const handlePlaybackRestart = useCallback(() => {
+    if (dataSource === 'live') {
+      handleStopStream();
+      resetBoardState();
+      setResultsOpen(false);
+      return;
+    }
+    setSamplePlaybackPlaying(false);
+    applyReplayUpTo(-1);
+  }, [dataSource, handleStopStream, resetBoardState, applyReplayUpTo]);
 
   const handleResetBoard = useCallback(() => {
     handleStopStream();
     resetBoardState();
+    setSamplePlaybackPlaying(false);
     setResultsOpen(false);
     setShowMoveLog(true);
     setShowBackendLog(false);
@@ -684,14 +736,12 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   }, []);
 
   useEffect(() => {
-    if (dataSource !== 'sample') {
-      autoStartedSampleRef.current = false;
-      return;
-    }
-    if (autoStartedSampleRef.current) return;
-    autoStartedSampleRef.current = true;
-    void startSampleReplay();
-  }, [dataSource, startSampleReplay]);
+    if (dataSource !== 'sample') return;
+    void loadChessSample().catch((err) => {
+      setAutoError((err as Error).message || 'Failed to load sample');
+      setStatusMessage('Sample error');
+    });
+  }, [dataSource, loadChessSample]);
 
   const averageLatencyMs = useMemo(() => {
     const entries = moveLogEntries.filter((entry) => typeof entry.latencyMs === 'number');
@@ -715,20 +765,10 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
 
   const material = useMemo(() => materialAdvantageFromGame(chessRef.current), [moveCount]);
 
-  const handleStartGame = useCallback(() => {
-    if (dataSource === 'sample') {
-      void startSampleReplay();
-      return;
-    }
-    void startAutoStream();
-  }, [dataSource, startAutoStream, startSampleReplay]);
-
-  const handleStartSample = useCallback(() => {
-    void startSampleReplay();
-  }, [startSampleReplay]);
-
   const handleSwitchToLive = useCallback(() => {
     handleStopStream();
+    setReplayPayloads([]);
+    replayPayloadsRef.current = [];
     resetBoardState();
     setResultsOpen(false);
     onSetDataSource?.('live');
@@ -744,11 +784,23 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   const handleRematch = useCallback(() => {
     setResultsOpen(false);
     if (dataSource === 'sample') {
-      void startSampleReplay();
+      setSamplePlaybackPlaying(false);
+      void loadChessSample();
       return;
     }
     void startAutoStream();
-  }, [dataSource, startAutoStream, startSampleReplay]);
+  }, [dataSource, loadChessSample, startAutoStream]);
+
+  const playbackActive = dataSource === 'sample' ? samplePlaybackPlaying : isPlaying;
+  const replayPositionLabel =
+    dataSource === 'sample' && replayPayloads.length > 0
+      ? `${replayCursor + 1} / ${replayPayloads.length}`
+      : dataSource === 'live'
+        ? 'Live stream'
+        : '—';
+  const canReplayPrev = dataSource === 'sample' && replayCursor >= 0;
+  const canReplayNext =
+    dataSource === 'sample' && replayPayloads.length > 0 && replayCursor < replayPayloads.length - 1;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#eef2ff_0%,#ffffff_40%)]">
@@ -771,26 +823,30 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
 
               <div className="sandbox-controls-panel">
                 <div className="sandbox-controls-top">
-                  <Badge variant="outline">Prepared replay</Badge>
-                  <Badge variant={autoError ? 'destructive' : isPlaying ? 'default' : 'secondary'}>{autoError ? 'Error' : isPlaying ? 'Running' : 'Ready'}</Badge>
+                  <Badge variant="outline">{dataSource === 'live' ? 'Live stream' : 'Prepared replay'}</Badge>
+                  <Badge variant={autoError ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
+                    {autoError ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
+                  </Badge>
                 </div>
-                <div className="sandbox-controls-actions">
-                  {!isPlaying ? (
-                    <Button
-                      onClick={handleStartGame}
-                      className="min-w-[10rem] font-medium"
-                    >
-                      <Play className="mr-2 h-4 w-4" />
-                      Replay prepared run
-                    </Button>
-                  ) : (
-                    <Button onClick={handleStopStream} variant="outline" className="min-w-[10rem] font-medium">
-                      <Pause className="mr-2 h-4 w-4" />
-                      Stop
-                    </Button>
-                  )}
-                  <Button variant="outline" onClick={handleResetBoard} aria-label="Reset board">
-                    <RotateCcw className="h-4 w-4" />
+                <SandboxPlaybackControls
+                  isLive={dataSource === 'live'}
+                  isPlaying={playbackActive}
+                  onPlay={() => void handlePlaybackPlay()}
+                  onPause={handlePlaybackPause}
+                  onRestart={handlePlaybackRestart}
+                  onPrev={goReplayPrev}
+                  onNext={goReplayNext}
+                  canPrev={canReplayPrev}
+                  canNext={canReplayNext}
+                  speed={playbackSpeed}
+                  onSpeedChange={setPlaybackSpeed}
+                  positionLabel={replayPositionLabel}
+                  disabled={!!autoError}
+                  hideStepControls={dataSource === 'live'}
+                />
+                <div className="sandbox-controls-actions mt-2">
+                  <Button variant="outline" size="sm" onClick={handleResetBoard}>
+                    Full reset
                   </Button>
                 </div>
               </div>

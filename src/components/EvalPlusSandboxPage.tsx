@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
-import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { SandboxPlaybackControls } from './SandboxPlaybackControls';
 import { motion } from 'motion/react';
 import { ApiError, authHeaders, streamEvalPlusAutoUrl, throwIfResponseNotOk } from '../lib/api';
 import type { ChessSandboxPageProps } from './ChessSandboxPage';
@@ -43,22 +43,6 @@ function formatDuration(ms: number): string {
   return m > 0 ? `${m}:${rs.toString().padStart(2, '0')}` : `${rs}s`;
 }
 
-function waitWithAbort(ms: number, signal: AbortSignal) {
-  return new Promise<void>((resolve, reject) => {
-    const id = window.setTimeout(() => {
-      cleanup();
-      resolve();
-    }, ms);
-    const onAbort = () => {
-      window.clearTimeout(id);
-      cleanup();
-      reject(new DOMException('The operation was aborted.', 'AbortError'));
-    };
-    const cleanup = () => signal.removeEventListener('abort', onAbort);
-    signal.addEventListener('abort', onAbort, { once: true });
-  });
-}
-
 function isEvalPlusEvent(p: StreamPayload): p is StreamPayload & EvalPlusRunnerMove {
   return (
     p.type === 'event' &&
@@ -91,10 +75,11 @@ export function EvalPlusSandboxPage({
   const abortControllerRef = useRef<AbortController | null>(null);
   const streamStartedAtRef = useRef<number | null>(null);
   const sawEndEventRef = useRef(false);
-  const autoStartedSampleRef = useRef(false);
   const [showBackendLog, setShowBackendLog] = useState(false);
   const [systemLog, setSystemLog] = useState<string[]>([]);
   const [showDiff, setShowDiff] = useState(true);
+  const [samplePlaybackPlaying, setSamplePlaybackPlaying] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
 
   const appendSystemLog = useCallback((entry: string) => {
     setSystemLog((prev) => [entry, ...prev].slice(0, 60));
@@ -111,9 +96,11 @@ export function EvalPlusSandboxPage({
     streamStartedAtRef.current = null;
     sawEndEventRef.current = false;
     setEvalResults(null);
+    setSamplePlaybackPlaying(false);
   }, []);
 
-  const buildResultsSummary = useCallback((passAtKOverride?: EvalPlusPassAtK | null): EvalPlusResultsSummary => {
+  /** Stable summary builder from refs only — safe to call from loadEvalSample without depending on passAtK state. */
+  const buildResultsSummaryFromRefs = useCallback((passAtKValue: EvalPlusPassAtK | null): EvalPlusResultsSummary => {
     const durationMs = streamStartedAtRef.current ? Date.now() - streamStartedAtRef.current : 0;
     const list = movesRef.current;
     const latencies = list.map((m) => m.latency_ms).filter((x): x is number => typeof x === 'number');
@@ -123,20 +110,24 @@ export function EvalPlusSandboxPage({
       const t = m.system_move_record?.total_tokens;
       if (typeof t === 'number') tokens += t;
     }
-    const pk = passAtKOverride !== undefined ? passAtKOverride : passAtK;
     return {
       submissions: list.length,
       durationLabel: formatDuration(durationMs),
       averageLatencyMs: avgLatency,
       totalTokens: tokens > 0 ? tokens : null,
-      passAtK: pk,
+      passAtK: passAtKValue,
       summaryLine:
         'Metrics are derived from streamed RunnerMoveRecord payloads (CrewForge runner). Pass@k comes from the final end event or bundled experiment JSON.',
     };
-  }, [passAtK]);
+  }, []);
+
+  const buildResultsSummary = useCallback((passAtKOverride?: EvalPlusPassAtK | null): EvalPlusResultsSummary => {
+    const pk = passAtKOverride !== undefined ? passAtKOverride : passAtK;
+    return buildResultsSummaryFromRefs(pk);
+  }, [passAtK, buildResultsSummaryFromRefs]);
 
   const processPayload = useCallback(
-    (payload: StreamPayload) => {
+    (payload: StreamPayload, options?: { suppressDialogs?: boolean }) => {
       if (!payload || typeof payload !== 'object') return false;
 
       if (payload.type === 'log') {
@@ -170,8 +161,10 @@ export function EvalPlusSandboxPage({
         const pk = payload.result?.pass_at_k;
         if (pk && typeof pk === 'object') setPassAtK(pk);
         setStatusMessage('Run complete');
-        setEvalResults(buildResultsSummary(pk && typeof pk === 'object' ? pk : null));
-        setResultsOpen(true);
+        if (!options?.suppressDialogs) {
+          setEvalResults(buildResultsSummary(pk && typeof pk === 'object' ? pk : null));
+          setResultsOpen(true);
+        }
         return true;
       }
 
@@ -294,66 +287,11 @@ export function EvalPlusSandboxPage({
     }
   }, [appendSystemLog, buildResultsSummary, onAuthFailure, processLine, resetState, token]);
 
-  const startSampleReplay = useCallback(async () => {
-    abortControllerRef.current?.abort();
-    resetState();
-    setResultsOpen(false);
-    setIsPlaying(true);
-    setStatusMessage('Loading EvalPlus sample…');
-
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    try {
-      const response = await fetch('/samples/evalplus-auto-sample.json', { signal: controller.signal });
-      if (!response.ok) throw new Error('Unable to load EvalPlus sample.');
-      const data = (await response.json()) as unknown;
-
-      streamStartedAtRef.current = Date.now();
-
-      if (Array.isArray(data)) {
-        setStatusMessage('Replaying prepared EvalPlus run');
-        for (const item of data) {
-          if (controller.signal.aborted) throw new DOMException('The operation was aborted.', 'AbortError');
-          const shouldStop = processPayload(item as StreamPayload);
-          if (shouldStop) break;
-          await waitWithAbort(480, controller.signal);
-        }
-        if (!sawEndEventRef.current) {
-          setEvalResults(buildResultsSummary(null));
-          setResultsOpen(true);
-        }
-      } else {
-        const bundle = data as Record<string, unknown>;
-        const mv = movesFromPayload(bundle);
-        const pk = extractPassAtK(bundle as EvalPlusRunResult);
-        setMoves(mv);
-        movesRef.current = mv;
-        setStepIndex(Math.max(0, mv.length - 1));
-        if (pk) setPassAtK(pk);
-        setStatusMessage('Loaded experiment bundle');
-        setEvalResults(buildResultsSummary(pk));
-        setResultsOpen(true);
-      }
-    } catch (error) {
-      const err = error as Error;
-      if (err.name === 'AbortError') {
-        appendSystemLog('Replay stopped.');
-        setStatusMessage('Replay paused');
-      } else {
-        setAutoError(err.message || 'Failed to load sample.');
-        setStatusMessage('Sample error');
-      }
-    } finally {
-      setIsPlaying(false);
-      abortControllerRef.current = null;
-    }
-  }, [appendSystemLog, buildResultsSummary, processPayload, resetState]);
-
   const handleStopStream = useCallback(() => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
     setIsPlaying(false);
+    setSamplePlaybackPlaying(false);
     setStatusMessage('Stream paused');
   }, []);
 
@@ -363,19 +301,119 @@ export function EvalPlusSandboxPage({
     setResultsOpen(false);
   }, [handleStopStream, resetState]);
 
+  const loadEvalSample = useCallback(async () => {
+    resetState();
+    setResultsOpen(false);
+    const response = await fetch('/samples/evalplus-auto-sample.json');
+    if (!response.ok) throw new Error('Unable to load EvalPlus sample.');
+    const data = (await response.json()) as unknown;
+    streamStartedAtRef.current = Date.now();
+    sawEndEventRef.current = false;
+
+    if (Array.isArray(data)) {
+      const collected: EvalPlusRunnerMove[] = [];
+      let pk: EvalPlusPassAtK | null = null;
+      for (const item of data) {
+        const p = item as StreamPayload;
+        if (p.type === 'end') {
+          sawEndEventRef.current = true;
+          const endPk = p.result?.pass_at_k;
+          if (endPk && typeof endPk === 'object') pk = endPk;
+        }
+        if (isEvalPlusEvent(p)) {
+          collected.push({
+            turn: p.turn,
+            player: p.player,
+            action: p.action,
+            env_state: p.env_state!,
+            system_move_record: p.system_move_record,
+            timestamp: p.timestamp,
+            latency_ms: p.latency_ms,
+            task_label: p.task_label,
+          });
+        }
+      }
+      setMoves(collected);
+      movesRef.current = collected;
+      setStepIndex(0);
+      if (pk) setPassAtK(pk);
+      setStatusMessage('Sample loaded — play, step, or adjust speed.');
+    } else {
+      const bundle = data as Record<string, unknown>;
+      const mv = movesFromPayload(bundle);
+      const pk = extractPassAtK(bundle as EvalPlusRunResult);
+      setMoves(mv);
+      movesRef.current = mv;
+      setStepIndex(Math.max(0, mv.length - 1));
+      if (pk) setPassAtK(pk);
+      setStatusMessage('Loaded experiment bundle');
+      setEvalResults(buildResultsSummaryFromRefs(pk));
+      setResultsOpen(true);
+    }
+  }, [buildResultsSummaryFromRefs, resetState]);
+
+  const handlePlaybackPlay = useCallback(async () => {
+    if (dataSource === 'live') {
+      void startLiveStream();
+      return;
+    }
+    if (movesRef.current.length === 0) {
+      try {
+        await loadEvalSample();
+      } catch (err) {
+        setAutoError((err as Error).message || 'Failed to load sample.');
+        setStatusMessage('Sample error');
+        return;
+      }
+    }
+    setSamplePlaybackPlaying(true);
+  }, [dataSource, loadEvalSample, startLiveStream]);
+
+  const handlePlaybackPause = useCallback(() => {
+    if (dataSource === 'live') {
+      handleStopStream();
+      return;
+    }
+    setSamplePlaybackPlaying(false);
+  }, [dataSource, handleStopStream]);
+
+  const handlePlaybackRestart = useCallback(() => {
+    if (dataSource === 'live') {
+      handleStopStream();
+      resetState();
+      setResultsOpen(false);
+      return;
+    }
+    setSamplePlaybackPlaying(false);
+    setStepIndex(0);
+  }, [dataSource, handleStopStream, resetState]);
+
   useEffect(() => {
     return () => abortControllerRef.current?.abort();
   }, []);
 
   useEffect(() => {
-    if (dataSource !== 'sample') {
-      autoStartedSampleRef.current = false;
+    if (dataSource !== 'sample') return;
+    void loadEvalSample().catch((err) => {
+      setAutoError((err as Error).message || 'Failed to load sample.');
+      setStatusMessage('Sample error');
+    });
+  }, [dataSource, loadEvalSample]);
+
+  useEffect(() => {
+    if (!samplePlaybackPlaying || dataSource !== 'sample') return;
+    if (moves.length === 0) return;
+    if (stepIndex >= moves.length - 1) {
+      setSamplePlaybackPlaying(false);
       return;
     }
-    if (autoStartedSampleRef.current) return;
-    autoStartedSampleRef.current = true;
-    void startSampleReplay();
-  }, [dataSource, startSampleReplay]);
+    const base = 480;
+    const delay = Math.max(50, base / playbackSpeed);
+    const id = window.setTimeout(() => {
+      setStepIndex((i) => Math.min(Math.max(0, moves.length - 1), i + 1));
+    }, delay);
+    return () => clearTimeout(id);
+  }, [samplePlaybackPlaying, stepIndex, playbackSpeed, dataSource, moves.length]);
 
   const safeStep = Math.min(stepIndex, Math.max(0, moves.length - 1));
   const prevCode = safeStep > 0 ? moves[safeStep - 1]?.action ?? '' : '';
@@ -393,6 +431,12 @@ export function EvalPlusSandboxPage({
 
   const goPrev = () => setStepIndex((i) => Math.max(0, i - 1));
   const goNext = () => setStepIndex((i) => Math.min(Math.max(0, moves.length - 1), i + 1));
+
+  const playbackActive = dataSource === 'sample' ? samplePlaybackPlaying : isPlaying;
+  const playbackPositionLabel =
+    moves.length === 0 ? '—' : `Step ${safeStep + 1} / ${moves.length}`;
+  const canStepPrev = dataSource === 'sample' && safeStep > 0;
+  const canStepNext = dataSource === 'sample' && moves.length > 0 && safeStep < moves.length - 1;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#ecfdf5_0%,#ffffff_45%)]">
@@ -415,28 +459,30 @@ export function EvalPlusSandboxPage({
 
               <div className="sandbox-controls-panel">
                 <div className="sandbox-controls-top">
-                  <Badge variant="outline">Prepared replay</Badge>
-                  <Badge variant={autoError ? 'destructive' : isPlaying ? 'default' : 'secondary'}>
-                    {autoError ? 'Error' : isPlaying ? 'Running' : 'Ready'}
+                  <Badge variant="outline">{dataSource === 'live' ? 'Live stream' : 'Prepared replay'}</Badge>
+                  <Badge variant={autoError ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
+                    {autoError ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
                   </Badge>
                 </div>
-                <div className="sandbox-controls-actions">
-                  {!isPlaying ? (
-                    <Button
-                      onClick={() => void startSampleReplay()}
-                      className="min-w-[10rem] font-medium"
-                    >
-                      <Play className="mr-2 h-4 w-4" />
-                      Replay prepared run
-                    </Button>
-                  ) : (
-                    <Button onClick={handleStopStream} variant="outline" className="min-w-[10rem] font-medium">
-                      <Pause className="mr-2 h-4 w-4" />
-                      Stop
-                    </Button>
-                  )}
-                  <Button variant="outline" onClick={handleReset} aria-label="Reset">
-                    <RotateCcw className="h-4 w-4" />
+                <SandboxPlaybackControls
+                  isLive={dataSource === 'live'}
+                  isPlaying={playbackActive}
+                  onPlay={() => void handlePlaybackPlay()}
+                  onPause={handlePlaybackPause}
+                  onRestart={handlePlaybackRestart}
+                  onPrev={goPrev}
+                  onNext={goNext}
+                  canPrev={canStepPrev}
+                  canNext={canStepNext}
+                  speed={playbackSpeed}
+                  onSpeedChange={setPlaybackSpeed}
+                  positionLabel={playbackPositionLabel}
+                  disabled={!!autoError}
+                  hideStepControls={dataSource === 'live'}
+                />
+                <div className="sandbox-controls-actions mt-2">
+                  <Button variant="outline" size="sm" onClick={handleReset}>
+                    Full reset
                   </Button>
                 </div>
               </div>
@@ -487,26 +533,6 @@ export function EvalPlusSandboxPage({
                 <div className="space-y-3 p-4 sm:p-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={goPrev}
-                        disabled={safeStep <= 0}
-                        aria-label="Previous step"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={goNext}
-                        disabled={safeStep >= moves.length - 1 || moves.length === 0}
-                        aria-label="Next step"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
                       <Badge variant="outline">{currentMove?.task_label ?? '—'}</Badge>
                     </div>
                     {currentMove && (
@@ -637,7 +663,7 @@ export function EvalPlusSandboxPage({
         onClose={() => setResultsOpen(false)}
         onRunAgain={() => {
           setResultsOpen(false);
-          if (dataSource === 'sample') void startSampleReplay();
+          if (dataSource === 'sample') void loadEvalSample();
           else void startLiveStream();
         }}
         results={evalResults}

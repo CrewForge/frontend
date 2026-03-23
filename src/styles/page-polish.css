@@ -203,6 +203,66 @@
   flex-wrap: wrap;
 }
 
+/* Shared playback bar (Chess + EvalPlus sample replay) */
+.sandbox-playback-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.sandbox-playback-bar__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sandbox-playback-bar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.sandbox-playback-bar__position {
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.sandbox-playback-bar__speed {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.sandbox-playback-bar__speed-label {
+  font-size: 0.65rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+}
+
+.sandbox-playback-bar__speed input[type='range'] {
+  width: min(160px, 42vw);
+  accent-color: var(--primary);
+}
+
+.sandbox-playback-bar__speed-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+  min-width: 2.75rem;
+}
+
 .sandbox-log-panel {
   border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
   border-radius: 0.8rem;
@@ -427,8 +487,8 @@
 }
 
 .chess-piece-asset--compact {
-  width: 0.98rem;
-  height: 0.98rem;
+  width: 2.94rem;
+  height: 2.94rem;
 }
 
 .chess-piece-asset--compact .piece-image {
@@ -464,9 +524,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.15rem 0.25rem;
-  min-height: 1.35rem;
-  padding: 0.15rem 0.25rem;
+  gap: 0.35rem 0.45rem;
+  min-height: 3.2rem;
+  padding: 0.35rem 0.45rem;
   border-radius: 0.35rem;
   background: color-mix(in oklab, var(--card) 90%, var(--muted));
   border: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
@@ -486,17 +546,18 @@
 }
 
 .chess-material__plus {
-  margin-left: 0.2rem;
+  margin-left: 0.35rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.78rem;
+  font-size: 2.1rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: color-mix(in oklab, var(--foreground) 90%, #0ea5e9);
+  line-height: 1;
 }
 
 .chess-material__empty {
   display: block;
-  min-height: 1rem;
+  min-height: 2.5rem;
 }
 
 .chess-eval-bar {
