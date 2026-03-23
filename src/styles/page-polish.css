@@ -465,19 +465,32 @@
   color: #c3e88d;
 }
 
-/* Narrow “run complete” modal (overrides default dialog sm:max-w-lg) */
-.evalplus-results-dialog {
-  width: min(20rem, calc(100vw - 2rem));
-  max-width: min(20rem, calc(100vw - 2rem));
+/* “Run complete” modals — EvalPlus + Chess (wide; close = X top-right or overlay; Run again at bottom) */
+.evalplus-results-dialog,
+.game-results-dialog {
+  width: min(45rem, calc(100vw - 2rem));
+  max-width: min(45rem, calc(100vw - 2rem));
   max-height: 90vh;
   overflow-y: auto;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0.75rem;
+  padding-top: 0.5rem;
 }
 
 @media (min-width: 640px) {
-  .evalplus-results-dialog {
-    width: min(22rem, calc(100vw - 2rem));
-    max-width: min(22rem, calc(100vw - 2rem));
+  .evalplus-results-dialog,
+  .game-results-dialog {
+    width: min(50rem, calc(100vw - 2rem));
+    max-width: min(50rem, calc(100vw - 2rem));
   }
+}
+
+.results-dialog-header {
+  padding-right: 0.25rem;
+}
+
+.results-dialog-body {
+  margin-top: 0;
 }
 
 .evalplus-ide-body {

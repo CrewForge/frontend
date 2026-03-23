@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
@@ -44,64 +44,59 @@ export function EvalPlusResultsDialog({ open, onClose, onRunAgain, results }: Ev
       }}
     >
       <DialogContent className="evalplus-results-dialog">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-left">
-            <Trophy className="h-6 w-6 shrink-0 text-primary" />
+        <DialogHeader className="results-dialog-header shrink-0 space-y-0 pb-0 text-left">
+          <DialogTitle className="flex items-center gap-2 pr-8 text-left text-base">
+            <Trophy className="h-5 w-5 shrink-0 text-primary" />
             <span>EvalPlus run complete</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="results-dialog-body space-y-2.5 pb-1">
           <div className="grid grid-cols-2 gap-2">
-            <Card className="p-3 text-center sm:p-4">
-              <div className="text-xl font-semibold tabular-nums sm:text-2xl">{results.submissions}</div>
+            <Card className="p-2.5 text-center sm:p-3">
+              <div className="text-lg font-semibold tabular-nums sm:text-xl">{results.submissions}</div>
               <div className="text-xs text-muted-foreground">Submissions</div>
             </Card>
-            <Card className="p-3 text-center sm:p-4">
-              <div className="text-lg font-semibold tabular-nums sm:text-2xl">{results.durationLabel}</div>
+            <Card className="p-2.5 text-center sm:p-3">
+              <div className="text-lg font-semibold tabular-nums sm:text-xl">{results.durationLabel}</div>
               <div className="text-xs text-muted-foreground">Duration</div>
             </Card>
-            <Card className="p-3 text-center sm:p-4">
-              <div className="text-lg font-semibold tabular-nums sm:text-2xl">
+            <Card className="p-2.5 text-center sm:p-3">
+              <div className="text-base font-semibold tabular-nums sm:text-lg">
                 {results.averageLatencyMs === null ? '—' : `${results.averageLatencyMs} ms`}
               </div>
               <div className="text-xs text-muted-foreground">Avg latency</div>
             </Card>
-            <Card className="p-3 text-center sm:p-4">
-              <div className="text-lg font-semibold tabular-nums sm:text-2xl">
+            <Card className="p-2.5 text-center sm:p-3">
+              <div className="text-base font-semibold tabular-nums sm:text-lg">
                 {results.totalTokens === null ? '—' : results.totalTokens.toLocaleString()}
               </div>
               <div className="text-xs text-muted-foreground">Tokens (sum)</div>
             </Card>
           </div>
 
-          <Card className="p-4 sm:p-6">
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-medium sm:text-base">
+          <Card className="p-3 sm:p-4">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
               <BarChart3 className="h-4 w-4 shrink-0" />
               Pass@k (from stream / experiment result)
             </h4>
             {results.passAtK && Object.keys(results.passAtK).length > 0 ? (
-              <div className="space-y-2">{formatPassRow(results.passAtK)}</div>
+              <div className="space-y-1.5">{formatPassRow(results.passAtK)}</div>
             ) : (
               <p className="text-sm text-muted-foreground">No pass@k payload on the end event.</p>
             )}
-            <p className="mt-3 text-xs text-muted-foreground">{results.summaryLine}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{results.summaryLine}</p>
           </Card>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             <Badge variant="outline">EvalPlus</Badge>
             <Badge variant="secondary">RunnerMoveRecord → UI</Badge>
           </div>
-        </div>
 
-        <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
-            Close
-          </Button>
-          <Button onClick={onRunAgain} className="w-full sm:w-auto">
+          <Button type="button" className="mt-1 w-full" onClick={onRunAgain}>
             Run again
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
