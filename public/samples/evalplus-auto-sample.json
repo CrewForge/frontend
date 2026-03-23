@@ -1,14 +1,14 @@
 [
   {
     "type": "log",
-    "message": "EvalPlus prepared replay (matches CrewForge RunnerMoveRecord / run_game output shape)"
+    "message": "EvalPlus prepared replay (matches CrewForge RunnerMoveRecord / run_game output shape). Includes intentionally long lines to exercise IDE-style wrapping in the UI."
   },
   {
     "type": "event",
     "turn": 0,
     "player": "SingleLLMSystem",
     "task_label": "HumanEval/0",
-    "action": "def has_close_elements(numbers, threshold):\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False\n",
+    "action": "def has_close_elements(numbers, threshold):\n    # NOTE: O(n^2) pairwise scan — acceptable for small n; replace with sort+adjacent scan once numerical tolerances, NaN/inf handling, and EvalPlus harness expectations (see CrewForge evalplus_env.py) are aligned with the reference solution.\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False\n",
     "env_state": { "num_tasks": 1, "current_task_id": 1, "current_k": 0 },
     "system_move_record": {
       "calls": [],
@@ -26,7 +26,7 @@
     "turn": 1,
     "player": "SingleLLMSystem",
     "task_label": "HumanEval/0",
-    "action": "def has_close_elements(numbers, threshold):\n    \"\"\"Check if any two numbers are closer than threshold.\"\"\"\n    numbers = sorted(numbers)\n    for i in range(len(numbers) - 1):\n        if numbers[i + 1] - numbers[i] < threshold:\n            return True\n    return False\n",
+    "action": "def has_close_elements(numbers, threshold):\n    \"\"\"Return True if any two numbers differ by strictly less than threshold. After sorting, only adjacent pairs need checking (closest pair in 1D lies on the sorted order); this reduces typical runtime to O(n log n) and matches common HumanEval / EvalPlus reference patterns for floating-point lists.\"\"\"\n    numbers = sorted(numbers)\n    for i in range(len(numbers) - 1):\n        if numbers[i + 1] - numbers[i] < threshold:\n            return True\n    return False\n",
     "env_state": { "num_tasks": 2, "current_task_id": 1, "current_k": 0 },
     "system_move_record": {
       "calls": [],
@@ -44,7 +44,7 @@
     "turn": 2,
     "player": "SingleLLMSystem",
     "task_label": "HumanEval/0",
-    "action": "def has_close_elements(numbers, threshold):\n    \"\"\"Check if any two numbers are closer than threshold (inclusive).\"\"\"\n    if threshold <= 0:\n        raise ValueError(\"threshold must be positive\")\n    numbers = sorted(numbers)\n    for i in range(len(numbers) - 1):\n        if numbers[i + 1] - numbers[i] < threshold:\n            return True\n    return False\n",
+    "action": "def has_close_elements(numbers, threshold):\n    \"\"\"Return True if any two numbers differ by strictly less than threshold (inclusive of boundary behavior per spec). Assumes finite comparable elements; if the EvalPlus runner injects mixed int/float/str, normalize upstream — the bundled sample harness may still pass raw JSON numbers only.\"\"\"\n    if threshold <= 0:\n        raise ValueError(\"threshold must be positive\")\n    numbers = sorted(numbers)\n    for i in range(len(numbers) - 1):\n        if numbers[i + 1] - numbers[i] < threshold:\n            return True\n    return False\n",
     "env_state": { "num_tasks": 3, "current_task_id": 2, "current_k": 0 },
     "system_move_record": {
       "calls": [],
@@ -62,7 +62,7 @@
     "turn": 3,
     "player": "SingleLLMSystem",
     "task_label": "HumanEval/1",
-    "action": "def separate_paren_groups(paren_string: str):\n    \"\"\"Split nested parentheses groups into separate strings.\"\"\"\n    groups = []\n    depth = 0\n    start = None\n    for i, ch in enumerate(paren_string):\n        if ch == '(':\n            if depth == 0:\n                start = i + 1\n            depth += 1\n        elif ch == ')':\n            depth -= 1\n            if depth == 0 and start is not None:\n                groups.append(paren_string[start:i])\n                start = None\n    return groups\n",
+    "action": "def separate_paren_groups(paren_string: str):\n    \"\"\"Split a string of nested parentheses into top-level group substrings. The algorithm walks left-to-right with a depth counter; when depth returns to zero after a closing paren, the slice from the last unmatched open to that close is recorded. This mirrors typical stack-based parsers but avoids allocating a stack for depth-only tracking in HumanEval-style solutions.\"\"\"\n    groups = []\n    depth = 0\n    start = None\n    for i, ch in enumerate(paren_string):\n        if ch == '(':\n            if depth == 0:\n                start = i + 1\n            depth += 1\n        elif ch == ')':\n            depth -= 1\n            if depth == 0 and start is not None:\n                groups.append(paren_string[start:i])\n                start = None\n    return groups\n",
     "env_state": { "num_tasks": 4, "current_task_id": 3, "current_k": 0 },
     "system_move_record": {
       "calls": [],

@@ -32,7 +32,7 @@ export function EvalPlusCodeDiff({ before, after, className }: EvalPlusCodeDiffP
   const showLang = (before || after).trim().length > 0;
 
   return (
-    <div className={`evalplus-ide-panel evalplus-ide-diff overflow-x-auto text-left text-[11px] leading-relaxed sm:text-xs ${className ?? ''}`}>
+    <div className={`evalplus-ide-panel evalplus-ide-diff text-left text-[11px] leading-relaxed sm:text-xs ${className ?? ''}`}>
       <div className="evalplus-ide-chrome">
         <span className="evalplus-ide-chrome-label">Diff</span>
         {showLang && <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>}
