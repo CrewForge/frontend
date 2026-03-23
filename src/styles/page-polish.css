@@ -296,6 +296,375 @@
   }
 }
 
+/* Chess sandbox — responsive board, Lichess-style eval bar, SAN move list */
+.chess-board-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.chess-board-and-eval {
+  display: flex;
+  flex-direction: row;
+  gap: 0.85rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.chess-board-and-eval__board {
+  flex: 1;
+  min-width: 0;
+}
+
+.chess-board-frame {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  padding: 0.8rem 0.95rem;
+  border-radius: 1rem;
+  background: linear-gradient(165deg, #3a3632 0%, #2a2724 48%, #312e2b 100%);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.12),
+    0 18px 38px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  box-sizing: border-box;
+}
+
+.chess-board-grid {
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: minmax(1.15rem, 3.5%) repeat(8, minmax(0, 1fr));
+  grid-template-rows: minmax(1.1rem, 3.5%) repeat(8, minmax(0, 1fr));
+  aspect-ratio: 1;
+  min-height: 0;
+}
+
+.chess-board-corner {
+  min-width: 0;
+}
+
+.chess-board-file-label,
+.chess-board-rank-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(9px, 1.8cqw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.72);
+  user-select: none;
+}
+
+.chess-board-square {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  cursor: default;
+  transition: filter 0.15s ease;
+}
+
+.chess-board-square:hover {
+  filter: brightness(1.03);
+}
+
+.chess-square--light {
+  background: #f0d9b5;
+}
+
+.chess-square--dark {
+  background: #b58863;
+}
+
+.chess-square--last {
+  box-shadow: inset 0 0 0 3px rgba(255, 214, 90, 0.42);
+}
+
+.chess-square--ring-yellow {
+  box-shadow: inset 0 0 0 4px rgba(250, 204, 21, 0.85);
+}
+
+.chess-square--ring-green {
+  box-shadow: inset 0 0 0 4px rgba(74, 222, 128, 0.85);
+}
+
+.chess-board-piece-wrap {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 10%;
+  pointer-events: none;
+}
+
+.chess-piece-svg {
+  max-width: 88%;
+  max-height: 88%;
+  width: auto;
+  height: auto;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
+}
+
+.chess-eval-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  width: fit-content;
+  max-width: 7.5rem;
+}
+
+.chess-eval-bar__readout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 4.25rem;
+  text-align: right;
+}
+
+.chess-eval-bar__main {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.chess-eval-bar__sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-foreground);
+}
+
+.chess-eval-bar__delta {
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  align-items: flex-end;
+}
+
+.chess-eval-bar__delta-label {
+  font-size: 0.58rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
+}
+
+.chess-eval-bar__delta-cp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chess-eval-bar__delta-pawns {
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+.chess-eval-bar__delta--positive .chess-eval-bar__delta-cp {
+  color: #15803d;
+}
+
+.chess-eval-bar__delta--positive .chess-eval-bar__delta-pawns {
+  color: color-mix(in oklab, #15803d 75%, var(--muted-foreground));
+}
+
+.chess-eval-bar__delta--negative .chess-eval-bar__delta-cp {
+  color: #b91c1c;
+}
+
+.chess-eval-bar__delta--negative .chess-eval-bar__delta-pawns {
+  color: color-mix(in oklab, #b91c1c 75%, var(--muted-foreground));
+}
+
+.chess-eval-bar__delta--neutral .chess-eval-bar__delta-cp {
+  color: var(--muted-foreground);
+}
+
+.chess-eval-bar__track {
+  position: relative;
+  width: 14px;
+  min-height: 11rem;
+  flex: 1 1 auto;
+  align-self: stretch;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.chess-eval-bar__track-inner {
+  position: absolute;
+  inset: 0;
+}
+
+.chess-eval-bar__black {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #2d2a28 0%, #1a1816 100%);
+}
+
+.chess-eval-bar__white {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #f3f3f3 0%, #d8d8d8 100%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.chess-eval-bar__midline {
+  display: none;
+}
+
+.chess-eval-bar__cap {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.chess-eval-bar__cap--top {
+  top: -1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.chess-eval-bar__cap--bottom {
+  bottom: -1px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.35), transparent);
+}
+
+.chess-movelist {
+  width: 100%;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 92%, var(--muted));
+  overflow: hidden;
+}
+
+.chess-movelist--empty {
+  padding: 0.85rem 1rem;
+}
+
+.chess-movelist__empty {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--muted-foreground);
+}
+
+.chess-movelist__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+}
+
+.chess-movelist__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.chess-movelist__hint {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, transparent);
+}
+
+.chess-movelist__scroll {
+  max-height: 11.5rem;
+  overflow: auto;
+  padding: 0.35rem 0.25rem 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+}
+
+.chess-movelist__row {
+  display: grid;
+  grid-template-columns: 2.1rem 1fr 1fr;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.4rem;
+}
+
+.chess-movelist__row:nth-child(even) {
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+}
+
+.chess-movelist__num {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.chess-movelist__white {
+  font-weight: 650;
+  color: color-mix(in oklab, var(--foreground) 96%, #2563eb);
+}
+
+.chess-movelist__black {
+  font-weight: 650;
+  color: color-mix(in oklab, var(--foreground) 92%, #171717);
+}
+
+@media (max-width: 520px) {
+  .chess-board-and-eval {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chess-eval-bar {
+    flex-direction: row;
+    max-width: none;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .chess-eval-bar__readout {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem 1rem;
+    text-align: left;
+    min-width: 0;
+  }
+
+  .chess-eval-bar__track {
+    width: 18px;
+    min-height: 7.5rem;
+    max-height: 10rem;
+    align-self: center;
+  }
+}
+
 /*
  * EvalPlus — Tokyo Night–inspired IDE surfaces (explicit CSS; Tailwind snapshot omits many hues).
  * Palette reference: Tokyo Night (dark UI / Neovim theme family).

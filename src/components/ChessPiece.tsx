@@ -7,9 +7,11 @@ interface ChessPieceProps {
   type: PieceType;
   color: PieceColor;
   size?: number;
+  /** Scale with the square (responsive board). */
+  fluid?: boolean;
 }
 
-export function ChessPiece({ type, color, size = 40 }: ChessPieceProps) {
+export function ChessPiece({ type, color, size = 40, fluid = false }: ChessPieceProps) {
   const fill = color === 'white' ? '#ffffff' : '#1f2937';
   const stroke = color === 'white' ? '#1f2937' : '#ffffff';
 
@@ -58,7 +60,13 @@ export function ChessPiece({ type, color, size = 40 }: ChessPieceProps) {
   };
 
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40">
+    <svg
+      className={fluid ? 'chess-piece-svg' : undefined}
+      width={fluid ? '100%' : size}
+      height={fluid ? '100%' : size}
+      viewBox="0 0 40 40"
+      preserveAspectRatio="xMidYMid meet"
+    >
       {pieces[type]}
     </svg>
   );

@@ -10,7 +10,10 @@ import { Play, Pause, RotateCcw } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Chess } from 'chess.js';
 import { ApiError, authHeaders, streamChessAutoUrl, throwIfResponseNotOk } from '../lib/api';
+import { formatCentipawnDelta, formatEvalPawns } from '../lib/chessEval';
 import type { GameResultsSummary } from './GameResultsDialog';
+import { ChessEvalBar } from './ChessEvalBar';
+import { ChessMoveList } from './ChessMoveList';
 
 export interface ChessSandboxPageProps {
   token: string;
@@ -24,6 +27,8 @@ export interface ChessSandboxPageProps {
 type MoveLogEntry = {
   ply: number;
   uci: string;
+  /** Standard algebraic notation from chess.js (includes +, #, =Q, …). */
+  san: string;
   player: string;
   reasoning?: string;
   centipawnsTotal?: number;
@@ -52,11 +57,6 @@ function formatDuration(ms: number): string {
 }
 
 const INFERRED_NOTE = 'Inferred client-side from streamed moves.';
-
-function formatCentipawns(value?: number) {
-  if (typeof value !== 'number') return '—';
-  return `${value > 0 ? '+' : ''}${value}`;
-}
 
 function waitWithAbort(ms: number, signal: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
@@ -321,7 +321,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
       .slice(0, 3)
       .map((entry) => {
         const swing = typeof entry.centipawnsCurrent === 'number' ? `${entry.centipawnsCurrent > 0 ? '+' : ''}${entry.centipawnsCurrent}` : '—';
-        return `Move ${entry.ply + 1} (${entry.uci.toUpperCase()}): ${entry.reasoning} Eval swing ${swing}.`;
+        return `Move ${entry.ply + 1} (${entry.san}): ${entry.reasoning} Eval swing ${swing}.`;
       });
     const movesWithLatency = moveLogRef.current.filter((entry) => typeof entry.latencyMs === 'number');
     const averageLatencyMs = movesWithLatency.length
@@ -353,12 +353,17 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
 
       if (payload.type === 'event' && payload.uci) {
         try {
-          chessRef.current.move(payload.uci, { sloppy: true });
+          const played = chessRef.current.move(payload.uci, { sloppy: true });
+          if (!played) {
+            appendSystemLog(`Illegal move in stream: ${payload.uci}`);
+            return false;
+          }
           setBoard(buildBoardState(chessRef.current, payload.uci));
           setMoveCount((prev) => prev + 1);
           const nextEntry: MoveLogEntry = {
             ply: typeof payload.ply === 'number' ? payload.ply : moveLogRef.current.length,
             uci: payload.uci,
+            san: played.san,
             player: payload.player || 'agent',
             reasoning: payload.reasoning,
             centipawnsTotal: payload.centipawns_total,
@@ -393,7 +398,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                   : idx === ((typeof payload.ply === 'number' ? payload.ply : 0) % connections.length),
             })),
           );
-          setStatusMessage(`Last move: ${payload.uci.toUpperCase()} (${payload.player || 'agent'})`);
+          setStatusMessage(`Last move: ${played.san} (${payload.player || 'agent'})`);
         } catch (err) {
           appendSystemLog(`Invalid move received: ${payload.uci}`);
         }
@@ -636,6 +641,20 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     return Math.round(entries.reduce((sum, entry) => sum + (entry.latencyMs ?? 0), 0) / entries.length);
   }, [moveLogEntries]);
 
+  /** Change in eval vs previous position (prefers engine-reported swing, else Δ totals). */
+  const evalDeltaCp = useMemo(() => {
+    if (moveLogEntries.length === 0) return null;
+    const last = moveLogEntries[moveLogEntries.length - 1];
+    if (typeof last.centipawnsCurrent === 'number') return last.centipawnsCurrent;
+    if (moveLogEntries.length >= 2) {
+      const prev = moveLogEntries[moveLogEntries.length - 2];
+      const a = last.centipawnsTotal;
+      const b = prev.centipawnsTotal;
+      if (typeof a === 'number' && typeof b === 'number') return a - b;
+    }
+    return null;
+  }, [moveLogEntries]);
+
   const handleStartGame = useCallback(() => {
     if (dataSource === 'sample') {
       void startSampleReplay();
@@ -728,7 +747,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
               </Card>
               <Card className="p-3">
                 <div className="text-[11px] font-medium tracking-wide text-muted-foreground">Last move</div>
-                <div className="mt-1 text-sm font-semibold sm:text-base">{latestMove?.uci?.toUpperCase() ?? '—'}</div>
+                <div className="mt-1 text-sm font-semibold sm:text-base">{latestMove?.san ?? '—'}</div>
               </Card>
               <Card className="p-3">
                 <div className="text-[11px] font-medium tracking-wide text-muted-foreground">Average latency</div>
@@ -745,33 +764,39 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
             <div className="space-y-4">
               <Card className="overflow-hidden">
                 <div className="border-b px-4 py-3">
-                  <h3 className="text-base font-semibold">Board state</h3>
-                  <p className="text-sm text-muted-foreground">Reconstructed from streamed move events</p>
+                  <h3 className="text-base font-semibold">Board &amp; analysis</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Board from streamed UCI; SAN, checks, and mates from chess.js; engine bar from streamed centipawns.
+                  </p>
                 </div>
-                <div className="flex justify-center p-4 sm:p-6">
-                  <motion.div
-                    key={moveCount}
-                    initial={{ opacity: 0.88, scale: 0.985 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChessBoard board={board} />
-                  </motion.div>
+                <div className="p-3 sm:p-5">
+                  <div className="chess-board-workspace">
+                    <div className="chess-board-and-eval">
+                      <ChessEvalBar
+                        centipawnsTotal={latestMove?.centipawnsTotal ?? null}
+                        evalDeltaCp={evalDeltaCp}
+                      />
+                      <motion.div
+                        className="chess-board-and-eval__board"
+                        key={moveCount}
+                        initial={{ opacity: 0.9, scale: 0.992 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChessBoard board={board} />
+                      </motion.div>
+                    </div>
+                    <ChessMoveList
+                      entries={moveLogEntries.map((e) => ({
+                        ply: e.ply,
+                        san: e.san,
+                        uci: e.uci,
+                        player: e.player,
+                      }))}
+                    />
+                  </div>
                 </div>
               </Card>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="p-4">
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Eval total</div>
-                  <div className="mt-1 text-lg font-semibold">{formatCentipawns(latestMove?.centipawnsTotal)}</div>
-                  <div className="text-xs text-muted-foreground">from latest event payload</div>
-                </Card>
-                <Card className="p-4">
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Eval swing</div>
-                  <div className="mt-1 text-lg font-semibold">{formatCentipawns(latestMove?.centipawnsCurrent)}</div>
-                  <div className="text-xs text-muted-foreground">delta from latest event payload</div>
-                </Card>
-              </div>
             </div>
 
             <div className="space-y-4">
@@ -799,13 +824,14 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                         <div key={`${entry.ply}-${entry.uci}-${idx}`} className="sandbox-move-item">
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="sandbox-move-uci">
-                              {entry.ply + 1}. {entry.uci.toUpperCase()}
+                              {entry.ply + 1}. {entry.san}{' '}
+                              <span className="text-muted-foreground font-normal">({entry.uci.toUpperCase()})</span>
                             </div>
                             <Badge variant="secondary">{entry.player}</Badge>
                           </div>
                           <div className="sandbox-move-meta mt-2">
-                            <span>eval {formatCentipawns(entry.centipawnsTotal)}</span>
-                            <span>delta {formatCentipawns(entry.centipawnsCurrent)}</span>
+                            <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
+                            <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
                             <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>
                           </div>
                           {entry.reasoning && <p className="sandbox-reasoning">{entry.reasoning}</p>}
@@ -817,7 +843,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                   <div className="sandbox-collapsible-summary">
                     {moveLogEntries.length === 0
                       ? 'Move list is hidden.'
-                      : `Move list hidden. Latest move: ${latestMove?.uci?.toUpperCase() ?? '—'} with ${moveLogEntries.length} total entries.`}
+                      : `Move list hidden. Latest move: ${latestMove?.san ?? '—'} with ${moveLogEntries.length} total entries.`}
                   </div>
                 )}
               </Card>

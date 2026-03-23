@@ -19,61 +19,43 @@ interface ChessBoardProps {
 export function ChessBoard({ board, onSquareClick }: ChessBoardProps) {
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
   const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
-  const pieceSize = 46;
 
   const getSquareColor = (row: number, col: number) => {
-    return (row + col) % 2 === 0 ? 'bg-[#f0d9b5]' : 'bg-[#b58863]';
+    return (row + col) % 2 === 0 ? 'chess-square--light' : 'chess-square--dark';
   };
 
   const getHighlightClass = (highlight?: string) => {
-    if (highlight === 'selected') return 'ring-4 ring-yellow-400 ring-inset';
-    if (highlight === 'target') return 'ring-4 ring-green-400 ring-inset';
-    if (highlight === 'lastMove') return 'bg-yellow-200/40';
+    if (highlight === 'selected') return 'chess-square--ring-yellow';
+    if (highlight === 'target') return 'chess-square--ring-green';
+    if (highlight === 'lastMove') return 'chess-square--last';
     return '';
   };
 
   return (
-    <div className="inline-block rounded-2xl bg-[#312e2b] p-3 shadow-xl sm:p-4">
-      <div className="grid grid-cols-[auto_repeat(8,1fr)] gap-0">
+    <div className="chess-board-frame">
+      <div className="chess-board-grid">
         {/* Top file labels */}
-        <div className="w-5 sm:w-6"></div>
+        <div className="chess-board-corner" aria-hidden />
         {files.map((file) => (
-          <div
-            key={`top-${file}`}
-            className="flex h-5 items-center justify-center text-[10px] font-medium text-white sm:h-6 sm:text-xs"
-          >
+          <div key={`top-${file}`} className="chess-board-file-label">
             {file}
           </div>
         ))}
 
-        {/* Board rows with rank labels */}
         {board.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>
-            {/* Rank label */}
-            <div className="flex w-5 items-center justify-center text-[10px] font-medium text-white sm:w-6 sm:text-xs">
-              {ranks[rowIndex]}
-            </div>
-            
-            {/* Squares */}
+            <div className="chess-board-rank-label">{ranks[rowIndex]}</div>
             {row.map((square, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className={`
-                  flex h-10 w-10 items-center justify-center cursor-pointer
-                  sm:h-12 sm:w-12 md:h-14 md:w-14 xl:h-16 xl:w-16
-                  transition-all relative
-                  ${getSquareColor(rowIndex, colIndex)}
-                  ${getHighlightClass(square.highlight)}
-                  hover:opacity-80
-                `}
+                className={`chess-board-square ${getSquareColor(rowIndex, colIndex)} ${getHighlightClass(square.highlight)}`}
                 onClick={() => onSquareClick?.(rowIndex, colIndex)}
+                role="presentation"
               >
                 {square.piece && (
-                  <ChessPiece
-                    type={square.piece.type}
-                    color={square.piece.color}
-                    size={pieceSize}
-                  />
+                  <div className="chess-board-piece-wrap">
+                    <ChessPiece type={square.piece.type} color={square.piece.color} fluid />
+                  </div>
                 )}
               </div>
             ))}
