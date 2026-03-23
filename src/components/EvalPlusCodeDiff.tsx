@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { diffLines, type DiffLine } from '../lib/lineDiff';
 import { detectLanguage, highlightLine } from '../lib/syntaxHighlight';
+import { CopyCodeButton } from './CopyCodeButton';
 
 type EvalPlusCodeDiffProps = {
   before: string;
@@ -30,12 +31,25 @@ export function EvalPlusCodeDiff({ before, after, className }: EvalPlusCodeDiffP
   );
   const hasChanges = lines.some((d) => d.kind !== 'same');
   const showLang = (before || after).trim().length > 0;
+  const copyText = useMemo(
+    () =>
+      lines
+        .map((d) => {
+          const prefix = d.kind === 'add' ? '+' : d.kind === 'remove' ? '-' : ' ';
+          return `${prefix}${d.text ?? ''}`;
+        })
+        .join('\n'),
+    [lines],
+  );
 
   return (
     <div className={`evalplus-ide-panel evalplus-ide-diff text-left text-[11px] leading-relaxed sm:text-xs ${className ?? ''}`}>
       <div className="evalplus-ide-chrome">
         <span className="evalplus-ide-chrome-label">Diff</span>
-        {showLang && <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>}
+        <div className="evalplus-ide-chrome-trail">
+          {showLang && <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>}
+          <CopyCodeButton textToCopy={copyText} disabled={!copyText.trim()} />
+        </div>
       </div>
       <div className="evalplus-ide-body">
         {!hasChanges && <div className="evalplus-ide-empty">No line changes in this iteration.</div>}

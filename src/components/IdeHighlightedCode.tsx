@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { highlightFullCode } from '../lib/syntaxHighlight';
+import { CopyCodeButton } from './CopyCodeButton';
 
 type IdeHighlightedCodeProps = {
   code: string;
@@ -27,7 +28,10 @@ export function IdeHighlightedCode({
     <div className={panelClass}>
       <div className="evalplus-ide-chrome">
         <span className="evalplus-ide-chrome-label">{fileTab}</span>
-        {hasCode && <span className="evalplus-ide-lang-pill">{language}</span>}
+        <div className="evalplus-ide-chrome-trail">
+          {hasCode && <span className="evalplus-ide-lang-pill">{language}</span>}
+          <CopyCodeButton textToCopy={code} disabled={!hasCode} />
+        </div>
       </div>
       {hasCode ? (
         <pre className="evalplus-ide-readonly">
