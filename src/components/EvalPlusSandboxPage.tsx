@@ -529,7 +529,9 @@ export function EvalPlusSandboxPage({
                   <h3 className="text-base font-semibold">Current solution</h3>
                   <p className="text-sm text-muted-foreground">Full submitted code for this step</p>
                 </div>
-                <IdeHighlightedCode code={currCode} fileTab="solution.py" embedded emptyLabel="—" />
+                <div className="p-4 sm:p-6">
+                  <IdeHighlightedCode code={currCode} fileTab="solution.py" emptyLabel="—" />
+                </div>
               </Card>
             </div>
 
