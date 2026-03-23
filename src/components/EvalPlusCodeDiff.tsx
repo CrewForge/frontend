@@ -7,26 +7,38 @@ type EvalPlusCodeDiffProps = {
   className?: string;
 };
 
-function lineClass(d: DiffLine): string {
-  if (d.kind === 'add') return 'bg-emerald-500/15 text-emerald-900 dark:text-emerald-100';
-  if (d.kind === 'remove') return 'bg-rose-500/15 text-rose-900 dark:text-rose-100';
-  return 'bg-muted/40 text-foreground';
+function lineRowClass(d: DiffLine): string {
+  if (d.kind === 'add') return 'evalplus-diff-line evalplus-diff-line--add';
+  if (d.kind === 'remove') return 'evalplus-diff-line evalplus-diff-line--remove';
+  return 'evalplus-diff-line evalplus-diff-line--same';
 }
 
-export function EvalPlusCodeDiff({ before, after, className }: EvalPlusCodeDiffProps) {
+function gutterClass(d: DiffLine): string {
+  const base = 'evalplus-diff-gutter';
+  if (d.kind === 'add') return `${base} evalplus-diff-gutter--add`;
+  if (d.kind === 'remove') return `${base} evalplus-diff-gutter--remove`;
+  return `${base} text-muted-foreground`;
+}
+
+export function EvalPlusCodeDiff({
+  before,
+  after,
+  className,
+}: EvalPlusCodeDiffProps) {
   const lines = diffLines(before, after);
+  const hasChanges = lines.some((d) => d.kind !== 'same');
+
   return (
-    <pre
+    <div
       className={`overflow-x-auto rounded-lg border bg-card p-3 text-left font-mono text-[11px] leading-relaxed sm:text-xs ${className ?? ''}`}
     >
+      {!hasChanges && <div className="pb-2 text-[10px] text-muted-foreground sm:text-[11px]">No line changes in this iteration.</div>}
       {lines.map((d, i) => (
-        <div key={i} className={`flex min-h-[1.25rem] border-l-2 pl-2 ${lineClass(d)}`}>
-          <span className="w-6 shrink-0 select-none text-[10px] text-muted-foreground">
-            {d.kind === 'add' ? '+' : d.kind === 'remove' ? '−' : ' '}
-          </span>
+        <div key={i} className={lineRowClass(d)}>
+          <span className={gutterClass(d)}>{d.kind === 'add' ? '+' : d.kind === 'remove' ? '-' : ' '}</span>
           <span className="whitespace-pre-wrap break-all">{d.text || ' '}</span>
         </div>
       ))}
-    </pre>
+    </div>
   );
 }

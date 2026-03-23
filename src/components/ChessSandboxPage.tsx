@@ -211,7 +211,7 @@ const buildBoardState = (game: Chess, lastMove?: string | null): BoardState => {
 
 const createInitialBoard = () => buildBoardState(new Chess());
 
-export function ChessSandboxPage({ token, onBack, dataSource = 'live', onSetDataSource, onAuthFailure }: ChessSandboxPageProps) {
+export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDataSource, onAuthFailure }: ChessSandboxPageProps) {
   const mode: 'user' | 'stockfish' = 'stockfish';
   const environmentLabel = 'Strategy Workspace';
   const [isPlaying, setIsPlaying] = useState(false);
@@ -686,44 +686,28 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'live', onSetData
                   <Badge variant="secondary">Workspace view</Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                  Session state and metrics are reconstructed directly from backend JSON events.
+                  Session state and metrics are reconstructed from bundled sample JSON and do not require a backend process.
                 </p>
               </div>
 
               <div className="sandbox-controls-panel">
                 <div className="sandbox-controls-top">
-                  <Badge variant="outline">{dataSource === 'sample' ? 'Prepared replay' : 'Live backend stream'}</Badge>
+                  <Badge variant="outline">Prepared replay</Badge>
                   <Badge variant={autoError ? 'destructive' : isPlaying ? 'default' : 'secondary'}>{autoError ? 'Error' : isPlaying ? 'Running' : 'Ready'}</Badge>
                 </div>
                 <div className="sandbox-controls-actions">
                   {!isPlaying ? (
                     <Button
                       onClick={handleStartGame}
-                      disabled={dataSource === 'live' && !token}
                       className="min-w-[10rem] font-medium"
                     >
                       <Play className="mr-2 h-4 w-4" />
-                      {dataSource === 'sample' ? 'Replay prepared run' : 'Start live stream'}
+                      Replay prepared run
                     </Button>
                   ) : (
                     <Button onClick={handleStopStream} variant="outline" className="min-w-[10rem] font-medium">
                       <Pause className="mr-2 h-4 w-4" />
                       Stop
-                    </Button>
-                  )}
-                  {dataSource === 'live' && !isPlaying && (
-                    <Button variant="outline" onClick={handleStartSample}>
-                      Open prepared replay
-                    </Button>
-                  )}
-                  {dataSource === 'sample' && token && !isPlaying && (
-                    <Button variant="outline" onClick={handleSwitchToLive}>
-                      Connect live source
-                    </Button>
-                  )}
-                  {dataSource === 'live' && !isPlaying && (
-                    <Button variant="ghost" onClick={handleSwitchToSample}>
-                      Use prepared replay
                     </Button>
                   )}
                   <Button variant="outline" onClick={handleResetBoard} aria-label="Reset board">

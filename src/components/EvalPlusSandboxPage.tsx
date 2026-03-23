@@ -69,7 +69,7 @@ function isEvalPlusEvent(p: StreamPayload): p is StreamPayload & EvalPlusRunnerM
 export function EvalPlusSandboxPage({
   token,
   onBack,
-  dataSource = 'live',
+  dataSource = 'sample',
   onSetDataSource,
   onAuthFailure,
 }: ChessSandboxPageProps) {
@@ -403,14 +403,13 @@ export function EvalPlusSandboxPage({
                   <Badge variant="secondary">EvalPlus</Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                  Code submissions and diffs follow CrewForge <code className="text-xs">RunnerMoveRecord</code> events
-                  from <code className="text-xs">runner.run_game</code> with <code className="text-xs">EvalPlusEnv</code>.
+                  Code submissions and diffs are rendered from bundled sample events and do not require a backend process.
                 </p>
               </div>
 
               <div className="sandbox-controls-panel">
                 <div className="sandbox-controls-top">
-                  <Badge variant="outline">{dataSource === 'sample' ? 'Prepared replay' : 'Live backend stream'}</Badge>
+                  <Badge variant="outline">Prepared replay</Badge>
                   <Badge variant={autoError ? 'destructive' : isPlaying ? 'default' : 'secondary'}>
                     {autoError ? 'Error' : isPlaying ? 'Running' : 'Ready'}
                   </Badge>
@@ -418,32 +417,16 @@ export function EvalPlusSandboxPage({
                 <div className="sandbox-controls-actions">
                   {!isPlaying ? (
                     <Button
-                      onClick={dataSource === 'sample' ? () => void startSampleReplay() : () => void startLiveStream()}
-                      disabled={dataSource === 'live' && !token}
+                      onClick={() => void startSampleReplay()}
                       className="min-w-[10rem] font-medium"
                     >
                       <Play className="mr-2 h-4 w-4" />
-                      {dataSource === 'sample' ? 'Replay prepared run' : 'Start live stream'}
+                      Replay prepared run
                     </Button>
                   ) : (
                     <Button onClick={handleStopStream} variant="outline" className="min-w-[10rem] font-medium">
                       <Pause className="mr-2 h-4 w-4" />
                       Stop
-                    </Button>
-                  )}
-                  {dataSource === 'live' && !isPlaying && (
-                    <Button variant="outline" onClick={() => void startSampleReplay()}>
-                      Open prepared replay
-                    </Button>
-                  )}
-                  {dataSource === 'sample' && token && !isPlaying && (
-                    <Button variant="outline" onClick={() => onSetDataSource?.('live')}>
-                      Connect live source
-                    </Button>
-                  )}
-                  {dataSource === 'live' && !isPlaying && (
-                    <Button variant="ghost" onClick={() => onSetDataSource?.('sample')}>
-                      Use prepared replay
                     </Button>
                   )}
                   <Button variant="outline" onClick={handleReset} aria-label="Reset">
@@ -492,7 +475,7 @@ export function EvalPlusSandboxPage({
                       ? 'Diff vs previous submission for the same task label.'
                       : safeStep === 0
                         ? 'First submission (diff compares against empty previous).'
-                        : 'New task or different label — diff vs previous step.'}
+                        : 'New task or different label - diff vs previous step.'}
                   </p>
                 </div>
                 <div className="space-y-3 p-4 sm:p-6">

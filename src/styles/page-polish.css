@@ -288,3 +288,68 @@
     justify-content: flex-end;
   }
 }
+
+/*
+ * EvalPlus code diff — explicit green/red (the checked-in Tailwind bundle in index.css
+ * does not include emerald/rose utilities, so utility classes on diff rows had no effect).
+ */
+.evalplus-diff-line {
+  display: flex;
+  min-height: 1.25rem;
+  padding-left: 0.5rem;
+  align-items: flex-start;
+}
+
+.evalplus-diff-line--same {
+  border-left: 2px solid var(--border);
+  background-color: color-mix(in oklab, var(--muted) 28%, transparent);
+  color: var(--foreground);
+}
+
+.evalplus-diff-line--add {
+  border-left: 4px solid #059669;
+  background-color: #dcfce7;
+  color: #064e3b;
+}
+
+.evalplus-diff-line--remove {
+  border-left: 4px solid #e11d48;
+  background-color: #ffe4e6;
+  color: #881337;
+}
+
+.dark .evalplus-diff-line--add {
+  border-left-color: #34d399;
+  background-color: color-mix(in oklab, #059669 42%, transparent);
+  color: #ecfdf5;
+}
+
+.dark .evalplus-diff-line--remove {
+  border-left-color: #f87171;
+  background-color: color-mix(in oklab, #e11d48 38%, transparent);
+  color: #ffe4e6;
+}
+
+.evalplus-diff-gutter {
+  width: 1.5rem;
+  flex-shrink: 0;
+  user-select: none;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.evalplus-diff-gutter--add {
+  color: #047857;
+}
+
+.evalplus-diff-gutter--remove {
+  color: #be123c;
+}
+
+.dark .evalplus-diff-gutter--add {
+  color: #6ee7b7;
+}
+
+.dark .evalplus-diff-gutter--remove {
+  color: #fda4af;
+}

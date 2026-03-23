@@ -5,7 +5,7 @@ Prototype UI for the CrewForge multi-agent research platform. The original Figma
 ## Prerequisites
 
 - Node.js 18+ (includes `npm`). On Windows, if `npm` is not recognized, install [Node.js LTS](https://nodejs.org/) or run: `winget install OpenJS.NodeJS.LTS`, then **close and reopen** your terminal (or Cursor) so `PATH` includes `C:\Program Files\nodejs`.
-- Backend API running (Flask) — default **port 8080** for `GET /health`, `POST /auth`, `GET /run/chess?mode=auto`, etc.
+- Backend API is optional. The frontend now runs fully in standalone sample-replay mode by default.
 
 ### Windows: `npm` / `vite` not found
 
@@ -47,14 +47,14 @@ npm run dev
 
 Dev server: **http://localhost:3000**
 
-## API base URL
+## API base URL (optional)
 
 | Scenario | `.env` / env var |
 |----------|------------------|
 | **Recommended local dev** (avoids CORS): proxy in `vite.config.ts` forwards `/api` → `http://localhost:8080` | `VITE_API_BASE_URL=/api` |
 | **Direct to Flask** (ensure `FRONTEND_ORIGIN` on the backend allows `http://localhost:3000`) | `VITE_API_BASE_URL=http://localhost:8080` |
 
-Copy `.env.example` to `.env` and adjust. Restart `npm run dev` after changing env vars.
+Copy `.env.example` to `.env` only if you want to test backend integration. Restart `npm run dev` after changing env vars.
 
 ## Backend contract used by this frontend
 
@@ -106,7 +106,7 @@ Sample payload used by the UI:
 
 - `public/samples/chess-auto-sample.json`
 
-### 2. Live backend integration
+### 2. Live backend integration (optional)
 
 1. Start the Flask backend on port `8080`
 2. Set `VITE_API_BASE_URL=/api` in `.env` for local proxy mode

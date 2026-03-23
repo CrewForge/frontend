@@ -16,7 +16,7 @@ export function SandboxPage({
   environment,
   token,
   onBack,
-  dataSource = 'live',
+  dataSource = 'sample',
   onSetDataSource,
   onAuthFailure,
 }: SandboxPageProps) {

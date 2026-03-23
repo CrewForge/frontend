@@ -115,7 +115,7 @@ export default function App() {
   return (
     <>
       {currentPage === 'landing' && (
-        <LandingPage onSignIn={() => setCurrentPage('login')} onViewDemo={handleOpenDemo} />
+        <LandingPage onSignIn={handleOpenDemo} onViewDemo={handleOpenDemo} />
       )}
 
       {currentPage === 'login' && (
