@@ -401,6 +401,21 @@
   color: #c3e88d;
 }
 
+/* Narrow “run complete” modal (overrides default dialog sm:max-w-lg) */
+.evalplus-results-dialog {
+  width: min(20rem, calc(100vw - 2rem));
+  max-width: min(20rem, calc(100vw - 2rem));
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .evalplus-results-dialog {
+    width: min(22rem, calc(100vw - 2rem));
+    max-width: min(22rem, calc(100vw - 2rem));
+  }
+}
+
 .evalplus-ide-body {
   padding: 0.65rem 0.75rem 0.85rem;
 }

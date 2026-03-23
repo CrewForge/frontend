@@ -43,7 +43,7 @@ export function EvalPlusResultsDialog({ open, onClose, onRunAgain, results }: Ev
         if (!next) onClose();
       }}
     >
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto sm:max-w-xl">
+      <DialogContent className="evalplus-results-dialog">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-left">
             <Trophy className="h-6 w-6 shrink-0 text-primary" />
@@ -52,7 +52,7 @@ export function EvalPlusResultsDialog({ open, onClose, onRunAgain, results }: Ev
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2">
             <Card className="p-3 text-center sm:p-4">
               <div className="text-xl font-semibold tabular-nums sm:text-2xl">{results.submissions}</div>
               <div className="text-xs text-muted-foreground">Submissions</div>
