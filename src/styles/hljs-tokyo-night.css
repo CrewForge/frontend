@@ -1,0 +1,119 @@
+/*
+ * highlight.js token colors — Tokyo Night–style, scoped to EvalPlus IDE panels only.
+ * Covers common hljs classes across languages (JS/TS, Python, C-family, markup, etc.).
+ */
+.evalplus-ide-panel .hljs {
+  background: transparent;
+  color: var(--ide-fg-muted, #a9b1d6);
+}
+
+.evalplus-ide-panel code.hljs {
+  display: block;
+  width: 100%;
+}
+
+/* Keywords & control */
+.evalplus-ide-panel .hljs-keyword,
+.evalplus-ide-panel .hljs-selector-tag,
+.evalplus-ide-panel .hljs-selector-id,
+.evalplus-ide-panel .hljs-selector-class,
+.evalplus-ide-panel .hljs-section,
+.evalplus-ide-panel .hljs-template-tag,
+.evalplus-ide-panel .hljs-doctag,
+.evalplus-ide-panel .hljs-variable.language_,
+.evalplus-ide-panel .hljs-meta .hljs-keyword {
+  color: #bb9af7;
+}
+
+/* Types, built-ins, constants */
+.evalplus-ide-panel .hljs-type,
+.evalplus-ide-panel .hljs-built_in,
+.evalplus-ide-panel .hljs-symbol,
+.evalplus-ide-panel .hljs-class,
+.evalplus-ide-panel .hljs-title.class_,
+.evalplus-ide-panel .hljs-title.class_.inherited__,
+.evalplus-ide-panel .hljs-literal,
+.evalplus-ide-panel .hljs-number,
+.evalplus-ide-panel .hljs-regexp,
+.evalplus-ide-panel .hljs-link,
+.evalplus-ide-panel .hljs-bullet {
+  color: #e0af68;
+}
+
+/* Functions, titles */
+.evalplus-ide-panel .hljs-title,
+.evalplus-ide-panel .hljs-title.function_,
+.evalplus-ide-panel .hljs-function,
+.evalplus-ide-panel .hljs-name {
+  color: #7aa2f7;
+}
+
+/* Strings & chars */
+.evalplus-ide-panel .hljs-string,
+.evalplus-ide-panel .hljs-meta .hljs-string,
+.evalplus-ide-panel .hljs-char.escape_,
+.evalplus-ide-panel .hljs-subst,
+.evalplus-ide-panel .hljs-template-variable {
+  color: #9ece6a;
+}
+
+/* Comments */
+.evalplus-ide-panel .hljs-comment,
+.evalplus-ide-panel .hljs-quote,
+.evalplus-ide-panel .hljs-code,
+.evalplus-ide-panel .hljs-formula {
+  color: #565f89;
+  font-style: italic;
+}
+
+/* Operators, punctuation, params */
+.evalplus-ide-panel .hljs-operator,
+.evalplus-ide-panel .hljs-punctuation,
+.evalplus-ide-panel .hljs-params,
+.evalplus-ide-panel .hljs-attr,
+.evalplus-ide-panel .hljs-attribute,
+.evalplus-ide-panel .hljs-variable,
+.evalplus-ide-panel .hljs-selector-attr,
+.evalplus-ide-panel .hljs-selector-pseudo {
+  color: #c0caf5;
+}
+
+/* Meta, tags (markup) */
+.evalplus-ide-panel .hljs-meta,
+.evalplus-ide-panel .hljs-tag,
+.evalplus-ide-panel .hljs-tag .hljs-name,
+.evalplus-ide-panel .hljs-tag .hljs-attr {
+  color: #7aa2f7;
+}
+
+.evalplus-ide-panel .hljs-tag .hljs-string {
+  color: #9ece6a;
+}
+
+/* Diff grammar */
+.evalplus-ide-panel .hljs-addition {
+  color: #9ece6a;
+}
+
+.evalplus-ide-panel .hljs-deletion {
+  color: #f7768e;
+}
+
+/* JSON / keys */
+.evalplus-ide-panel .hljs-property,
+.evalplus-ide-panel .hljs-attr {
+  color: #7dcfff;
+}
+
+/* Strong / emphasis in markdown */
+.evalplus-ide-panel .hljs-strong,
+.evalplus-ide-panel .hljs-emphasis {
+  color: #c0caf5;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* Shell / make */
+.evalplus-ide-panel .hljs-variable.constant_ {
+  color: #ff9e64;
+}

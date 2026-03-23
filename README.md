@@ -83,6 +83,10 @@ npm run build
 
 Output: `build/`.
 
+## EvalPlus syntax highlighting
+
+The EvalPlus workspace uses [highlight.js](https://highlightjs.org/) with **autodetection** and the full language pack (190+ grammars). Highlighting is themed to match the Tokyo Night–style IDE panels. The library is split into a separate JS chunk (`highlight-*.js`) at build time.
+
 ## Test the frontend
 
 ### 1. Fastest check: sample results viewer

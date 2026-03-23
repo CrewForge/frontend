@@ -290,66 +290,182 @@
 }
 
 /*
- * EvalPlus code diff — explicit green/red (the checked-in Tailwind bundle in index.css
- * does not include emerald/rose utilities, so utility classes on diff rows had no effect).
+ * EvalPlus — Tokyo Night–inspired IDE surfaces (explicit CSS; Tailwind snapshot omits many hues).
+ * Palette reference: Tokyo Night (dark UI / Neovim theme family).
  */
+.evalplus-ide-panel {
+  --ide-bg: #16161e;
+  --ide-bg-line: #1a1b26;
+  --ide-bg-elevated: #24283b;
+  --ide-border: #292e42;
+  --ide-fg: #c0caf5;
+  --ide-fg-muted: #a9b1d6;
+  --ide-fg-dim: #565f89;
+  /* Add: spring green; Remove: warm coral — tuned for dark bg */
+  --ide-add: #9ece6a;
+  --ide-add-glow: rgba(158, 206, 106, 0.18);
+  --ide-remove: #ff9e9e;
+  --ide-remove-glow: rgba(255, 158, 158, 0.14);
+  --ide-accent: #7aa2f7;
+  background: var(--ide-bg);
+  border: 1px solid var(--ide-border);
+  border-radius: 0.6rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  color: var(--ide-fg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.evalplus-ide-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.45rem 0.75rem;
+  background: linear-gradient(180deg, #24283b 0%, #1f2335 100%);
+  border-bottom: 1px solid var(--ide-border);
+  border-radius: 0.55rem 0.55rem 0 0;
+}
+
+.evalplus-ide-chrome-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ide-fg-dim);
+}
+
+.evalplus-ide-lang-pill {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ide-accent);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  background: rgba(122, 162, 247, 0.12);
+  border: 1px solid rgba(122, 162, 247, 0.28);
+}
+
+/* Flush inside a Card: no outer frame, only top separator */
+.evalplus-ide-panel--embedded {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  border-top: 1px solid var(--ide-border);
+}
+
+.evalplus-ide-panel--embedded .evalplus-ide-chrome {
+  border-radius: 0;
+}
+
+.evalplus-ide-body {
+  padding: 0.65rem 0.75rem 0.85rem;
+}
+
+.evalplus-ide-body--flush {
+  padding: 0;
+}
+
+.evalplus-ide-empty {
+  padding: 0 0.75rem 0.5rem;
+  font-size: 10px;
+  color: var(--ide-fg-dim);
+}
+
+/* Full-file view (Current solution) */
+.evalplus-ide-readonly {
+  margin: 0;
+  max-height: 20rem;
+  overflow: auto;
+  padding: 0.85rem 1rem;
+  background: var(--ide-bg-line);
+  color: var(--ide-fg-muted);
+  font-size: 11px;
+  line-height: 1.65;
+  tab-size: 4;
+}
+
+.evalplus-ide-readonly::selection {
+  background: color-mix(in oklab, var(--ide-accent) 45%, transparent);
+  color: var(--ide-fg);
+}
+
+.evalplus-ide-readonly--empty {
+  color: var(--ide-fg-dim);
+  font-style: italic;
+}
+
+/* Diff rows — use explicit white-space: pre (Tailwind pre-wrap is not in the bundled CSS) */
 .evalplus-diff-line {
   display: flex;
-  min-height: 1.25rem;
-  padding-left: 0.5rem;
+  min-height: 1.35rem;
+  padding-left: 0.35rem;
   align-items: flex-start;
+  border-radius: 0.15rem;
+  min-width: 0;
 }
 
 .evalplus-diff-line--same {
-  border-left: 2px solid var(--border);
-  background-color: color-mix(in oklab, var(--muted) 28%, transparent);
-  color: var(--foreground);
+  border-left: 2px solid transparent;
+  background-color: transparent;
+  color: var(--ide-fg-muted);
+}
+
+.evalplus-diff-line--same:hover {
+  background-color: rgba(122, 162, 247, 0.06);
 }
 
 .evalplus-diff-line--add {
-  border-left: 4px solid #059669;
-  background-color: #dcfce7;
-  color: #064e3b;
+  border-left: 3px solid var(--ide-add);
+  background: linear-gradient(90deg, var(--ide-add-glow) 0%, transparent 72%);
+  color: var(--ide-fg);
 }
 
 .evalplus-diff-line--remove {
-  border-left: 4px solid #e11d48;
-  background-color: #ffe4e6;
-  color: #881337;
-}
-
-.dark .evalplus-diff-line--add {
-  border-left-color: #34d399;
-  background-color: color-mix(in oklab, #059669 42%, transparent);
-  color: #ecfdf5;
-}
-
-.dark .evalplus-diff-line--remove {
-  border-left-color: #f87171;
-  background-color: color-mix(in oklab, #e11d48 38%, transparent);
-  color: #ffe4e6;
+  border-left: 3px solid var(--ide-remove);
+  background: linear-gradient(90deg, var(--ide-remove-glow) 0%, transparent 72%);
+  color: #e0d4f7;
 }
 
 .evalplus-diff-gutter {
-  width: 1.5rem;
+  width: 1.35rem;
   flex-shrink: 0;
   user-select: none;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.evalplus-diff-gutter--same {
+  color: var(--ide-fg-dim);
+  opacity: 0.65;
 }
 
 .evalplus-diff-gutter--add {
-  color: #047857;
+  color: var(--ide-add);
 }
 
 .evalplus-diff-gutter--remove {
-  color: #be123c;
+  color: var(--ide-remove);
 }
 
-.dark .evalplus-diff-gutter--add {
-  color: #6ee7b7;
+.evalplus-diff-line-code {
+  flex: 1 1 0%;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* Preserve leading spaces / tabs exactly like an editor */
+  white-space: pre;
+  tab-size: 4;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
-.dark .evalplus-diff-gutter--remove {
-  color: #fda4af;
+.evalplus-diff-line-code .hljs {
+  background: transparent;
+  display: inline;
+  padding: 0;
+  font-family: inherit;
 }

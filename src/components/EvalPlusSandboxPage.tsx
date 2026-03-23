@@ -15,6 +15,7 @@ import {
   completedTaskOrdinal,
 } from '../lib/evalplusExperiment';
 import { EvalPlusCodeDiff } from './EvalPlusCodeDiff';
+import { IdeHighlightedCode } from './IdeHighlightedCode';
 import { EvalPlusResultsDialog, type EvalPlusResultsSummary } from './EvalPlusResultsDialog';
 
 type StreamPayload = {
@@ -528,9 +529,7 @@ export function EvalPlusSandboxPage({
                   <h3 className="text-base font-semibold">Current solution</h3>
                   <p className="text-sm text-muted-foreground">Full submitted code for this step</p>
                 </div>
-                <pre className="max-h-[20rem] overflow-auto p-4 font-mono text-[11px] leading-relaxed sm:text-xs">
-                  {currCode || '—'}
-                </pre>
+                <IdeHighlightedCode code={currCode} fileTab="solution.py" embedded emptyLabel="—" />
               </Card>
             </div>
 

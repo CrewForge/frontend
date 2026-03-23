@@ -52,6 +52,15 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules/highlight.js')) {
+              return 'highlight';
+            }
+          },
+        },
+      },
     },
     server: {
       port: 3000,
