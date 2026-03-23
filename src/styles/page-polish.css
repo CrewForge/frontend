@@ -410,34 +410,32 @@
   padding: 8%;
 }
 
-.chess-piece-glyph {
-  display: flex;
+.chess-piece-asset {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  user-select: none;
-  font-family: 'Segoe UI Symbol', 'DejaVu Sans', 'Noto Sans Symbols2', serif;
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22));
 }
 
-.chess-piece-glyph--fluid {
-  font-size: clamp(1.35rem, 26cqw, 3rem);
+.chess-piece-asset .piece-image {
+  width: 100%;
+  height: 100%;
+  max-width: 96%;
+  max-height: 96%;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
 }
 
-.chess-piece-glyph--compact {
-  font-size: 1rem;
+.chess-piece-asset--compact {
+  width: 0.98rem;
+  height: 0.98rem;
 }
 
-.chess-piece-glyph--white {
-  color: #f9fafb;
-  -webkit-text-stroke: 0.045em #111827;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
-}
-
-.chess-piece-glyph--black {
-  color: #111827;
-  -webkit-text-stroke: 0.03em rgba(249, 250, 251, 0.85);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+.chess-piece-asset--compact .piece-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .chess-board-overlay {
@@ -485,6 +483,15 @@
 .chess-material__glyph {
   display: inline-flex;
   opacity: 0.95;
+}
+
+.chess-material__plus {
+  margin-left: 0.2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--foreground) 90%, #0ea5e9);
 }
 
 .chess-material__empty {

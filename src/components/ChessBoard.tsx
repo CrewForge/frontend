@@ -114,7 +114,7 @@ export function ChessBoard({ board, onSquareClick, moveAnim = null }: ChessBoard
                 >
                   {square.piece && !hide && (
                     <div className="chess-board-piece-wrap">
-                      <ChessPiece type={square.piece.type} color={square.piece.color} fluid />
+                      <ChessPiece type={square.piece.type} color={square.piece.color} />
                     </div>
                   )}
                 </div>
@@ -139,7 +139,7 @@ export function ChessBoard({ board, onSquareClick, moveAnim = null }: ChessBoard
             }}
           >
             <div className="chess-board-piece-wrap chess-board-piece-wrap--overlay">
-              <ChessPiece type={moveAnim.pieceType} color={moveAnim.pieceColor} fluid />
+              <ChessPiece type={moveAnim.pieceType} color={moveAnim.pieceColor} />
             </div>
           </motion.div>
 
@@ -157,7 +157,7 @@ export function ChessBoard({ board, onSquareClick, moveAnim = null }: ChessBoard
               }}
             >
               <div className="chess-board-piece-wrap chess-board-piece-wrap--overlay">
-                <ChessPiece type={moveAnim.capturedType} color={moveAnim.capturedColor} fluid />
+                <ChessPiece type={moveAnim.capturedType} color={moveAnim.capturedColor} />
               </div>
             </motion.div>
           )}

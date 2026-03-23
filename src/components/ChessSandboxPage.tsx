@@ -10,7 +10,7 @@ import { Play, Pause, RotateCcw } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Chess } from 'chess.js';
 import { ApiError, authHeaders, streamChessAutoUrl, throwIfResponseNotOk } from '../lib/api';
-import { capturedPiecesFromGame } from '../lib/chessCaptures';
+import { materialAdvantageFromGame } from '../lib/chessCaptures';
 import { formatCentipawnDelta, formatEvalPawns } from '../lib/chessEval';
 import type { GameResultsSummary } from './GameResultsDialog';
 import { ChessEvalBar } from './ChessEvalBar';
@@ -713,7 +713,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     return null;
   }, [moveLogEntries]);
 
-  const material = useMemo(() => capturedPiecesFromGame(chessRef.current), [moveCount]);
+  const material = useMemo(() => materialAdvantageFromGame(chessRef.current), [moveCount]);
 
   const handleStartGame = useCallback(() => {
     if (dataSource === 'sample') {
@@ -831,7 +831,12 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                 </div>
                 <div className="p-3 sm:p-5">
                   <div className="chess-board-workspace">
-                    <ChessMaterial takenByWhite={material.byWhite} takenByBlack={material.byBlack}>
+                    <ChessMaterial
+                      whiteIcons={material.whiteIcons}
+                      blackIcons={material.blackIcons}
+                      whitePlus={material.whitePlus}
+                      blackPlus={material.blackPlus}
+                    >
                       <div className="chess-board-and-eval">
                         <ChessEvalBar
                           centipawnsTotal={latestMove?.centipawnsTotal ?? null}

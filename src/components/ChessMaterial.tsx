@@ -3,10 +3,10 @@ import { ChessPiece } from './ChessPiece';
 import type { PieceKind } from '../lib/chessCaptures';
 
 interface ChessMaterialProps {
-  /** Black pieces captured by White (above the board). */
-  takenByWhite: PieceKind[];
-  /** White pieces captured by Black (below the board). */
-  takenByBlack: PieceKind[];
+  whiteIcons: PieceKind[];
+  blackIcons: PieceKind[];
+  whitePlus: number;
+  blackPlus: number;
   children: React.ReactNode;
 }
 
@@ -28,18 +28,26 @@ function MaterialStrip({ kinds, color }: { kinds: PieceKind[]; color: 'white' | 
 }
 
 /**
- * Lichess-style: top strip = pieces White took from Black; bottom = pieces Black took from White.
+ * Lichess-style: only show net material edge (icons + +N) for the side that is ahead.
  * Renders `{children}` (board + eval) between the strips.
  */
-export function ChessMaterial({ takenByWhite, takenByBlack, children }: ChessMaterialProps) {
+export function ChessMaterial({
+  whiteIcons,
+  blackIcons,
+  whitePlus,
+  blackPlus,
+  children,
+}: ChessMaterialProps) {
   return (
     <div className="chess-material-wrap" aria-label="Material balance">
       <div className="chess-material__row chess-material__row--top">
-        <MaterialStrip kinds={takenByWhite} color="black" />
+        <MaterialStrip kinds={whiteIcons} color="black" />
+        {whitePlus > 0 ? <span className="chess-material__plus">+{whitePlus}</span> : null}
       </div>
       {children}
       <div className="chess-material__row chess-material__row--bottom">
-        <MaterialStrip kinds={takenByBlack} color="white" />
+        <MaterialStrip kinds={blackIcons} color="white" />
+        {blackPlus > 0 ? <span className="chess-material__plus">+{blackPlus}</span> : null}
       </div>
     </div>
   );
