@@ -130,7 +130,7 @@ export function ChessBoard({ board, onSquareClick, moveAnim = null }: ChessBoard
             className="chess-board-overlay-piece chess-board-overlay-piece--mover"
             initial={{ x: 0, y: 0, opacity: 1 }}
             animate={{ x: dx, y: dy, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 280, damping: 28, mass: 0.65 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 32, mass: 0.5 }}
             style={{
               left: metrics.from.left,
               top: metrics.from.top,

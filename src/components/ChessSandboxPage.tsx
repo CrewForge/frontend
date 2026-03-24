@@ -250,7 +250,8 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
 
           if (usePieceAnim) {
             const beforeGame = new Chess(fenBefore);
-            setBoard(buildBoardState(beforeGame, null));
+            /* Show last-move square tint immediately; piece still flies via overlay. */
+            setBoard(buildBoardState(beforeGame, lastHighlight));
             const victimFly = played.isCapture() && !played.isEnPassant();
             setMoveAnim({
               from: played.from,
@@ -265,11 +266,13 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                 : undefined,
               victimFly,
             });
+            /* Mover spring ~0.3s; victim fly is 0.42s — don’t clear overlay early on captures. */
+            const settleMs = victimFly ? 430 : 340;
             animTimeoutRef.current = window.setTimeout(() => {
               setBoard(buildBoardState(chessRef.current, lastHighlight));
               setMoveAnim(null);
               animTimeoutRef.current = null;
-            }, 460);
+            }, settleMs);
           } else {
             setMoveAnim(null);
             setBoard(buildBoardState(chessRef.current, lastHighlight));
