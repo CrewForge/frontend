@@ -160,6 +160,158 @@
   gap: 0.75rem;
 }
 
+.sandbox-metrics-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--foreground);
+}
+
+.sandbox-metrics-strip__k {
+  font-weight: 650;
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  margin-right: 0.15rem;
+}
+
+.sandbox-metrics-strip__sep {
+  color: var(--muted-foreground);
+  opacity: 0.45;
+  user-select: none;
+}
+
+.sandbox-viz-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sandbox-viz-toolbar__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sandbox-viz-toolbar__playback-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.sandbox-viz-toolbar__playback-wrap {
+  flex: 1 1 14rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.sandbox-viz-toolbar__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* ~25% smaller board + material + eval in Strategy sandbox */
+.sandbox-chess-compact {
+  width: 75%;
+  max-width: min(720px, 100%);
+  margin-inline: auto;
+}
+
+.sandbox-chess-compact.chess-board-workspace {
+  gap: 0.55rem;
+}
+
+.sandbox-chess-compact .chess-board-frame {
+  padding: 0.58rem 0.7rem;
+}
+
+.sandbox-chess-compact .chess-eval-bar__track {
+  min-height: 8.25rem;
+}
+
+.sandbox-chess-compact .chess-material__row {
+  min-height: 2.45rem;
+  padding: 0.28rem 0.38rem;
+}
+
+.sandbox-chess-compact .chess-piece-asset--compact {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+/* SAN pairs list: show ~5 rows then scroll */
+.chess-movelist--clamped .chess-movelist__scroll {
+  max-height: calc(5 * 1.42em + 0.4rem);
+  min-height: 0;
+  scrollbar-gutter: stable;
+}
+
+/* Move log: fixed panel height; list scrolls inside (self-contained) — ~+80% vs 32rem cap */
+.sandbox-move-log {
+  display: flex;
+  flex-direction: column;
+  height: min(92vh, calc(32rem * 1.8));
+  max-height: min(92vh, calc(32rem * 1.8));
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.sandbox-move-log__header {
+  flex-shrink: 0;
+}
+
+.sandbox-move-log-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-radius: 0.55rem;
+  padding: 0.35rem 0.15rem 0.5rem 0.35rem;
+  margin-top: 0.15rem;
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border)) color-mix(in oklab, var(--muted) 35%, transparent);
+}
+
+.sandbox-move-log-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.sandbox-move-log-scroll::-webkit-scrollbar-track {
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+
+.sandbox-move-log-scroll::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--muted-foreground) 38%, var(--border));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.sandbox-move-log-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--muted-foreground) 52%, var(--border));
+  background-clip: padding-box;
+}
+
 /* Primary workspace (code / board) grows; sidebar stays readable but capped */
 .sandbox-main-grid {
   display: grid;
@@ -203,28 +355,39 @@
   flex-wrap: wrap;
 }
 
-/* Shared playback bar (Chess + EvalPlus sample replay) */
+/* Shared playback bar (Chess + EvalPlus sample replay) — one row: buttons · seek · position/speed */
 .sandbox-playback-bar {
   display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
   width: 100%;
-  margin-top: 0.35rem;
+  max-width: 100%;
+  min-width: 0;
+  margin-top: 0.2rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .sandbox-playback-bar__main {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.45rem;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .sandbox-playback-bar__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1rem;
+  justify-content: flex-end;
+  gap: 0.45rem 0.75rem;
+  min-width: 0;
+  flex: 0 1 auto;
+  margin-left: auto;
 }
 
 .sandbox-playback-bar__position {
@@ -232,6 +395,8 @@
   font-weight: 650;
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .sandbox-playback-bar__speed {
@@ -239,6 +404,8 @@
   align-items: center;
   gap: 0.4rem;
   min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
 }
 
 .sandbox-playback-bar__speed-label {
@@ -250,7 +417,9 @@
 }
 
 .sandbox-playback-bar__speed input[type='range'] {
-  width: min(160px, 42vw);
+  width: min(160px, 100%);
+  max-width: 100%;
+  min-width: 0;
   accent-color: var(--primary);
 }
 
@@ -271,12 +440,14 @@
 .sandbox-playback-bar__seek {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  width: 100%;
-  min-width: 0;
-  margin-top: 0.35rem;
-  padding-top: 0.35rem;
-  border-top: 1px solid color-mix(in oklab, var(--border) 45%, transparent);
+  gap: 0.4rem;
+  flex: 1 1 12rem;
+  min-width: min(100%, 7rem);
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
 }
 
 .sandbox-playback-bar__seek-label {
@@ -286,13 +457,24 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted-foreground);
+  white-space: nowrap;
 }
 
 .sandbox-playback-bar__seek input[type='range'] {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   accent-color: var(--primary);
   height: 0.35rem;
+}
+
+@media (max-width: 520px) {
+  .sandbox-playback-bar__meta {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .sandbox-log-panel {

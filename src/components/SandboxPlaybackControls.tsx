@@ -62,7 +62,7 @@ export function SandboxPlaybackControls({
           type="button"
           variant="default"
           size="sm"
-          className="min-w-[7rem] font-medium"
+          className="min-w-0 shrink-0 font-medium sm:min-w-[7rem]"
           disabled={disabled}
           onClick={isPlaying ? onPause : onPlay}
         >
@@ -115,6 +115,22 @@ export function SandboxPlaybackControls({
         </Button>
       </div>
 
+      {seekUsable && (
+        <label className="sandbox-playback-bar__seek">
+          <span className="sandbox-playback-bar__seek-label">{seekLabel}</span>
+          <input
+            type="range"
+            min={seekMin}
+            max={seekMax}
+            step={1}
+            value={Math.min(seekMax, Math.max(seekMin, seekValue))}
+            disabled={disabled}
+            onChange={(e) => onSeekChange?.(Number(e.target.value))}
+            aria-label={`${seekLabel} scrub`}
+          />
+        </label>
+      )}
+
       <div className="sandbox-playback-bar__meta">
         <span className="sandbox-playback-bar__position">{positionLabel}</span>
         {!stepDisabled && (
@@ -134,22 +150,6 @@ export function SandboxPlaybackControls({
           </label>
         )}
       </div>
-
-      {seekUsable && (
-        <label className="sandbox-playback-bar__seek">
-          <span className="sandbox-playback-bar__seek-label">{seekLabel}</span>
-          <input
-            type="range"
-            min={seekMin}
-            max={seekMax}
-            step={1}
-            value={Math.min(seekMax, Math.max(seekMin, seekValue))}
-            disabled={disabled}
-            onChange={(e) => onSeekChange?.(Number(e.target.value))}
-            aria-label={`${seekLabel} scrub`}
-          />
-        </label>
-      )}
     </div>
   );
 }
