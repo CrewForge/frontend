@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
   centipawnsToWhiteShare,
+  DECISIVE_CENTIPAWNS,
   formatCentipawnDelta,
   formatEvalRich,
   formatPawnDelta,
@@ -33,6 +34,10 @@ export function ChessEvalBar({
 
   const rich = useMemo(() => formatEvalRich(centipawnsTotal ?? undefined), [centipawnsTotal]);
 
+  const decisive =
+    typeof centipawnsTotal === 'number' &&
+    (centipawnsTotal >= DECISIVE_CENTIPAWNS || centipawnsTotal <= -DECISIVE_CENTIPAWNS);
+
   const delta = typeof evalDeltaCp === 'number' ? evalDeltaCp : null;
   const deltaTone =
     delta === null ? 'neutral' : delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral';
@@ -56,7 +61,7 @@ export function ChessEvalBar({
           {rich.centipawns ? (
             <span className="chess-eval-bar__sub cp-line">{rich.centipawns}</span>
           ) : null}
-          <span className="chess-eval-bar__unit">pawns (White)</span>
+          <span className="chess-eval-bar__unit">{decisive ? 'Decisive' : 'pawns (White)'}</span>
         </motion.div>
 
         <motion.div

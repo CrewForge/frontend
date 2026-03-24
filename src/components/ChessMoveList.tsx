@@ -19,7 +19,12 @@ export function ChessMoveList({ entries, className = '' }: ChessMoveListProps) {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.scrollTop = el.scrollHeight;
+      });
+    });
+    return () => cancelAnimationFrame(id);
   }, [entries.length]);
 
   const rows = useMemo(() => {

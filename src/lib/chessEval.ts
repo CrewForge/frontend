@@ -3,12 +3,19 @@
  * and human-readable labels.
  */
 
-/** ~Winning chances from centipawns (smooth 0–100, 50 = equal). */
+/**
+ * When |centipawns| ≥ this value, the eval bar is pinned fully to that side (decisive / “game over” scale).
+ * ~4 pawns is well past “winning” in engine terms without claiming exact mate.
+ */
+export const DECISIVE_CENTIPAWNS = 4000;
+
+/** ~Winning chances from centipawns (smooth 0–100, 50 = equal). Pins at ±decisive threshold. */
 export function centipawnsToWhiteShare(cp: number): number {
   if (!Number.isFinite(cp)) return 50;
-  // Logistic-style curve (similar spirit to analysis UIs)
+  if (cp >= DECISIVE_CENTIPAWNS) return 100;
+  if (cp <= -DECISIVE_CENTIPAWNS) return 0;
   const p = 1 / (1 + Math.exp(-0.0038 * cp));
-  // Keep a sliver of both colors at extremes so the bar never looks “empty”
+  // Keep a sliver of both colors at non-extreme evals
   return 5 + p * 90;
 }
 
@@ -16,9 +23,6 @@ export function formatEvalPawns(cp: number | undefined | null): string {
   if (cp === undefined || cp === null || Number.isNaN(cp)) return '—';
   const pawns = cp / 100;
   const abs = Math.abs(pawns);
-  if (abs >= 99) {
-    return pawns > 0 ? '+M' : '−M';
-  }
   if (abs >= 10) {
     return `${pawns > 0 ? '+' : ''}${Math.round(pawns)}`;
   }
@@ -35,10 +39,6 @@ export function formatEvalRich(cp: number | undefined | null): { pawns: string; 
     return { pawns: '—', centipawns: '' };
   }
   const pawns = cp / 100;
-  const abs = Math.abs(pawns);
-  if (abs >= 99) {
-    return { pawns: pawns > 0 ? '+M' : '−M', centipawns: '' };
-  }
   const pStr = `${pawns >= 0 ? '+' : ''}${pawns.toFixed(2)}`;
   const cpRounded = Math.round(cp);
   const cpStr = `${cpRounded >= 0 ? '+' : ''}${cpRounded}\u00a0cp`;
