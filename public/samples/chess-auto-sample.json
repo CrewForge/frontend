@@ -9,8 +9,8 @@
     "uci": "d2d4",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": 36,
-    "centipawns_current": 36,
+    "centipawns_total": 19,
+    "centipawns_current": 19,
     "latency_ms": 1207
   },
   {
@@ -19,8 +19,8 @@
     "uci": "g8f6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": 55,
-    "centipawns_current": 19,
+    "centipawns_total": 26,
+    "centipawns_current": 7,
     "latency_ms": 40
   },
   {
@@ -29,8 +29,8 @@
     "uci": "g1f3",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": 26,
-    "centipawns_current": -29,
+    "centipawns_total": 23,
+    "centipawns_current": -3,
     "latency_ms": 990
   },
   {
@@ -39,8 +39,8 @@
     "uci": "e7e6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -7,
-    "centipawns_current": -33,
+    "centipawns_total": 33,
+    "centipawns_current": 10,
     "latency_ms": 32
   },
   {
@@ -49,8 +49,8 @@
     "uci": "g2g3",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -7,
-    "centipawns_current": 0,
+    "centipawns_total": 17,
+    "centipawns_current": -16,
     "latency_ms": 1260
   },
   {
@@ -59,8 +59,8 @@
     "uci": "b7b6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -11,
-    "centipawns_current": -4,
+    "centipawns_total": 48,
+    "centipawns_current": 31,
     "latency_ms": 65
   },
   {
@@ -69,8 +69,8 @@
     "uci": "c2c4",
     "player": "qwen3:8b",
     "reasoning": "Simplify where possible to reduce tactical exposure.",
-    "centipawns_total": -54,
-    "centipawns_current": -43,
+    "centipawns_total": 48,
+    "centipawns_current": 0,
     "latency_ms": 959
   },
   {
@@ -79,8 +79,8 @@
     "uci": "c8a6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -104,
-    "centipawns_current": -50,
+    "centipawns_total": 44,
+    "centipawns_current": -4,
     "latency_ms": 40
   },
   {
@@ -89,8 +89,8 @@
     "uci": "d1c2",
     "player": "qwen3:8b",
     "reasoning": "Contest open files while avoiding unnecessary pawn weaknesses.",
-    "centipawns_total": -134,
-    "centipawns_current": -30,
+    "centipawns_total": 31,
+    "centipawns_current": -13,
     "latency_ms": 1210
   },
   {
@@ -99,8 +99,8 @@
     "uci": "a6b7",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -176,
-    "centipawns_current": -42,
+    "centipawns_total": 43,
+    "centipawns_current": 12,
     "latency_ms": 40
   },
   {
@@ -109,8 +109,8 @@
     "uci": "b1c3",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": -248,
-    "centipawns_current": -72,
+    "centipawns_total": 31,
+    "centipawns_current": -12,
     "latency_ms": 844
   },
   {
@@ -119,8 +119,8 @@
     "uci": "c7c5",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -324,
-    "centipawns_current": -76,
+    "centipawns_total": 41,
+    "centipawns_current": 10,
     "latency_ms": 40
   },
   {
@@ -129,8 +129,8 @@
     "uci": "e2e4",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": -357,
-    "centipawns_current": -33,
+    "centipawns_total": 41,
+    "centipawns_current": 0,
     "latency_ms": 1372
   },
   {
@@ -139,8 +139,8 @@
     "uci": "c5d4",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -392,
-    "centipawns_current": -35,
+    "centipawns_total": 42,
+    "centipawns_current": 1,
     "latency_ms": 28
   },
   {
@@ -149,8 +149,8 @@
     "uci": "c3d5",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -464,
-    "centipawns_current": -72,
+    "centipawns_total": -330,
+    "centipawns_current": -372,
     "latency_ms": 1028
   },
   {
@@ -159,8 +159,8 @@
     "uci": "e6d5",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -538,
-    "centipawns_current": -74,
+    "centipawns_total": -330,
+    "centipawns_current": 0,
     "latency_ms": 53
   },
   {
@@ -173,8 +173,8 @@
     "uci": "c4d5",
     "player": "qwen3:8b",
     "reasoning": "Simplify where possible to reduce tactical exposure.",
-    "centipawns_total": -585,
-    "centipawns_current": -47,
+    "centipawns_total": -326,
+    "centipawns_current": 4,
     "latency_ms": 1309
   },
   {
@@ -183,8 +183,8 @@
     "uci": "f8b4",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -639,
-    "centipawns_current": -54,
+    "centipawns_total": -330,
+    "centipawns_current": -4,
     "latency_ms": 35
   },
   {
@@ -193,8 +193,8 @@
     "uci": "c1d2",
     "player": "qwen3:8b",
     "reasoning": "Contest open files while avoiding unnecessary pawn weaknesses.",
-    "centipawns_total": -723,
-    "centipawns_current": -84,
+    "centipawns_total": -328,
+    "centipawns_current": 2,
     "latency_ms": 921
   },
   {
@@ -203,8 +203,8 @@
     "uci": "b4d2",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -799,
-    "centipawns_current": -76,
+    "centipawns_total": -339,
+    "centipawns_current": -11,
     "latency_ms": 56
   },
   {
@@ -213,8 +213,8 @@
     "uci": "e1d2",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": -841,
-    "centipawns_current": -42,
+    "centipawns_total": -366,
+    "centipawns_current": -27,
     "latency_ms": 1272
   },
   {
@@ -223,8 +223,8 @@
     "uci": "e8g8",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -896,
-    "centipawns_current": -55,
+    "centipawns_total": -374,
+    "centipawns_current": -8,
     "latency_ms": 42
   },
   {
@@ -233,8 +233,8 @@
     "uci": "f3h4",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": -994,
-    "centipawns_current": -98,
+    "centipawns_total": -381,
+    "centipawns_current": -7,
     "latency_ms": 976
   },
   {
@@ -243,8 +243,8 @@
     "uci": "f8e8",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1095,
-    "centipawns_current": -101,
+    "centipawns_total": -381,
+    "centipawns_current": 0,
     "latency_ms": 46
   },
   {
@@ -253,8 +253,8 @@
     "uci": "f2f3",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -1167,
-    "centipawns_current": -72,
+    "centipawns_total": -421,
+    "centipawns_current": -40,
     "latency_ms": 1145
   },
   {
@@ -263,8 +263,8 @@
     "uci": "g7g6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1244,
-    "centipawns_current": -77,
+    "centipawns_total": -365,
+    "centipawns_current": 56,
     "latency_ms": 52
   },
   {
@@ -273,8 +273,8 @@
     "uci": "c2c4",
     "player": "qwen3:8b",
     "reasoning": "Simplify where possible to reduce tactical exposure.",
-    "centipawns_total": -1349,
-    "centipawns_current": -105,
+    "centipawns_total": -362,
+    "centipawns_current": 3,
     "latency_ms": 1184
   },
   {
@@ -283,8 +283,8 @@
     "uci": "f6e4",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1442,
-    "centipawns_current": -93,
+    "centipawns_total": -348,
+    "centipawns_current": 14,
     "latency_ms": 68
   },
   {
@@ -293,8 +293,8 @@
     "uci": "d2c2",
     "player": "qwen3:8b",
     "reasoning": "Contest open files while avoiding unnecessary pawn weaknesses.",
-    "centipawns_total": -1501,
-    "centipawns_current": -59,
+    "centipawns_total": -535,
+    "centipawns_current": -187,
     "latency_ms": 1079
   },
   {
@@ -303,8 +303,8 @@
     "uci": "e4d6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1573,
-    "centipawns_current": -72,
+    "centipawns_total": -467,
+    "centipawns_current": 68,
     "latency_ms": 54
   },
   {
@@ -313,8 +313,8 @@
     "uci": "c4d4",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": -1681,
-    "centipawns_current": -108,
+    "centipawns_total": -490,
+    "centipawns_current": -23,
     "latency_ms": 970
   },
   {
@@ -323,8 +323,8 @@
     "uci": "b8a6",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1778,
-    "centipawns_current": -97,
+    "centipawns_total": -447,
+    "centipawns_current": 43,
     "latency_ms": 37
   },
   {
@@ -337,8 +337,8 @@
     "uci": "a1c1",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": -1835,
-    "centipawns_current": -57,
+    "centipawns_total": -555,
+    "centipawns_current": -108,
     "latency_ms": 936
   },
   {
@@ -347,8 +347,8 @@
     "uci": "a8c8",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -1893,
-    "centipawns_current": -58,
+    "centipawns_total": -565,
+    "centipawns_current": -10,
     "latency_ms": 26
   },
   {
@@ -357,8 +357,8 @@
     "uci": "c2d2",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -1977,
-    "centipawns_current": -84,
+    "centipawns_total": -565,
+    "centipawns_current": 0,
     "latency_ms": 1112
   },
   {
@@ -367,8 +367,8 @@
     "uci": "c8c5",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2050,
-    "centipawns_current": -73,
+    "centipawns_total": -556,
+    "centipawns_current": 9,
     "latency_ms": 68
   },
   {
@@ -377,8 +377,8 @@
     "uci": "d4f4",
     "player": "qwen3:8b",
     "reasoning": "Simplify where possible to reduce tactical exposure.",
-    "centipawns_total": -2095,
-    "centipawns_current": -45,
+    "centipawns_total": -537,
+    "centipawns_current": 19,
     "latency_ms": 913
   },
   {
@@ -387,8 +387,8 @@
     "uci": "c5c1",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2157,
-    "centipawns_current": -62,
+    "centipawns_total": -556,
+    "centipawns_current": -19,
     "latency_ms": 64
   },
   {
@@ -397,8 +397,8 @@
     "uci": "d2c1",
     "player": "qwen3:8b",
     "reasoning": "Contest open files while avoiding unnecessary pawn weaknesses.",
-    "centipawns_total": -2255,
-    "centipawns_current": -98,
+    "centipawns_total": -574,
+    "centipawns_current": -18,
     "latency_ms": 1371
   },
   {
@@ -407,8 +407,8 @@
     "uci": "d8c8",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2339,
-    "centipawns_current": -84,
+    "centipawns_total": -576,
+    "centipawns_current": -2,
     "latency_ms": 58
   },
   {
@@ -417,8 +417,8 @@
     "uci": "c1d2",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": -2384,
-    "centipawns_current": -45,
+    "centipawns_total": -627,
+    "centipawns_current": -51,
     "latency_ms": 889
   },
   {
@@ -427,8 +427,8 @@
     "uci": "c8c5",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2436,
-    "centipawns_current": -52,
+    "centipawns_total": -668,
+    "centipawns_current": -41,
     "latency_ms": 63
   },
   {
@@ -437,8 +437,8 @@
     "uci": "d2d1",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": -2518,
-    "centipawns_current": -82,
+    "centipawns_total": -676,
+    "centipawns_current": -8,
     "latency_ms": 844
   },
   {
@@ -447,8 +447,8 @@
     "uci": "a6b4",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2589,
-    "centipawns_current": -71,
+    "centipawns_total": -670,
+    "centipawns_current": 6,
     "latency_ms": 27
   },
   {
@@ -457,8 +457,8 @@
     "uci": "f1d3",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -2631,
-    "centipawns_current": -42,
+    "centipawns_total": -981,
+    "centipawns_current": -311,
     "latency_ms": 721
   },
   {
@@ -467,8 +467,8 @@
     "uci": "b4d3",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2685,
-    "centipawns_current": -54,
+    "centipawns_total": -1074,
+    "centipawns_current": -93,
     "latency_ms": 58
   },
   {
@@ -477,8 +477,8 @@
     "uci": "h1f1",
     "player": "qwen3:8b",
     "reasoning": "Simplify where possible to reduce tactical exposure.",
-    "centipawns_total": -2762,
-    "centipawns_current": -77,
+    "centipawns_total": -9880,
+    "centipawns_current": -8806,
     "latency_ms": 937
   },
   {
@@ -487,8 +487,8 @@
     "uci": "d3f4",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2813,
-    "centipawns_current": -51,
+    "centipawns_total": -9900,
+    "centipawns_current": -20,
     "latency_ms": 64
   },
   {
@@ -501,8 +501,8 @@
     "uci": "g3f4",
     "player": "qwen3:8b",
     "reasoning": "Contest open files while avoiding unnecessary pawn weaknesses.",
-    "centipawns_total": -2836,
-    "centipawns_current": -23,
+    "centipawns_total": -9920,
+    "centipawns_current": -20,
     "latency_ms": 742
   },
   {
@@ -511,8 +511,8 @@
     "uci": "c5d5",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2862,
-    "centipawns_current": -26,
+    "centipawns_total": -9940,
+    "centipawns_current": -20,
     "latency_ms": 59
   },
   {
@@ -521,8 +521,8 @@
     "uci": "d1c1",
     "player": "qwen3:8b",
     "reasoning": "Choose a practical developing move to keep the position playable.",
-    "centipawns_total": -2876,
-    "centipawns_current": -14,
+    "centipawns_total": -9940,
+    "centipawns_current": 0,
     "latency_ms": 1052
   },
   {
@@ -531,8 +531,8 @@
     "uci": "e8c8",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2904,
-    "centipawns_current": -28,
+    "centipawns_total": -9960,
+    "centipawns_current": -20,
     "latency_ms": 27
   },
   {
@@ -541,8 +541,8 @@
     "uci": "c1b1",
     "player": "qwen3:8b",
     "reasoning": "Prioritize king safety and piece coordination over tactical risk.",
-    "centipawns_total": -2924,
-    "centipawns_current": -20,
+    "centipawns_total": -9960,
+    "centipawns_current": 0,
     "latency_ms": 1093
   },
   {
@@ -551,8 +551,8 @@
     "uci": "d5d3",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2947,
-    "centipawns_current": -23,
+    "centipawns_total": -9980,
+    "centipawns_current": -20,
     "latency_ms": 60
   },
   {
@@ -561,8 +561,8 @@
     "uci": "b1a1",
     "player": "qwen3:8b",
     "reasoning": "Stabilize the center before committing to forcing lines.",
-    "centipawns_total": -2973,
-    "centipawns_current": -26,
+    "centipawns_total": -9980,
+    "centipawns_current": 0,
     "latency_ms": 1031
   },
   {
@@ -571,8 +571,8 @@
     "uci": "d3f1",
     "player": "Stockfish",
     "reasoning": "Engine best move",
-    "centipawns_total": -2991,
-    "centipawns_current": -18,
+    "centipawns_total": -10000,
+    "centipawns_current": -20,
     "latency_ms": 52
   },
   {
