@@ -494,22 +494,52 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     [processPayload, resetBoardState],
   );
 
+  /** Indices in the NDJSON array where a chess move is applied (skip log / end lines). */
+  const getReplayMoveIndices = useCallback((list: StreamPayload[]) => {
+    const out: number[] = [];
+    for (let i = 0; i < list.length; i += 1) {
+      const p = list[i];
+      if (p?.type === 'event' && p.uci) out.push(i);
+    }
+    return out;
+  }, []);
+
   const goReplayNext = useCallback(() => {
     const list = replayPayloadsRef.current;
     if (!list.length) return;
     const next = replayCursor + 1;
     if (next >= list.length) return;
     const payload = list[next];
-    const suppress = payload.type !== 'end';
-    const stopped = processPayload(payload, { suppressDialogs: suppress });
+    const stopped = processPayload(payload, { suppressDialogs: true });
     setReplayCursor(next);
     if (stopped) setSamplePlaybackPlaying(false);
   }, [replayCursor, processPayload]);
 
   const goReplayPrev = useCallback(() => {
     if (replayCursor <= -1) return;
-    applyReplayUpTo(replayCursor - 1);
-  }, [replayCursor, applyReplayUpTo]);
+    const list = replayPayloadsRef.current;
+    const moveIdx = getReplayMoveIndices(list);
+    if (!moveIdx.length) return;
+
+    /** Last move index that is at or before the current cursor (position after replaying 0..cursor). */
+    let lastIncluded = -1;
+    for (const idx of moveIdx) {
+      if (idx <= replayCursor) lastIncluded = idx;
+      else break;
+    }
+
+    if (lastIncluded < 0) {
+      applyReplayUpTo(-1);
+      return;
+    }
+
+    const pos = moveIdx.indexOf(lastIncluded);
+    if (pos <= 0) {
+      applyReplayUpTo(-1);
+    } else {
+      applyReplayUpTo(moveIdx[pos - 1]);
+    }
+  }, [replayCursor, applyReplayUpTo, getReplayMoveIndices]);
 
   useEffect(() => {
     if (!samplePlaybackPlaying || dataSource !== 'sample') return;
