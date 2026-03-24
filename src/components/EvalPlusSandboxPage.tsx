@@ -438,6 +438,13 @@ export function EvalPlusSandboxPage({
   const canStepPrev = dataSource === 'sample' && safeStep > 0;
   const canStepNext = dataSource === 'sample' && moves.length > 0 && safeStep < moves.length - 1;
 
+  const handlePlaybackSeek = useCallback((idx: number) => {
+    setSamplePlaybackPlaying(false);
+    setStepIndex(idx);
+  }, []);
+
+  const seekEnabled = dataSource === 'sample' && moves.length > 1;
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#ecfdf5_0%,#ffffff_45%)]">
       <div className="sandbox-shell flex min-h-screen flex-col px-3 py-3 sm:px-5 sm:py-5 lg:px-6">
@@ -479,6 +486,11 @@ export function EvalPlusSandboxPage({
                   positionLabel={playbackPositionLabel}
                   disabled={!!autoError}
                   hideStepControls={dataSource === 'live'}
+                  seekMin={0}
+                  seekMax={Math.max(0, moves.length - 1)}
+                  seekValue={safeStep}
+                  onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
+                  seekLabel="Step"
                 />
                 <div className="sandbox-controls-actions mt-2">
                   <Button variant="outline" size="sm" onClick={handleReset}>

@@ -802,6 +802,16 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   const canReplayNext =
     dataSource === 'sample' && replayPayloads.length > 0 && replayCursor < replayPayloads.length - 1;
 
+  const handlePlaybackSeek = useCallback(
+    (idx: number) => {
+      setSamplePlaybackPlaying(false);
+      applyReplayUpTo(idx);
+    },
+    [applyReplayUpTo],
+  );
+
+  const seekEnabled = dataSource === 'sample' && replayPayloads.length > 0;
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#eef2ff_0%,#ffffff_40%)]">
       <div className="sandbox-shell flex min-h-screen flex-col px-3 py-3 sm:px-5 sm:py-5 lg:px-6">
@@ -843,6 +853,11 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                   positionLabel={replayPositionLabel}
                   disabled={!!autoError}
                   hideStepControls={dataSource === 'live'}
+                  seekMin={seekEnabled ? -1 : 0}
+                  seekMax={seekEnabled ? replayPayloads.length - 1 : 0}
+                  seekValue={replayCursor}
+                  onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
+                  seekLabel="Move"
                 />
                 <div className="sandbox-controls-actions mt-2">
                   <Button variant="outline" size="sm" onClick={handleResetBoard}>

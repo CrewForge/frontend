@@ -40,14 +40,16 @@ export function ChessMaterial({
 }: ChessMaterialProps) {
   return (
     <div className="chess-material-wrap" aria-label="Material balance">
+      {/* Top = Black’s side (rank 8): Black’s net advantage (pieces White captured appear as white glyphs) */}
       <div className="chess-material__row chess-material__row--top">
-        <MaterialStrip kinds={whiteIcons} color="black" />
-        {whitePlus > 0 ? <span className="chess-material__plus">+{whitePlus}</span> : null}
-      </div>
-      {children}
-      <div className="chess-material__row chess-material__row--bottom">
         <MaterialStrip kinds={blackIcons} color="white" />
         {blackPlus > 0 ? <span className="chess-material__plus">+{blackPlus}</span> : null}
+      </div>
+      {children}
+      {/* Bottom = White’s side (rank 1): White’s net advantage (Black’s pieces captured as black glyphs) */}
+      <div className="chess-material__row chess-material__row--bottom">
+        <MaterialStrip kinds={whiteIcons} color="black" />
+        {whitePlus > 0 ? <span className="chess-material__plus">+{whitePlus}</span> : null}
       </div>
     </div>
   );

@@ -263,6 +263,38 @@
   min-width: 2.75rem;
 }
 
+.sandbox-playback-bar__speed--compact input[type='range'] {
+  width: 4.25rem;
+  height: 0.35rem;
+}
+
+.sandbox-playback-bar__seek {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-width: 0;
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid color-mix(in oklab, var(--border) 45%, transparent);
+}
+
+.sandbox-playback-bar__seek-label {
+  flex-shrink: 0;
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.sandbox-playback-bar__seek input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--primary);
+  height: 0.35rem;
+}
+
 .sandbox-log-panel {
   border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
   border-radius: 0.8rem;
@@ -690,13 +722,15 @@
   background: linear-gradient(180deg, #2d2a28 0%, #1a1816 100%);
 }
 
+/* White fills from the bottom (White’s side); top of bar = Black */
 .chess-eval-bar__white {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
+  top: auto;
   background: linear-gradient(180deg, #f3f3f3 0%, #d8d8d8 100%);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
 }
 
 .chess-eval-bar__midline {

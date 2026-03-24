@@ -22,6 +22,12 @@ export interface SandboxPlaybackControlsProps {
   disabled?: boolean;
   /** Hide prev/next/speed (e.g. live chess with no buffer). */
   hideStepControls?: boolean;
+  /** Optional scrubber — discrete index (replay cursor / step). */
+  seekMin?: number;
+  seekMax?: number;
+  seekValue?: number;
+  onSeekChange?: (value: number) => void;
+  seekLabel?: string;
 }
 
 export function SandboxPlaybackControls({
@@ -39,8 +45,15 @@ export function SandboxPlaybackControls({
   positionLabel,
   disabled = false,
   hideStepControls = false,
+  seekMin = 0,
+  seekMax = 0,
+  seekValue = 0,
+  onSeekChange,
+  seekLabel = 'Position',
 }: SandboxPlaybackControlsProps) {
   const stepDisabled = isLive && hideStepControls;
+  const seekUsable =
+    !stepDisabled && typeof onSeekChange === 'function' && seekMax > seekMin;
 
   return (
     <div className="sandbox-playback-bar">
@@ -105,7 +118,7 @@ export function SandboxPlaybackControls({
       <div className="sandbox-playback-bar__meta">
         <span className="sandbox-playback-bar__position">{positionLabel}</span>
         {!stepDisabled && (
-          <label className="sandbox-playback-bar__speed">
+          <label className="sandbox-playback-bar__speed sandbox-playback-bar__speed--compact">
             <span className="sandbox-playback-bar__speed-label">Speed</span>
             <input
               type="range"
@@ -121,6 +134,22 @@ export function SandboxPlaybackControls({
           </label>
         )}
       </div>
+
+      {seekUsable && (
+        <label className="sandbox-playback-bar__seek">
+          <span className="sandbox-playback-bar__seek-label">{seekLabel}</span>
+          <input
+            type="range"
+            min={seekMin}
+            max={seekMax}
+            step={1}
+            value={Math.min(seekMax, Math.max(seekMin, seekValue))}
+            disabled={disabled}
+            onChange={(e) => onSeekChange?.(Number(e.target.value))}
+            aria-label={`${seekLabel} scrub`}
+          />
+        </label>
+      )}
     </div>
   );
 }
