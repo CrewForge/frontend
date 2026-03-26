@@ -159,9 +159,11 @@ export function InteractionGraphView({
 
   if (layout === "sideColumn") {
     return (
-      <div className="flex min-w-0 flex-col gap-2">
-        {shell}
-        <div className="min-h-0 max-h-[min(200px,28vh)] overflow-y-auto">
+      <div className="interaction-graph-side-column">
+        <div className="interaction-graph-flow-slot">
+          {shell}
+        </div>
+        <div className="interaction-graph-evidence-scroll">
           <EdgeEvidencePanel edge={selectedEdge} focusTurn={evidenceFocusTurn} />
         </div>
       </div>

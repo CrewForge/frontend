@@ -29,8 +29,6 @@ import {
   SandboxSidePanelHeader,
 } from './sandbox-visualization/SandboxVisualizationTemplate';
 
-const sandboxSplitLayoutTransition = { type: 'spring' as const, stiffness: 380, damping: 38 };
-
 export interface ChessSandboxPageProps {
   token: string;
   onBack: () => void;
@@ -788,7 +786,7 @@ export function ChessSandboxPage({
           <div
             className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
           >
-            <motion.div layout className="min-w-0" transition={sandboxSplitLayoutTransition}>
+            <div className="min-w-0">
               <SandboxPrimaryCard
                   title="Board & analysis"
                   description="UCI stream · chess.js SAN · eval from centipawns"
@@ -859,9 +857,9 @@ export function ChessSandboxPage({
                     />
                   </div>
                 </SandboxPrimaryCard>
-            </motion.div>
+            </div>
 
-            <motion.aside layout className="min-w-0 flex flex-col gap-3" transition={sandboxSplitLayoutTransition}>
+            <aside className="min-w-0 flex flex-col gap-3">
               <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
               <div className="sandbox-side-stack min-w-0">
               <InteractionGraphSection
@@ -910,7 +908,7 @@ export function ChessSandboxPage({
                 </div>
               </SandboxSideLogCard>
               </div>
-            </motion.aside>
+            </aside>
           </div>
         </div>
       </SandboxVisualizationRoot>
