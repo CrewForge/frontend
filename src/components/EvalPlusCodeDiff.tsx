@@ -5,6 +5,8 @@ import { detectLanguage, highlightLine } from '../lib/syntaxHighlight';
 type EvalPlusCodeDiffProps = {
   before: string;
   after: string;
+  /** Registered highlight.js language (e.g. from ```lang); overrides autodetection when set. */
+  highlightLanguage?: string | null;
   className?: string;
   /** When true, render only the diff body (no outer panel, chrome, or copy). For use inside EvalPlusCodeWorkspace. */
   contentOnly?: boolean;
@@ -23,9 +25,18 @@ function gutterClass(d: DiffLine): string {
   return `${base} evalplus-diff-gutter--same`;
 }
 
-export function EvalPlusCodeDiff({ before, after, className, contentOnly = false }: EvalPlusCodeDiffProps) {
+export function EvalPlusCodeDiff({
+  before,
+  after,
+  highlightLanguage,
+  className,
+  contentOnly = false,
+}: EvalPlusCodeDiffProps) {
   const lines = useMemo(() => diffLines(before, after), [before, after]);
-  const detectedLanguage = useMemo(() => detectLanguage(before, after), [before, after]);
+  const detectedLanguage = useMemo(
+    () => highlightLanguage ?? detectLanguage(before, after),
+    [before, after, highlightLanguage],
+  );
   const lineHtml = useMemo(
     () => lines.map((d) => highlightLine(d.text || ' ', detectedLanguage)),
     [lines, detectedLanguage],

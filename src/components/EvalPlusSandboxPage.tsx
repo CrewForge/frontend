@@ -20,7 +20,8 @@ import { Switch } from './ui/switch';
 import { ExperimentPicker } from './experiments/ExperimentPicker';
 import { InteractionGraphSection } from './interaction-graph/InteractionGraphSection';
 import { EvalPlusResultsDialog, type EvalPlusResultsSummary } from './EvalPlusResultsDialog';
-import { detectLanguage } from '../lib/syntaxHighlight';
+import { resolveEvalPlusHighlightLanguage } from '../lib/syntaxHighlight';
+import { stripMarkdownCodeFence } from '../lib/evalplusMarkdownFence';
 import type { ExperimentDataset, ExperimentManifestEntry } from '../lib/experiments/types';
 import { loadManifest, normalizeLoadedDataset } from '../lib/experiments/load';
 import { datasetToEvalPlusMoves } from '../lib/experiments/normalize';
@@ -505,8 +506,16 @@ export function EvalPlusSandboxPage({
   const prevCode = safeStep > 0 ? moves[safeStep - 1]?.action ?? '' : '';
   const currCode = moves[safeStep]?.action ?? '';
 
+  const prevFence = useMemo(() => stripMarkdownCodeFence(prevCode), [prevCode]);
+  const currFence = useMemo(() => stripMarkdownCodeFence(currCode), [currCode]);
+  const displayPrev = prevFence.code;
+  const displayCurr = currFence.code;
+  const evalPlusHighlightLang = useMemo(
+    () => resolveEvalPlusHighlightLanguage(displayPrev, displayCurr, currFence.language ?? prevFence.language),
+    [displayPrev, displayCurr, currFence.language, prevFence.language],
+  );
+
   const currentMove = moves[safeStep];
-  const detectedLanguage = useMemo(() => detectLanguage(prevCode, currCode), [prevCode, currCode]);
   const avgLatency = useMemo(() => {
     const lat = moves.map((m) => m.latency_ms).filter((x): x is number => typeof x === 'number');
     if (!lat.length) return null;
@@ -648,10 +657,10 @@ export function EvalPlusSandboxPage({
                             Show diff
                           </label>
                         </div>
-                        {(prevCode || currCode).trim() ? (
-                          <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>
+                        {(displayPrev || displayCurr).trim() ? (
+                          <span className="evalplus-ide-lang-pill">{evalPlusHighlightLang}</span>
                         ) : null}
-                        <CopyCodeButton textToCopy={currCode} disabled={!currCode.trim()} />
+                        <CopyCodeButton textToCopy={displayCurr} disabled={!displayCurr.trim()} />
                       </div>
                     </div>
                     <motion.div
@@ -661,9 +670,19 @@ export function EvalPlusSandboxPage({
                       transition={{ duration: 0.18 }}
                     >
                       {showDiff ? (
-                        <EvalPlusCodeDiff before={prevCode} after={currCode} contentOnly />
+                        <EvalPlusCodeDiff
+                          before={displayPrev}
+                          after={displayCurr}
+                          highlightLanguage={evalPlusHighlightLang}
+                          contentOnly
+                        />
                       ) : (
-                        <IdeHighlightedCode code={currCode} contentOnly emptyLabel="—" />
+                        <IdeHighlightedCode
+                          code={displayCurr}
+                          language={evalPlusHighlightLang}
+                          contentOnly
+                          emptyLabel="—"
+                        />
                       )}
                     </motion.div>
                   </div>

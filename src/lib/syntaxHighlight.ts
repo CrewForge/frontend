@@ -117,9 +117,18 @@ export function detectLanguage(before: string, after: string): string {
 
 /**
  * Highlight an entire source file. Uses heuristics + restricted highlightAuto.
+ * When `languageOverride` is a registered highlight.js grammar, it wins (e.g. EvalPlus ```lang fences).
  */
-export function highlightFullCode(code: string): { html: string; language: string } {
+export function highlightFullCode(code: string, languageOverride?: string | null): { html: string; language: string } {
   if (!code.trim()) return { html: '', language: 'plaintext' };
+  if (languageOverride && hljs.getLanguage(languageOverride)) {
+    try {
+      const h = hljs.highlight(code, { language: languageOverride, ignoreIllegals: true });
+      return { html: h.value, language: languageOverride };
+    } catch {
+      /* fall through */
+    }
+  }
   const hinted = inferLanguageFromHeuristics(code);
   if (hinted && hljs.getLanguage(hinted)) {
     try {
@@ -136,6 +145,18 @@ export function highlightFullCode(code: string): { html: string; language: strin
   } catch {
     return { html: escapeHtml(code), language: 'plaintext' };
   }
+}
+
+/**
+ * EvalPlus: prefer an explicit fence language when valid; otherwise autodetect on stripped snippets.
+ */
+export function resolveEvalPlusHighlightLanguage(
+  strippedBefore: string,
+  strippedAfter: string,
+  fenceLanguage: string | null,
+): string {
+  if (fenceLanguage && hljs.getLanguage(fenceLanguage)) return fenceLanguage;
+  return detectLanguage(strippedBefore, strippedAfter);
 }
 
 /**

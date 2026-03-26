@@ -9,6 +9,8 @@ type IdeHighlightedCodeProps = {
   emptyLabel?: string;
   /** When true, render only the highlighted code block (no panel chrome or copy). For use inside EvalPlus merged workspace. */
   contentOnly?: boolean;
+  /** Registered highlight.js language name (e.g. from markdown ```lang fence). */
+  language?: string | null;
 };
 
 export function IdeHighlightedCode({
@@ -16,8 +18,9 @@ export function IdeHighlightedCode({
   fileTab = 'solution.py',
   emptyLabel = '—',
   contentOnly = false,
+  language: languageProp,
 }: IdeHighlightedCodeProps) {
-  const { html, language } = useMemo(() => highlightFullCode(code), [code]);
+  const { html, language } = useMemo(() => highlightFullCode(code, languageProp), [code, languageProp]);
   const hasCode = code.trim().length > 0;
 
   const inner = hasCode ? (
