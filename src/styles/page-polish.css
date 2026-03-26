@@ -366,6 +366,11 @@
   min-height: 6px !important;
 }
 
+/* Replay step: edges with traffic this turn use primary stroke + soft glow */
+.react-flow__edge.interaction-graph-edge--step-active path {
+  filter: drop-shadow(0 0 0.22rem color-mix(in oklab, var(--primary) 50%, transparent));
+}
+
 /* Edge evidence: collapsible chevron follows Radix data-state on trigger */
 [data-slot="collapsible-trigger"][data-state="open"] .interaction-edge-collapse-chevron {
   transform: rotate(180deg);

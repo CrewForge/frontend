@@ -74,7 +74,10 @@ export function InteractionGraphView({
   evidenceFocusTurn?: number | null;
 }) {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
-  const built = useMemo(() => buildFlowGraph(graph), [graph]);
+  const built = useMemo(
+    () => buildFlowGraph(graph, { focusTurn: evidenceFocusTurn ?? null }),
+    [graph, evidenceFocusTurn],
+  );
   const [nodes, setNodes, onNodesChange] = useNodesState(built.nodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(built.edges);
 

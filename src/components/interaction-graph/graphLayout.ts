@@ -1,7 +1,8 @@
+import type { CSSProperties } from "react";
 import dagre from "dagre";
 import type { Edge, Node } from "reactflow";
 import { Position } from "reactflow";
-import type { InteractionGraphData } from "../../lib/experiments/types";
+import type { InteractionGraphData, InteractionGraphEdge } from "../../lib/experiments/types";
 
 const META_HINT = "meta";
 const COMMON_SPACE_ID = "CommonSpace";
@@ -28,16 +29,46 @@ function nodeTypeFor(label: string) {
   return "agent";
 }
 
-function buildReactFlowEdges(graph: InteractionGraphData): Edge[] {
+function edgeHasSamplesForTurn(edge: InteractionGraphEdge, turn: number): boolean {
+  return (edge.samples ?? []).some((s) => s.turn === turn);
+}
+
+function buildReactFlowEdges(graph: InteractionGraphData, focusTurn: number | null): Edge[] {
+  const focus =
+    focusTurn != null && !Number.isNaN(Number(focusTurn)) ? Number(focusTurn) : null;
+
   return graph.edges.map((e, i) => {
     const spread = ((i % 11) - 5) * 4;
+    const baseW = Math.min(5.5, Math.max(1.5, 1 + e.weight / 2.5));
+    const stepActive = focus !== null && edgeHasSamplesForTurn(e, focus);
+
+    let style: CSSProperties;
+    if (focus === null) {
+      style = {
+        strokeWidth: baseW,
+        opacity: 0.84,
+      };
+    } else if (stepActive) {
+      style = {
+        stroke: "var(--primary)",
+        strokeWidth: Math.min(7, baseW + 2),
+        opacity: 1,
+      };
+    } else {
+      style = {
+        stroke: "color-mix(in oklab, var(--muted-foreground) 42%, transparent)",
+        strokeWidth: baseW,
+        opacity: 0.42,
+      };
+    }
+
     return {
       id: e.id,
       source: e.source,
       target: e.target,
       type: "smoothstep",
       pathOptions: { borderRadius: 20, offset: spread },
-      animated: e.weight > 6,
+      animated: focus !== null ? stepActive : e.weight > 6,
       label: `${e.weight}`,
       data: {
         weight: e.weight,
@@ -45,10 +76,8 @@ function buildReactFlowEdges(graph: InteractionGraphData): Edge[] {
         samples: e.samples,
         lastTimestamp: e.lastTimestamp,
       },
-      style: {
-        strokeWidth: Math.min(5.5, Math.max(1.5, 1 + e.weight / 2.5)),
-        opacity: 0.84,
-      },
+      style,
+      className: focus === null ? undefined : stepActive ? "interaction-graph-edge--step-active" : "interaction-graph-edge--step-dim",
     };
   });
 }
@@ -189,8 +218,12 @@ export function graphTopologySignature(graph: InteractionGraphData): string {
   return `N:${nodeIds}|E:${edgeIds}`;
 }
 
-export function buildFlowGraph(graph: InteractionGraphData): { nodes: Node[]; edges: Edge[] } {
-  const edges = buildReactFlowEdges(graph);
+export function buildFlowGraph(
+  graph: InteractionGraphData,
+  options?: { focusTurn?: number | null },
+): { nodes: Node[]; edges: Edge[] } {
+  const focusTurn = options?.focusTurn ?? null;
+  const edges = buildReactFlowEdges(graph, focusTurn);
 
   if (graph.nodes.length === 0) {
     return { nodes: [], edges: [] };
