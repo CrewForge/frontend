@@ -13,6 +13,12 @@ import type { GameResultsSummary } from './GameResultsDialog';
 import { ChessEvalBar } from './ChessEvalBar';
 import { ChessMoveList } from './ChessMoveList';
 import { ChessMaterial } from './ChessMaterial';
+import { ExperimentPicker } from './experiments/ExperimentPicker';
+import { InteractionGraphSection } from './interaction-graph/InteractionGraphSection';
+import type { ExperimentDataset, ExperimentManifestEntry } from '../lib/experiments/types';
+import { loadDataset, loadManifest } from '../lib/experiments/load';
+import { datasetToChessReplayPayloads, turnAtChessReplayStep } from '../lib/experiments/normalize';
+import { scrollChildIntoContainer } from '../lib/scrollChildIntoContainer';
 import {
   SandboxVisualizationRoot,
   SandboxEnvironmentHeader,
@@ -164,7 +170,6 @@ export function ChessSandboxPage({
   const [board, setBoard] = useState<BoardState>(createInitialBoard());
   const [resultsOpen, setResultsOpen] = useState(false);
   const [gameResults, setGameResults] = useState<GameResultsSummary | null>(null);
-  const [moveCount, setMoveCount] = useState(0);
   const [moveLogEntries, setMoveLogEntries] = useState<MoveLogEntry[]>([]);
   const moveLogRef = useRef<MoveLogEntry[]>([]);
   const [latestMove, setLatestMove] = useState<MoveLogEntry | null>(null);
@@ -183,6 +188,19 @@ export function ChessSandboxPage({
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [samplePlaybackPlaying, setSamplePlaybackPlaying] = useState(false);
   const moveLogScrollRef = useRef<HTMLDivElement>(null);
+  const activeMoveLogItemRef = useRef<HTMLDivElement | null>(null);
+  const [manifestEntries, setManifestEntries] = useState<ExperimentManifestEntry[]>([]);
+  const [selectedDatasetPath, setSelectedDatasetPath] = useState<string | null>(null);
+  const [activeDataset, setActiveDataset] = useState<ExperimentDataset | null>(null);
+
+  const chessMovePayloads = useMemo(
+    () => replayPayloads.filter((p) => p?.type === 'event' && p?.uci),
+    [replayPayloads],
+  );
+  const chessMovePayloadsRef = useRef<StreamPayload[]>([]);
+  useEffect(() => {
+    chessMovePayloadsRef.current = chessMovePayloads;
+  }, [chessMovePayloads]);
 
   const resetBoardState = useCallback(() => {
     if (animTimeoutRef.current) {
@@ -192,7 +210,6 @@ export function ChessSandboxPage({
     setMoveAnim(null);
     chessRef.current = new Chess();
     setBoard(buildBoardState(chessRef.current, null));
-    setMoveCount(0);
     moveLogRef.current = [];
     setMoveLogEntries([]);
     setLatestMove(null);
@@ -294,7 +311,6 @@ export function ChessSandboxPage({
             setBoard(buildBoardState(chessRef.current, lastHighlight));
           }
 
-          setMoveCount((prev) => prev + 1);
           const nextEntry: MoveLogEntry = {
             ply: typeof payload.ply === 'number' ? payload.ply : moveLogRef.current.length,
             uci: payload.uci,
@@ -307,10 +323,7 @@ export function ChessSandboxPage({
           };
           setLatestMove(nextEntry);
           setMoveLogEntries((prev) => {
-            const next = [
-              ...prev.slice(-49),
-              nextEntry,
-            ];
+            const next = [...prev, nextEntry];
             moveLogRef.current = next;
             return next;
           });
@@ -474,15 +487,29 @@ export function ChessSandboxPage({
     replayPayloadsRef.current = replayPayloads;
   }, [replayPayloads]);
 
+  useEffect(() => {
+    void loadManifest()
+      .then((entries) => {
+        setManifestEntries(entries);
+        const chessEntries = entries.filter((entry) => entry.envType === 'chess');
+        if (chessEntries.length === 0) return;
+        setSelectedDatasetPath((prev) => prev ?? chessEntries[0].path);
+      })
+      .catch((err) => {
+        setAutoError((err as Error).message || 'Failed to load experiment manifest.');
+      });
+  }, []);
+
   const loadChessSample = useCallback(async () => {
-    const response = await fetch('/samples/chess-auto-sample.json');
-    if (!response.ok) {
-      throw new Error('Unable to load sample results.');
+    if (!selectedDatasetPath) {
+      throw new Error('No chess experiment selected.');
     }
-    const payloads = (await response.json()) as StreamPayload[];
-    if (!Array.isArray(payloads)) {
-      throw new Error('Sample results are not in the expected array format.');
+    const dataset = await loadDataset(selectedDatasetPath);
+    const payloads = datasetToChessReplayPayloads(dataset) as StreamPayload[];
+    if (!Array.isArray(payloads) || payloads.length === 0) {
+      throw new Error('Selected dataset does not contain replayable chess moves.');
     }
+    setActiveDataset(dataset);
     setReplayPayloads(payloads);
     replayPayloadsRef.current = payloads;
     resetBoardState();
@@ -490,13 +517,14 @@ export function ChessSandboxPage({
     setResultsOpen(false);
     setAutoError(null);
     setSamplePlaybackPlaying(false);
-    setStatusMessage('Sample loaded — play, step, or adjust speed.');
-  }, [resetBoardState]);
+    setStatusMessage('Experiment loaded — play, step, or adjust speed.');
+  }, [resetBoardState, selectedDatasetPath]);
 
-  const applyReplayUpTo = useCallback(
-    (endIndex: number) => {
-      const list = replayPayloadsRef.current;
-      if (endIndex < 0) {
+  /** Replay step index in `chessMovePayloads` only: -1 = before first move, else last applied move index. */
+  const applyReplayUpToStep = useCallback(
+    (stepIndex: number) => {
+      const list = chessMovePayloadsRef.current;
+      if (stepIndex < 0) {
         resetBoardState();
         setSamplePlaybackPlaying(false);
         setStatusMessage('Replay reset');
@@ -504,7 +532,7 @@ export function ChessSandboxPage({
       }
       if (!list.length) return;
       resetBoardState();
-      const max = Math.min(endIndex, list.length - 1);
+      const max = Math.min(stepIndex, list.length - 1);
       for (let i = 0; i <= max; i += 1) {
         processPayload(list[i], { suppressDialogs: true });
       }
@@ -514,18 +542,8 @@ export function ChessSandboxPage({
     [processPayload, resetBoardState],
   );
 
-  /** Indices in the NDJSON array where a chess move is applied (skip log / end lines). */
-  const getReplayMoveIndices = useCallback((list: StreamPayload[]) => {
-    const out: number[] = [];
-    for (let i = 0; i < list.length; i += 1) {
-      const p = list[i];
-      if (p?.type === 'event' && p.uci) out.push(i);
-    }
-    return out;
-  }, []);
-
   const goReplayNext = useCallback(() => {
-    const list = replayPayloadsRef.current;
+    const list = chessMovePayloadsRef.current;
     if (!list.length) return;
     const next = replayCursor + 1;
     if (next >= list.length) return;
@@ -537,33 +555,12 @@ export function ChessSandboxPage({
 
   const goReplayPrev = useCallback(() => {
     if (replayCursor <= -1) return;
-    const list = replayPayloadsRef.current;
-    const moveIdx = getReplayMoveIndices(list);
-    if (!moveIdx.length) return;
-
-    /** Last move index that is at or before the current cursor (position after replaying 0..cursor). */
-    let lastIncluded = -1;
-    for (const idx of moveIdx) {
-      if (idx <= replayCursor) lastIncluded = idx;
-      else break;
-    }
-
-    if (lastIncluded < 0) {
-      applyReplayUpTo(-1);
-      return;
-    }
-
-    const pos = moveIdx.indexOf(lastIncluded);
-    if (pos <= 0) {
-      applyReplayUpTo(-1);
-    } else {
-      applyReplayUpTo(moveIdx[pos - 1]);
-    }
-  }, [replayCursor, applyReplayUpTo, getReplayMoveIndices]);
+    applyReplayUpToStep(replayCursor - 1);
+  }, [replayCursor, applyReplayUpToStep]);
 
   useEffect(() => {
     if (!samplePlaybackPlaying || dataSource !== 'sample') return;
-    const list = replayPayloadsRef.current;
+    const list = chessMovePayloadsRef.current;
     if (!list.length) return;
     if (replayCursor >= list.length - 1) {
       setSamplePlaybackPlaying(false);
@@ -610,8 +607,8 @@ export function ChessSandboxPage({
       return;
     }
     setSamplePlaybackPlaying(false);
-    applyReplayUpTo(-1);
-  }, [dataSource, handleStopStream, resetBoardState, applyReplayUpTo]);
+    applyReplayUpToStep(-1);
+  }, [dataSource, handleStopStream, resetBoardState, applyReplayUpToStep]);
 
   const handleResetBoard = useCallback(() => {
     handleStopStream();
@@ -632,29 +629,31 @@ export function ChessSandboxPage({
 
   useEffect(() => {
     if (dataSource !== 'sample') return;
+    if (!selectedDatasetPath) return;
     void loadChessSample().catch((err) => {
       setAutoError((err as Error).message || 'Failed to load sample');
       setStatusMessage('Sample error');
     });
-  }, [dataSource, loadChessSample]);
+  }, [dataSource, loadChessSample, selectedDatasetPath]);
 
   useEffect(() => {
     if (backendLiveAvailable || dataSource !== 'live') return;
     onSetDataSource?.('sample');
   }, [backendLiveAvailable, dataSource, onSetDataSource]);
 
-  /** Keep move log pinned to the latest entry (bottom) as new moves stream in. */
+  /** Keep the active move row in view inside the log scroll area only (does not scroll the page). */
   useEffect(() => {
-    const el = moveLogScrollRef.current;
-    if (!el) return;
+    const container = moveLogScrollRef.current;
+    const el = activeMoveLogItemRef.current;
+    if (!container || !el) return;
     const id = requestAnimationFrame(() => {
-      el.scrollTo({
-        top: el.scrollHeight,
+      scrollChildIntoContainer(container, el, {
         behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        padding: 10,
       });
     });
     return () => cancelAnimationFrame(id);
-  }, [moveLogEntries.length, prefersReducedMotion]);
+  }, [replayCursor, moveLogEntries.length, prefersReducedMotion]);
 
   const averageLatencyMs = useMemo(() => {
     const entries = moveLogEntries.filter((entry) => typeof entry.latencyMs === 'number');
@@ -676,7 +675,7 @@ export function ChessSandboxPage({
     return null;
   }, [moveLogEntries]);
 
-  const material = useMemo(() => materialAdvantageFromGame(chessRef.current), [moveCount]);
+  const material = useMemo(() => materialAdvantageFromGame(chessRef.current), [moveLogEntries.length]);
 
   const handleSwitchToLive = useCallback(() => {
     handleStopStream();
@@ -705,30 +704,39 @@ export function ChessSandboxPage({
   }, [dataSource, loadChessSample, startAutoStream]);
 
   const playbackActive = dataSource === 'sample' ? samplePlaybackPlaying : isPlaying;
+  const chessMovesTotal = chessMovePayloads.length;
   const replayPositionLabel =
-    dataSource === 'sample' && replayPayloads.length > 0
-      ? `${replayCursor + 1} / ${replayPayloads.length}`
+    dataSource === 'sample' && chessMovesTotal > 0
+      ? replayCursor < 0
+        ? `0 / ${chessMovesTotal}`
+        : `${replayCursor + 1} / ${chessMovesTotal}`
       : dataSource === 'live'
         ? 'Live stream'
         : '—';
   const canReplayPrev = dataSource === 'sample' && replayCursor >= 0;
-  const canReplayNext =
-    dataSource === 'sample' && replayPayloads.length > 0 && replayCursor < replayPayloads.length - 1;
+  const canReplayNext = dataSource === 'sample' && chessMovesTotal > 0 && replayCursor < chessMovesTotal - 1;
 
   const handlePlaybackSeek = useCallback(
     (idx: number) => {
       setSamplePlaybackPlaying(false);
-      applyReplayUpTo(idx);
+      applyReplayUpToStep(idx);
     },
-    [applyReplayUpTo],
+    [applyReplayUpToStep],
   );
 
-  const seekEnabled = dataSource === 'sample' && replayPayloads.length > 0;
+  const seekEnabled = dataSource === 'sample' && chessMovesTotal > 0;
+
+  const movesMetricValue = useMemo(() => {
+    if (dataSource === 'sample' && chessMovesTotal > 0) {
+      return `${moveLogEntries.length} / ${chessMovesTotal}`;
+    }
+    return moveLogEntries.length;
+  }, [dataSource, chessMovesTotal, moveLogEntries.length]);
 
   const chessMetricsItems = useMemo(
     () => [
       { key: 'status', label: 'Status', value: statusMessage },
-      { key: 'moves', label: 'Moves', value: moveCount },
+      { key: 'moves', label: 'Moves', value: movesMetricValue },
       { key: 'last', label: 'Last', value: latestMove?.san ?? '—' },
       {
         key: 'latency',
@@ -737,7 +745,7 @@ export function ChessSandboxPage({
         mutedSuffix: <span className="text-muted-foreground"> ({INFERRED_NOTE})</span>,
       },
     ],
-    [averageLatencyMs, latestMove?.san, moveCount, statusMessage],
+    [averageLatencyMs, latestMove?.san, movesMetricValue, statusMessage],
   );
 
   return (
@@ -755,50 +763,63 @@ export function ChessSandboxPage({
           onSwitchToLive={handleSwitchToLive}
           subtitle={
             backendLiveAvailable
-              ? 'Sample replay uses bundled JSON; live stream uses the environment API.'
-              : 'Standalone build: replay uses bundled JSON only. Connect a CrewForge API server to enable live streams.'
+              ? 'Replay uses experiment JSON datasets; live stream uses the environment API.'
+              : 'Standalone build: replay uses experiment JSON datasets only. Connect a CrewForge API server to enable live streams.'
           }
-          metricsStrip={<SandboxMetricsStrip items={chessMetricsItems} />}
+          metricsStrip={
+            <>
+              <SandboxMetricsStrip items={chessMetricsItems} />
+              <div className="mt-2.5">
+                <ExperimentPicker
+                  entries={manifestEntries}
+                  envType="chess"
+                  selectedPath={selectedDatasetPath}
+                  onSelectPath={setSelectedDatasetPath}
+                />
+              </div>
+            </>
+          }
         />
 
-        <div className="sandbox-main-grid p-3 sm:p-4">
-          <div className="min-w-0">
-            <SandboxPrimaryCard
-              title="Board & analysis"
-              description="UCI stream · chess.js SAN · eval from centipawns"
-              toolbar={
-                <SandboxVizToolbarBlock
-                  dataSource={dataSource}
-                  playbackActive={playbackActive}
-                  errorMessage={autoError}
-                  onFullReset={handleResetBoard}
-                  playbackControls={
-                    <SandboxPlaybackControls
-                      isLive={dataSource === 'live'}
-                      isPlaying={playbackActive}
-                      onPlay={() => void handlePlaybackPlay()}
-                      onPause={handlePlaybackPause}
-                      onRestart={handlePlaybackRestart}
-                      onPrev={goReplayPrev}
-                      onNext={goReplayNext}
-                      canPrev={canReplayPrev}
-                      canNext={canReplayNext}
-                      speed={playbackSpeed}
-                      onSpeedChange={setPlaybackSpeed}
-                      positionLabel={replayPositionLabel}
-                      disabled={!!autoError}
-                      hideStepControls={dataSource === 'live'}
-                      seekMin={seekEnabled ? -1 : 0}
-                      seekMax={seekEnabled ? replayPayloads.length - 1 : 0}
-                      seekValue={replayCursor}
-                      onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
-                      seekLabel="Move"
+        <div className="p-3 sm:p-4">
+          <div className="sandbox-main-grid sandbox-main-grid--with-graph">
+            <div className="min-w-0">
+              <SandboxPrimaryCard
+                  title="Board & analysis"
+                  description="UCI stream · chess.js SAN · eval from centipawns"
+                  toolbar={
+                    <SandboxVizToolbarBlock
+                      dataSource={dataSource}
+                      playbackActive={playbackActive}
+                      errorMessage={autoError}
+                      onFullReset={handleResetBoard}
+                      playbackControls={
+                        <SandboxPlaybackControls
+                          isLive={dataSource === 'live'}
+                          isPlaying={playbackActive}
+                          onPlay={() => void handlePlaybackPlay()}
+                          onPause={handlePlaybackPause}
+                          onRestart={handlePlaybackRestart}
+                          onPrev={goReplayPrev}
+                          onNext={goReplayNext}
+                          canPrev={canReplayPrev}
+                          canNext={canReplayNext}
+                          speed={playbackSpeed}
+                          onSpeedChange={setPlaybackSpeed}
+                          positionLabel={replayPositionLabel}
+                          disabled={!!autoError}
+                          hideStepControls={dataSource === 'live'}
+                          seekMin={seekEnabled ? -1 : 0}
+                          seekMax={seekEnabled ? chessMovesTotal - 1 : 0}
+                          seekValue={replayCursor}
+                          onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
+                          seekLabel="Move"
+                        />
+                      }
                     />
                   }
-                />
-              }
-            >
-              <div className="sandbox-chess-compact chess-board-workspace">
+                >
+                  <div className="sandbox-chess-compact chess-board-workspace">
                     <ChessMaterial
                       whiteIcons={material.whiteIcons}
                       blackIcons={material.blackIcons}
@@ -809,11 +830,11 @@ export function ChessSandboxPage({
                         <ChessEvalBar
                           centipawnsTotal={latestMove?.centipawnsTotal ?? null}
                           evalDeltaCp={evalDeltaCp}
-                          moveKey={moveCount}
+                          moveKey={moveLogEntries.length}
                         />
                         <motion.div
                           className="chess-board-and-eval__board"
-                          key={moveCount}
+                          key={moveLogEntries.length}
                           initial={{ opacity: 0.9, scale: 0.992 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.2 }}
@@ -832,43 +853,55 @@ export function ChessSandboxPage({
                       }))}
                     />
                   </div>
-            </SandboxPrimaryCard>
-          </div>
+                </SandboxPrimaryCard>
+            </div>
 
-          <div className="min-w-0">
-            <SandboxSideLogCard
-              title="Move log"
-              subtitle="Moves, eval, and reasoning"
-              entryCount={moveLogEntries.length}
-            >
-              <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
-                {moveLogEntries.length === 0 ? (
-                  <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
-                    No moves yet. Start a live stream or replay the sample run.
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {moveLogEntries.map((entry, idx) => (
-                      <div key={`${entry.ply}-${entry.uci}-${idx}`} className="sandbox-move-item">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="sandbox-move-uci">
-                            {entry.ply + 1}. {entry.san}{' '}
-                            <span className="font-normal text-muted-foreground">({entry.uci.toUpperCase()})</span>
+            <div className="sandbox-side-stack min-w-0">
+              <InteractionGraphSection
+                dataset={activeDataset}
+                layout="sideColumn"
+                evidenceFocusTurn={
+                  activeDataset && replayCursor >= 0 ? turnAtChessReplayStep(activeDataset, replayCursor) : null
+                }
+              />
+              <SandboxSideLogCard
+                title="Move log"
+                subtitle="Moves, eval, and reasoning"
+                entryCount={chessMovesTotal > 0 ? chessMovesTotal : moveLogEntries.length}
+              >
+                <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
+                  {moveLogEntries.length === 0 ? (
+                    <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                      No moves yet. Start a live stream or replay the loaded experiment.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {moveLogEntries.map((entry, idx) => (
+                        <div
+                          key={`${entry.ply}-${entry.uci}-${idx}`}
+                          ref={idx === moveLogEntries.length - 1 ? activeMoveLogItemRef : undefined}
+                          className="sandbox-move-item"
+                        >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="sandbox-move-uci">
+                                {entry.ply + 1}. {entry.san}{' '}
+                                <span className="font-normal text-muted-foreground">({entry.uci.toUpperCase()})</span>
+                              </div>
+                              <Badge variant="secondary">{entry.player}</Badge>
+                            </div>
+                            <div className="sandbox-move-meta mt-1.5">
+                              <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
+                              <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
+                              <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>
+                            </div>
+                            {entry.reasoning && <p className="sandbox-reasoning">{entry.reasoning}</p>}
                           </div>
-                          <Badge variant="secondary">{entry.player}</Badge>
-                        </div>
-                        <div className="sandbox-move-meta mt-1.5">
-                          <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
-                          <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
-                          <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>
-                        </div>
-                        {entry.reasoning && <p className="sandbox-reasoning">{entry.reasoning}</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </SandboxSideLogCard>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </SandboxSideLogCard>
+            </div>
           </div>
         </div>
       </SandboxVisualizationRoot>

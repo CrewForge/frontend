@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { SandboxPlaybackControls } from './SandboxPlaybackControls';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ApiError, authHeaders, streamEvalPlusAutoUrl, throwIfResponseNotOk } from '../lib/api';
 import type { ChessSandboxPageProps } from './ChessSandboxPage';
 import {
@@ -17,8 +17,14 @@ import { EvalPlusCodeDiff } from './EvalPlusCodeDiff';
 import { IdeHighlightedCode } from './IdeHighlightedCode';
 import { CopyCodeButton } from './CopyCodeButton';
 import { Switch } from './ui/switch';
+import { ExperimentPicker } from './experiments/ExperimentPicker';
+import { InteractionGraphSection } from './interaction-graph/InteractionGraphSection';
 import { EvalPlusResultsDialog, type EvalPlusResultsSummary } from './EvalPlusResultsDialog';
 import { detectLanguage } from '../lib/syntaxHighlight';
+import type { ExperimentDataset, ExperimentManifestEntry } from '../lib/experiments/types';
+import { loadManifest, normalizeLoadedDataset } from '../lib/experiments/load';
+import { datasetToEvalPlusMoves } from '../lib/experiments/normalize';
+import { scrollChildIntoContainer } from '../lib/scrollChildIntoContainer';
 import {
   SandboxVisualizationRoot,
   SandboxEnvironmentHeader,
@@ -89,6 +95,12 @@ export function EvalPlusSandboxPage({
   const [showDiff, setShowDiff] = useState(true);
   const [samplePlaybackPlaying, setSamplePlaybackPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [manifestEntries, setManifestEntries] = useState<ExperimentManifestEntry[]>([]);
+  const [selectedDatasetPath, setSelectedDatasetPath] = useState<string | null>(null);
+  const [activeDataset, setActiveDataset] = useState<ExperimentDataset | null>(null);
+  const submissionLogScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeSubmissionRef = useRef<HTMLButtonElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const appendSystemLog = useCallback((entry: string) => {
     setSystemLog((prev) => [entry, ...prev].slice(0, 60));
@@ -314,6 +326,19 @@ export function EvalPlusSandboxPage({
     setResultsOpen(false);
   }, [handleStopStream, resetState]);
 
+  useEffect(() => {
+    void loadManifest()
+      .then((entries) => {
+        setManifestEntries(entries);
+        const evalEntries = entries.filter((entry) => entry.envType === 'evalplus');
+        if (evalEntries.length === 0) return;
+        setSelectedDatasetPath((prev) => prev ?? evalEntries[0].path);
+      })
+      .catch((err) => {
+        setAutoError((err as Error).message || 'Failed to load experiment manifest.');
+      });
+  }, []);
+
   const handleSwitchToLive = useCallback(() => {
     handleStopStream();
     resetState();
@@ -329,18 +354,23 @@ export function EvalPlusSandboxPage({
   }, [handleStopStream, onSetDataSource, resetState]);
 
   const loadEvalSample = useCallback(async () => {
+    if (!selectedDatasetPath) {
+      throw new Error('No EvalPlus experiment selected.');
+    }
     resetState();
     setResultsOpen(false);
-    const response = await fetch('/samples/evalplus-auto-sample.json');
-    if (!response.ok) throw new Error('Unable to load EvalPlus sample.');
-    const data = (await response.json()) as unknown;
+    const res = await fetch(selectedDatasetPath);
+    if (!res.ok) {
+      throw new Error(`Failed to load experiment dataset (${res.status})`);
+    }
+    const raw = await res.json();
     streamStartedAtRef.current = Date.now();
     sawEndEventRef.current = false;
 
-    if (Array.isArray(data)) {
+    if (Array.isArray(raw)) {
       const collected: EvalPlusRunnerMove[] = [];
       let pk: EvalPlusPassAtK | null = null;
-      for (const item of data) {
+      for (const item of raw) {
         const p = item as StreamPayload;
         if (p.type === 'end') {
           sawEndEventRef.current = true;
@@ -364,20 +394,27 @@ export function EvalPlusSandboxPage({
       movesRef.current = collected;
       setStepIndex(0);
       if (pk) setPassAtK(pk);
+      setActiveDataset({ moves: collected as ExperimentDataset['moves'] });
       setStatusMessage('Sample loaded — play, step, or adjust speed.');
     } else {
-      const bundle = data as Record<string, unknown>;
-      const mv = movesFromPayload(bundle);
-      const pk = extractPassAtK(bundle as EvalPlusRunResult);
+      const bundle = normalizeLoadedDataset(raw) as ExperimentDataset;
+      const mv = datasetToEvalPlusMoves(bundle) as unknown as EvalPlusRunnerMove[];
+      const direct = bundle.result;
+      const parsedResult =
+        typeof direct === 'string'
+          ? (JSON.parse(direct) as EvalPlusPassAtK)
+          : (direct as EvalPlusPassAtK | undefined);
+      const pk = extractPassAtK(bundle as unknown as EvalPlusRunResult) ?? (parsedResult && typeof parsedResult === 'object' ? parsedResult : null);
       setMoves(mv);
       movesRef.current = mv;
-      setStepIndex(Math.max(0, mv.length - 1));
+      setStepIndex(0);
       if (pk) setPassAtK(pk);
       setStatusMessage('Loaded experiment bundle');
-      setEvalResults(buildResultsSummaryFromRefs(pk));
-      setResultsOpen(true);
+      setEvalResults(null);
+      setResultsOpen(false);
+      setActiveDataset(bundle);
     }
-  }, [buildResultsSummaryFromRefs, resetState]);
+  }, [resetState, selectedDatasetPath]);
 
   const handlePlaybackPlay = useCallback(async () => {
     if (dataSource === 'live') {
@@ -421,11 +458,12 @@ export function EvalPlusSandboxPage({
 
   useEffect(() => {
     if (dataSource !== 'sample') return;
+    if (!selectedDatasetPath) return;
     void loadEvalSample().catch((err) => {
       setAutoError((err as Error).message || 'Failed to load sample.');
       setStatusMessage('Sample error');
     });
-  }, [dataSource, loadEvalSample]);
+  }, [dataSource, loadEvalSample, selectedDatasetPath]);
 
   useEffect(() => {
     if (backendLiveAvailable || dataSource !== 'live') return;
@@ -448,10 +486,22 @@ export function EvalPlusSandboxPage({
   }, [samplePlaybackPlaying, stepIndex, playbackSpeed, dataSource, moves.length]);
 
   const safeStep = Math.min(stepIndex, Math.max(0, moves.length - 1));
+
+  useEffect(() => {
+    const container = submissionLogScrollRef.current;
+    const el = activeSubmissionRef.current;
+    if (!container || !el) return;
+    const id = requestAnimationFrame(() => {
+      scrollChildIntoContainer(container, el, {
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        padding: 10,
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [safeStep, prefersReducedMotion]);
+
   const prevCode = safeStep > 0 ? moves[safeStep - 1]?.action ?? '' : '';
   const currCode = moves[safeStep]?.action ?? '';
-  const sameTaskAsPrev =
-    safeStep > 0 && moves[safeStep]?.task_label && moves[safeStep]?.task_label === moves[safeStep - 1]?.task_label;
 
   const currentMove = moves[safeStep];
   const detectedLanguage = useMemo(() => detectLanguage(prevCode, currCode), [prevCode, currCode]);
@@ -482,17 +532,12 @@ export function EvalPlusSandboxPage({
       { key: 'status', label: 'Status', value: statusMessage },
       { key: 'submissions', label: 'Submissions', value: moves.length },
       {
-        key: 'step',
-        label: 'Step',
-        value: moves.length === 0 ? '—' : `${safeStep + 1} / ${moves.length}`,
-      },
-      {
         key: 'latency',
         label: 'Avg latency',
         value: avgLatency === null ? '—' : `${avgLatency} ms`,
       },
     ],
-    [avgLatency, moves.length, safeStep, statusMessage],
+    [avgLatency, moves.length, statusMessage],
   );
 
   const codeDescription = showDiff
@@ -516,167 +561,190 @@ export function EvalPlusSandboxPage({
           onSwitchToLive={handleSwitchToLive}
           subtitle={
             backendLiveAvailable
-              ? 'Code submissions and diffs use bundled sample events; live streaming uses the API when enabled.'
-              : 'Standalone build: submissions and diffs use bundled sample events only.'
+              ? 'Code submissions and diffs use experiment JSON datasets; live streaming uses the API when enabled.'
+              : 'Standalone build: submissions and diffs use experiment JSON datasets only.'
           }
-          metricsStrip={<SandboxMetricsStrip items={evalMetricsItems} />}
+          metricsStrip={
+            <>
+              <SandboxMetricsStrip items={evalMetricsItems} />
+              <div className="mt-2.5">
+                <ExperimentPicker
+                  entries={manifestEntries}
+                  envType="evalplus"
+                  selectedPath={selectedDatasetPath}
+                  onSelectPath={setSelectedDatasetPath}
+                />
+              </div>
+            </>
+          }
         />
 
-        <div className="sandbox-main-grid p-3 sm:p-4">
-          <div className="min-w-0">
-            <SandboxPrimaryCard
-              title="Code"
-              description={codeDescription}
-              toolbar={
-                <SandboxVizToolbarBlock
-                  dataSource={dataSource}
-                  playbackActive={playbackActive}
-                  errorMessage={autoError}
-                  onFullReset={handleReset}
-                  playbackControls={
-                    <SandboxPlaybackControls
-                      isLive={dataSource === 'live'}
-                      isPlaying={playbackActive}
-                      onPlay={() => void handlePlaybackPlay()}
-                      onPause={handlePlaybackPause}
-                      onRestart={handlePlaybackRestart}
-                      onPrev={goPrev}
-                      onNext={goNext}
-                      canPrev={canStepPrev}
-                      canNext={canStepNext}
-                      speed={playbackSpeed}
-                      onSpeedChange={setPlaybackSpeed}
-                      positionLabel={playbackPositionLabel}
-                      disabled={!!autoError}
-                      hideStepControls={dataSource === 'live'}
-                      seekMin={0}
-                      seekMax={Math.max(0, moves.length - 1)}
-                      seekValue={safeStep}
-                      onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
-                      seekLabel="Step"
+        <div className="p-3 sm:p-4">
+          <div className="sandbox-main-grid sandbox-main-grid--with-graph">
+            <div className="min-w-0">
+              <SandboxPrimaryCard
+                  title="Code"
+                  description={codeDescription}
+                  toolbar={
+                    <SandboxVizToolbarBlock
+                      dataSource={dataSource}
+                      playbackActive={playbackActive}
+                      errorMessage={autoError}
+                      onFullReset={handleReset}
+                      playbackControls={
+                        <SandboxPlaybackControls
+                          isLive={dataSource === 'live'}
+                          isPlaying={playbackActive}
+                          onPlay={() => void handlePlaybackPlay()}
+                          onPause={handlePlaybackPause}
+                          onRestart={handlePlaybackRestart}
+                          onPrev={goPrev}
+                          onNext={goNext}
+                          canPrev={canStepPrev}
+                          canNext={canStepNext}
+                          speed={playbackSpeed}
+                          onSpeedChange={setPlaybackSpeed}
+                          positionLabel={playbackPositionLabel}
+                          disabled={!!autoError}
+                          hideStepControls={dataSource === 'live'}
+                          seekMin={0}
+                          seekMax={Math.max(0, moves.length - 1)}
+                          seekValue={safeStep}
+                          onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
+                          seekLabel="Step"
+                        />
+                      }
                     />
                   }
-                />
-              }
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{currentMove?.task_label ?? '—'}</Badge>
-                </div>
-                {currentMove && (
-                  <span className="text-xs text-muted-foreground">
-                    {currentMove.player} · latency {typeof currentMove.latency_ms === 'number' ? `${currentMove.latency_ms} ms` : '—'}
-                    {typeof currentMove.system_move_record?.total_tokens === 'number'
-                      ? ` · ${currentMove.system_move_record.total_tokens} tok`
-                      : ''}
-                  </span>
-                )}
-              </div>
-              <div className="evalplus-ide-panel mt-3 overflow-hidden">
-                <div className="evalplus-ide-chrome evalplus-ide-chrome--workspace">
-                  <span className="evalplus-ide-chrome-label">{showDiff ? 'Diff' : 'solution.py'}</span>
-                  <div className="evalplus-ide-chrome-trail">
-                    <div className="evalplus-diff-toggle">
-                      <Switch
-                        id="evalplus-show-diff"
-                        checked={showDiff}
-                        onCheckedChange={setShowDiff}
-                        aria-label="Toggle diff view"
-                      />
-                      <label htmlFor="evalplus-show-diff" className="evalplus-diff-toggle-label">
-                        Show diff
-                      </label>
-                    </div>
-                    {(prevCode || currCode).trim() ? (
-                      <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>
-                    ) : null}
-                    <CopyCodeButton textToCopy={currCode} disabled={!currCode.trim()} />
-                  </div>
-                </div>
-                <motion.div
-                  key={`${safeStep}-${showDiff}`}
-                  initial={{ opacity: 0.92, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.18 }}
                 >
-                  {showDiff ? (
-                    <EvalPlusCodeDiff before={prevCode} after={currCode} contentOnly />
-                  ) : (
-                    <IdeHighlightedCode code={currCode} contentOnly emptyLabel="—" />
-                  )}
-                </motion.div>
-              </div>
-            </SandboxPrimaryCard>
-          </div>
-
-          <div className="min-w-0 space-y-4">
-            <SandboxSideLogCard
-              className="sandbox-log-panel gap-0 p-3"
-              title="Submission log"
-              subtitle="Turn, task, and latency from stream"
-              entryCount={moves.length}
-            >
-              <div className="max-h-[18rem] space-y-3 overflow-auto pr-1">
-                {moves.length === 0 ? (
-                  <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
-                    No submissions yet. Replay the sample or connect to the live backend.
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{currentMove?.task_label ?? '—'}</Badge>
+                    </div>
+                    {currentMove && (
+                      <span className="text-xs text-muted-foreground">
+                        {currentMove.player} · latency {typeof currentMove.latency_ms === 'number' ? `${currentMove.latency_ms} ms` : '—'}
+                        {typeof currentMove.system_move_record?.total_tokens === 'number'
+                          ? ` · ${currentMove.system_move_record.total_tokens} tok`
+                          : ''}
+                      </span>
+                    )}
                   </div>
-                ) : (
-                  <div className="space-y-2">
-                    {moves.map((m, idx) => (
-                      <button
-                        key={`${m.turn}-${idx}`}
-                        type="button"
-                        onClick={() => setStepIndex(idx)}
-                        className={`sandbox-move-item w-full text-left transition-colors ${idx === safeStep ? 'ring-2 ring-primary/40' : ''}`}
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="sandbox-move-uci">
-                            {m.turn + 1}. {m.task_label ?? `task ${completedTaskOrdinal(m.env_state)}`}
-                          </div>
-                          <Badge variant="secondary">{m.player}</Badge>
+                  <div className="evalplus-ide-panel mt-3 overflow-hidden">
+                    <div className="evalplus-ide-chrome evalplus-ide-chrome--workspace">
+                      <span className="evalplus-ide-chrome-label">{showDiff ? 'Diff' : 'solution.py'}</span>
+                      <div className="evalplus-ide-chrome-trail">
+                        <div className="evalplus-diff-toggle">
+                          <Switch
+                            id="evalplus-show-diff"
+                            checked={showDiff}
+                            onCheckedChange={setShowDiff}
+                            aria-label="Toggle diff view"
+                          />
+                          <label htmlFor="evalplus-show-diff" className="evalplus-diff-toggle-label">
+                            Show diff
+                          </label>
                         </div>
-                        <div className="sandbox-move-meta mt-2">
-                          <span>latency {typeof m.latency_ms === 'number' ? `${m.latency_ms} ms` : '—'}</span>
-                          <span>
-                            tokens{' '}
-                            {typeof m.system_move_record?.total_tokens === 'number' ? m.system_move_record.total_tokens : '—'}
-                          </span>
-                        </div>
-                      </button>
+                        {(prevCode || currCode).trim() ? (
+                          <span className="evalplus-ide-lang-pill">{detectedLanguage}</span>
+                        ) : null}
+                        <CopyCodeButton textToCopy={currCode} disabled={!currCode.trim()} />
+                      </div>
+                    </div>
+                    <motion.div
+                      key={`${safeStep}-${showDiff}`}
+                      initial={{ opacity: 0.92, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      {showDiff ? (
+                        <EvalPlusCodeDiff before={prevCode} after={currCode} contentOnly />
+                      ) : (
+                        <IdeHighlightedCode code={currCode} contentOnly emptyLabel="—" />
+                      )}
+                    </motion.div>
+                  </div>
+                </SandboxPrimaryCard>
+            </div>
+
+            <div className="sandbox-side-stack min-w-0">
+              <InteractionGraphSection
+                dataset={activeDataset}
+                layout="sideColumn"
+                evidenceFocusTurn={
+                  moves.length > 0 && typeof moves[safeStep]?.turn === 'number' ? moves[safeStep]!.turn : null
+                }
+              />
+              <SandboxSideLogCard
+                className="sandbox-move-log sandbox-log-panel gap-0 p-3"
+                title="Submission log"
+                subtitle="Turn, task, and latency"
+                entryCount={moves.length}
+              >
+                <div ref={submissionLogScrollRef} className="sandbox-move-log-scroll">
+                  {moves.length === 0 ? (
+                    <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                      No submissions yet. Replay the loaded experiment or connect to the live backend.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {moves.map((m, idx) => (
+                        <button
+                          key={`${m.turn}-${idx}`}
+                          ref={idx === safeStep ? activeSubmissionRef : undefined}
+                          type="button"
+                          onClick={() => setStepIndex(idx)}
+                          className={`sandbox-move-item w-full text-left transition-colors ${idx === safeStep ? 'ring-2 ring-primary/40' : ''}`}
+                        >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="sandbox-move-uci">
+                                {m.turn + 1}. {m.task_label ?? `task ${completedTaskOrdinal(m.env_state)}`}
+                              </div>
+                              <Badge variant="secondary">{m.player}</Badge>
+                            </div>
+                            <div className="sandbox-move-meta mt-2">
+                              <span>latency {typeof m.latency_ms === 'number' ? `${m.latency_ms} ms` : '—'}</span>
+                              <span>
+                                tokens{' '}
+                                {typeof m.system_move_record?.total_tokens === 'number' ? m.system_move_record.total_tokens : '—'}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </SandboxSideLogCard>
+
+              <SandboxSecondaryPanel
+                className="sandbox-passatk-panel p-3"
+                title="Pass@k"
+                subtitle="End event or bundle"
+                headerRight={
+                  <Button variant="ghost" size="sm" onClick={() => setShowBackendLog((v) => !v)}>
+                    {showBackendLog ? 'Hide log' : 'Raw log'}
+                  </Button>
+                }
+              >
+                {passAtK && Object.keys(passAtK).length > 0 ? (
+                  <div className="space-y-1 font-mono text-sm">
+                    {Object.entries(passAtK).map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">{k}</span>
+                        <span>{typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : String(v)}</span>
+                      </div>
                     ))}
                   </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">—</p>
                 )}
-              </div>
-            </SandboxSideLogCard>
-
-            <SandboxSecondaryPanel
-              title="Pass@k"
-              subtitle="From end event or bundled result"
-              headerRight={
-                <Button variant="ghost" size="sm" onClick={() => setShowBackendLog((v) => !v)}>
-                  {showBackendLog ? 'Hide raw log' : 'Raw log'}
-                </Button>
-              }
-            >
-              {passAtK && Object.keys(passAtK).length > 0 ? (
-                <div className="space-y-1 font-mono text-sm">
-                  {Object.entries(passAtK).map(([k, v]) => (
-                    <div key={k} className="flex justify-between gap-4">
-                      <span className="text-muted-foreground">{k}</span>
-                      <span>{typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : String(v)}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">—</p>
-              )}
-              {showBackendLog && (
-                <div className="mt-3 max-h-32 overflow-auto space-y-1 text-xs text-muted-foreground">
-                  {systemLog.length === 0 ? <span>Empty</span> : systemLog.map((l, i) => <div key={i}>{l}</div>)}
-                </div>
-              )}
-            </SandboxSecondaryPanel>
+                {showBackendLog && (
+                  <div className="mt-3 max-h-32 overflow-auto space-y-1 text-xs text-muted-foreground">
+                    {systemLog.length === 0 ? <span>Empty</span> : systemLog.map((l, i) => <div key={i}>{l}</div>)}
+                  </div>
+                )}
+              </SandboxSecondaryPanel>
+            </div>
           </div>
         </div>
       </SandboxVisualizationRoot>

@@ -1,0 +1,2833 @@
+[
+  {
+    "record_id": "20260325_162954_519136",
+    "timestamp": "2026-03-25T20:29:54.519+00:00",
+    "config_hash": "4a9a6acd9028eacfbff1",
+    "environment": {
+      "platform": "Darwin",
+      "platform_release": "25.3.0",
+      "platform_version": "Darwin Kernel Version 25.3.0: Wed Jan 28 20:56:34 PST 2026; root:xnu-12377.91.3~2/RELEASE_ARM64_T8112",
+      "architecture": "arm64",
+      "processor": "arm",
+      "python_version": "3.14.0 (main, Oct  7 2025, 09:34:52) [Clang 17.0.0 (clang-1700.3.19.1)]",
+      "hostname": "Archits-Computer.local",
+      "timestamp": "2026-03-25T20:29:54.519+00:00",
+      "cuda_gpus": null,
+      "ollama_version": "Warning: could not connect to a running Ollama instance\nWarning: client version is 0.10.1",
+      "env_type": "chess",
+      "cloud_mode": true,
+      "cloud_provider": "vertex",
+      "cloud_meta_model": "gemini-3.1-pro-preview",
+      "cloud_crew_model": "gemini-3.1-pro-preview"
+    },
+    "config": {
+      "experiment_id": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_2",
+      "system_type": "multi_agent",
+      "meta_model_name": "gemini-3.1-pro-preview",
+      "crew_model_name": "gemini-3.1-pro-preview",
+      "temperature": 0.2,
+      "max_context_tokens": 1048576,
+      "max_token": 8192,
+      "think": false,
+      "max_plies": 100,
+      "move_history_limit": 1,
+      "stockfish_elo": 1320,
+      "stockfish_play_depth": 10,
+      "stockfish_eval_depth": 10,
+      "crew_max_context_tokens": 1048576,
+      "crew_max_token": 8192,
+      "env_type": "chess",
+      "evalplus_dataset": "humaneval",
+      "evalplus_mini": true,
+      "evalplus_task_limit": 20,
+      "evalplus_k": 1,
+      "model_details": {}
+    },
+    "game_result": {
+      "status": "error",
+      "start_time": "2026-03-25T20:29:54.519+00:00",
+      "moves": [
+        {
+          "turn": 0,
+          "player": "multi_llm",
+          "action": "d2d4",
+          "env_state": {
+            "player": "system",
+            "san": "d4",
+            "uci": "d2d4",
+            "fen_before": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            "fen_after": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+            "centipawn_eval": 9,
+            "centipawn_eval_delta": 9,
+            "ply": 1
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 79734,
+                "timestamp": "2026-03-25T20:31:45.878+00:00",
+                "prompt_tokens": 1277,
+                "completion_tokens": 84,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Hello team. As the Positional Architect, I strongly recommend we avoid sharp, tactical openings like e2e4 where Stockfish excels. I propose we start with d2d4, c2c4, or g1f3 to steer the game into closed, maneuvering structures where we can build long-term positional advantages. What do you think?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 135598,
+                "timestamp": "2026-03-25T20:33:05.613+00:00",
+                "prompt_tokens": 1328,
+                "completion_tokens": 72,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with the Positional_Architect. From a tactical standpoint, starting with d2d4 or g1f3 minimizes immediate sharp clashes and forcing lines where Stockfish's calculation is unbeatable. Both moves are tactically sound and safe. Let's proceed with d2d4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 126076,
+                "timestamp": "2026-03-25T20:35:21.212+00:00",
+                "prompt_tokens": 1441,
+                "completion_tokens": 95,
+                "response": "",
+                "thinking": "",
+                "raw_response": "I have already agreed with the Positional_Architect in the common space. I will message the Dynamic_Aggressor to ensure they are on board with d2d4, as they might prefer more aggressive options.",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Are you on board with d2d4? It still allows for dynamic play (e.g., Queen's Gambit) without walking into Stockfish's sharpest e2e4 lines.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 9503,
+                "timestamp": "2026-03-25T20:37:27.289+00:00",
+                "prompt_tokens": 1392,
+                "completion_tokens": 79,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with d2d4. While we want to avoid Stockfish's tactical traps, we must not play too passively. d2d4 allows us to control the center and still offers plenty of dynamic possibilities (like the Queen's Gambit) to maintain the initiative. Let's go with d2d4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 34508,
+                "timestamp": "2026-03-25T20:37:36.792+00:00",
+                "prompt_tokens": 1256,
+                "completion_tokens": 118,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I prefer e2e4 for maximum dynamism and attacking chances, but I can agree to d2d4 if we commit to sharp, aggressive lines like the Queen's Gambit or aggressive setups against the King's Indian/Grunfeld.",
+                      "member": "Tactical_Validator"
+                    }
+                  },
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "As Dynamic_Aggressor, my top choice is e2e4 to immediately fight for the center and open lines for attack. However, I am willing to support d2d4 if we aim for sharp, dynamic variations."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 10071,
+                "timestamp": "2026-03-25T20:38:11.301+00:00",
+                "prompt_tokens": 1672,
+                "completion_tokens": 30,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I am fully on board with d2d4. Let's finalize this move."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 176910,
+                "timestamp": "2026-03-25T20:38:21.373+00:00",
+                "prompt_tokens": 1561,
+                "completion_tokens": 72,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with d2d4. From a prophylactic perspective, d2d4 limits Black's immediate sharp counterplay (like the Sicilian Defense after e2e4) and allows us to build a solid center while overprotecting key squares. Let's finalize d2d4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 134760,
+                "timestamp": "2026-03-25T20:41:18.284+00:00",
+                "prompt_tokens": 1668,
+                "completion_tokens": 50,
+                "response": "",
+                "thinking": "",
+                "raw_response": "I have nothing new to add. The team has reached a consensus on d2d4, which aligns perfectly with my prophylactic goals of avoiding sharp, tactical openings where Stockfish excels. I am ready for the meta-agent to finalize the move.",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 35680,
+                "timestamp": "2026-03-25T20:43:33.045+00:00",
+                "prompt_tokens": 1730,
+                "completion_tokens": 64,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "move": "d2d4",
+                      "reasoning": "All four agents (Positional_Architect, Tactical_Validator, Dynamic_Aggressor, and Prophylactic_Sentinel) have explicitly agreed on d2d4 to avoid sharp tactical lines where Stockfish excels, while still maintaining central control and dynamic possibilities."
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 13325,
+            "completion_tokens": 664,
+            "total_tokens": 13989,
+            "total_latency_ms": 742840,
+            "call_count": 9
+          },
+          "timestamp": "2026-03-25T20:44:08.776+00:00",
+          "latency_ms": 742847,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 0,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "d5",
+            "uci": "d7d5",
+            "fen_before": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+            "fen_after": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+            "centipawn_eval": 28,
+            "centipawn_eval_delta": 19,
+            "ply": 2
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T20:44:08.820+00:00",
+          "latency_ms": 41
+        },
+        {
+          "turn": 1,
+          "player": "multi_llm",
+          "action": "g1f3",
+          "env_state": {
+            "player": "system",
+            "san": "Nf3",
+            "uci": "g1f3",
+            "fen_before": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+            "fen_after": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
+            "centipawn_eval": 20,
+            "centipawn_eval_delta": -8,
+            "ply": 3
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 77183,
+                "timestamp": "2026-03-25T20:44:09.332+00:00",
+                "prompt_tokens": 1771,
+                "completion_tokens": 92,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played d7d5. To continue our strategy of avoiding sharp tactical brawls, I propose we play the London System with c1f4, or a flexible g1f3. The London System (c1f4) creates a very solid, closed pawn structure that neutralizes early tactical complications. What are your thoughts on c1f4 or g1f3?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 166898,
+                "timestamp": "2026-03-25T20:45:26.516+00:00",
+                "prompt_tokens": 1835,
+                "completion_tokens": 52,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Both c1f4 and g1f3 are tactically completely safe and avoid early forcing lines. Neither move allows any immediate tactical threats or blunders from Stockfish. I support either choice."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 13005,
+                "timestamp": "2026-03-25T20:48:13.416+00:00",
+                "prompt_tokens": 2040,
+                "completion_tokens": 70,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Positional_Architect suggested c1f4 or g1f3 in the common space. If you prefer c2c4 (Queen's Gambit) for more dynamism, I can confirm it is tactically sound and doesn't lose material by force. Let me know your preference.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 74915,
+                "timestamp": "2026-03-25T20:48:26.422+00:00",
+                "prompt_tokens": 1869,
+                "completion_tokens": 77,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "While c1f4 and g1f3 are solid, they can lead to passive positions where Stockfish easily equalizes. I strongly advocate for c2c4 (Queen's Gambit). It immediately challenges the center, creates tension, and fights for the initiative. It's dynamic but still positionally sound."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 30090,
+                "timestamp": "2026-03-25T20:49:41.337+00:00",
+                "prompt_tokens": 1448,
+                "completion_tokens": 119,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Tactical_Validator",
+                      "text": "I strongly prefer c2c4. It immediately challenges the center, creates imbalances, and fights for the initiative. The London (c1f4) is too passive. Let's push for c2c4."
+                    }
+                  },
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly advocate for c2c4 (Queen's Gambit). It immediately challenges the center, creates imbalances, and fights for the initiative. c1f4 is too passive and allows Black easy equality. Let's play c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 6610,
+                "timestamp": "2026-03-25T20:50:11.428+00:00",
+                "prompt_tokens": 2284,
+                "completion_tokens": 114,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "c2c4 is positionally excellent. It fights for central control and puts immediate pressure on d5. The London (c1f4) gives Stockfish too easy of a time to equalize and maneuver. Let's play c2c4."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "c2c4 is a great prophylactic move as well, as it challenges Black's central control and prevents them from comfortably developing. Please support c2c4 over c1f4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 60389,
+                "timestamp": "2026-03-25T20:50:18.039+00:00",
+                "prompt_tokens": 2016,
+                "completion_tokens": 92,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I advise against c2c4. Playing c2c4 immediately gives Stockfish active counterplay options (d5c4, c7c6, e7e6) and early central tension, which plays to its tactical strengths. I strongly support c1f4 or g1f3 to keep the position closed, restrict Black's early plans, and maintain a solid structure."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 52483,
+                "timestamp": "2026-03-25T20:51:18.429+00:00",
+                "prompt_tokens": 1329,
+                "completion_tokens": 135,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I agree. c2c4 immediately challenges d5, forcing Black to react and disrupting their ideal development plans. It restricts their options effectively.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "Dynamic_Aggressor suggests c2c4. From a prophylactic standpoint, it challenges d5 immediately, preventing Black from comfortably solidifying the center. Do you agree with c2c4?"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "We are considering c2c4. It challenges Black's center and forces a reaction. Please verify if there are any immediate tactical drawbacks to c2c4.",
+                      "member": "Tactical_Validator"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 63618,
+                "timestamp": "2026-03-25T20:52:10.913+00:00",
+                "prompt_tokens": 2352,
+                "completion_tokens": 80,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I am willing to support c2c4 if the team prefers it, as it challenges Black's center and forces a reaction. However, c1f4 remains the most restrictive and solid option to limit Stockfish's counterplay. I await Positional_Architect and Tactical_Validator's input on c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 4650,
+                "timestamp": "2026-03-25T20:53:14.532+00:00",
+                "prompt_tokens": 2627,
+                "completion_tokens": 40,
+                "response": "",
+                "thinking": "",
+                "raw_response": "I will wait for the team to reach a clear consensus. Positional_Architect and Tactical_Validator still need to weigh in on the c2c4 proposal before a final decision can be made.",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 20479,
+                "timestamp": "2026-03-25T20:53:19.182+00:00",
+                "prompt_tokens": 1341,
+                "completion_tokens": 148,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Dynamic_Aggressor",
+                      "text": "While c2c4 is objectively strong, it opens the center and allows sharp tactical lines (QGA, Semi-Slav, Albin) where Stockfish's calculation is unmatched. c1f4 (London) or g1f3 keeps the position closed, forcing a slow maneuvering game which is our best practical chance."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "Dynamic_Aggressor wants c2c4, but I believe that opens the position too much for Stockfish's tactical strength. I prefer g1f3 or c1f4 to keep it closed and solid. What are your thoughts on restricting Black's counterplay?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 31470,
+                "timestamp": "2026-03-25T20:53:39.663+00:00",
+                "prompt_tokens": 1331,
+                "completion_tokens": 160,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "c2c4 can lead to sharp, theoretical lines like the Slav or Semi-Slav, which plays into Stockfish's tactical strengths. I strongly prefer c1f4 (the London System) or g1f3 to steer the game into a closed, maneuvering structure where we can build a long-term positional advantage without early tension."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I understand the appeal of c2c4 to challenge the center, but it opens the position too early and invites sharp tactical brawls (like the Semi-Slav) where Stockfish excels. I propose c1f4 (London System) or g1f3 to keep the position closed and maneuver-based.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 9288,
+                "timestamp": "2026-03-25T20:54:11.133+00:00",
+                "prompt_tokens": 2185,
+                "completion_tokens": 93,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly prefer c1f4 or g1f3 over c2c4. c2c4 opens the position too early and allows Stockfish to enter sharp lines like the Albin Countergambit or complex Semi-Slavs. c1f4 (London System) guarantees a closed, maneuvering game where we can dictate the pace. Let's stick to c1f4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 59693,
+                "timestamp": "2026-03-25T20:54:20.423+00:00",
+                "prompt_tokens": 2729,
+                "completion_tokens": 130,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Can you confirm that c2c4 introduces significantly more tactical risk and forcing lines than c1f4 or g1f3? If so, please state this in the common space to help convince Dynamic_Aggressor to accept c1f4 or g1f3.",
+                      "member": "Tactical_Validator"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Dynamic_Aggressor",
+                      "text": "If you find c1f4 too passive, how about g1f3? It develops a piece, controls e5, and delays the decision between c2c4 and c1f4. It keeps the position closed for now while maintaining flexibility."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 46319,
+                "timestamp": "2026-03-25T20:55:20.116+00:00",
+                "prompt_tokens": 1518,
+                "completion_tokens": 82,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Dynamic_Aggressor",
+                      "text": "c2c4 is tactically sound. If d5c4, we have no immediate tactical issues and can regain the pawn or play for compensation. I support c2c4."
+                    }
+                  },
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "c2c4 is tactically sound. I support it as it creates immediate tension without tactical risk."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 4709,
+                "timestamp": "2026-03-25T20:56:06.437+00:00",
+                "prompt_tokens": 1327,
+                "completion_tokens": 66,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "c2c4 is tactically safe. If Black plays d5c4 (Queen's Gambit Accepted), we temporarily sacrifice a pawn but gain central control and rapid development. No immediate tactical blunders or threats from Stockfish. I approve c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 10184,
+                "timestamp": "2026-03-25T20:56:11.147+00:00",
+                "prompt_tokens": 2273,
+                "completion_tokens": 96,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with Positional_Architect and Prophylactic_Sentinel. Tactically, c2c4 invites forcing lines like the Albin Countergambit (e7e5) or Queen's Gambit Accepted (d5c4), which require precise calculation against the engine. c1f4 and g1f3 are completely safe and avoid early tactical skirmishes. I fully support c1f4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 8217,
+                "timestamp": "2026-03-25T20:56:21.332+00:00",
+                "prompt_tokens": 1346,
+                "completion_tokens": 152,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I confirm that c2c4 introduces significantly more tactical risk and forcing lines than c1f4 or g1f3. The move c2c4 allows the immediate capture d5c4, forcing White into concrete tactical sequences to regain the pawn or play a gambit. Against Stockfish, minimizing early tactical complexity is safer. I endorse c1f4 or g1f3 as tactically sound and stable."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I agree completely. c2c4 allows d5c4, opening up immediate tactical sequences and forcing lines. I have posted this in the common space to support c1f4 or g1f3.",
+                      "member": "Positional_Architect"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 55091,
+                "timestamp": "2026-03-25T20:56:29.549+00:00",
+                "prompt_tokens": 3051,
+                "completion_tokens": 79,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I must clarify my stance: while c2c4 doesn't lose material by force, it opens up forcing lines (d5c4, e7e5) where Stockfish's calculation is superior. To minimize tactical risk against the engine, I strongly recommend we play c1f4 or g1f3 instead.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 13206,
+                "timestamp": "2026-03-25T20:57:24.641+00:00",
+                "prompt_tokens": 1365,
+                "completion_tokens": 59,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Prophylactic_Sentinel and I agree on c2c4. It immediately challenges the center, creates imbalances, and fights for the initiative. Positional_Architect and Tactical_Validator, do you agree with c2c4?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 38503,
+                "timestamp": "2026-03-25T20:57:37.848+00:00",
+                "prompt_tokens": 1548,
+                "completion_tokens": 143,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Playing passively against Stockfish leads to a slow, suffocating defeat. We must fight for the initiative. c2c4 creates immediate tension and fights for an advantage. If you strongly oppose it, g1f3 is an acceptable compromise, but we must follow up actively.",
+                      "member": "Positional_Architect"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Tactical_Validator",
+                      "text": "Positional_Architect wants to avoid c2c4 to prevent sharp tactics and prefers c1f4 or g1f3. I believe c2c4 is our best try for an advantage and creates necessary imbalances. Do you see any immediate tactical dangers with c2c4, or should we push for it?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 60209,
+                "timestamp": "2026-03-25T20:58:16.352+00:00",
+                "prompt_tokens": 1548,
+                "completion_tokens": 135,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "I can agree to g1f3 as a flexible compromise. It develops a piece and keeps our options open. However, we must not fall into pure passivity. We should aim to play c2c4 soon to challenge d5 and seize the initiative. Let's proceed with g1f3."
+                    }
+                  },
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with Positional_Architect's compromise of g1f3. It develops a piece, controls the center, and keeps our options open for a dynamic c2c4 push later. Let's play g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 58573,
+                "timestamp": "2026-03-25T20:59:16.561+00:00",
+                "prompt_tokens": 1548,
+                "completion_tokens": 119,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "g1f3 is an acceptable compromise. It develops a piece and maintains flexibility. However, I strongly advocate we follow up with c2c4 soon to challenge the center and not let Black equalize too comfortably. I agree to g1f3 for this move."
+                    }
+                  },
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with Positional_Architect on g1f3. It develops a piece and keeps our options open for a dynamic c2c4 push later. Let's proceed with g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 10670,
+                "timestamp": "2026-03-25T21:00:15.135+00:00",
+                "prompt_tokens": 1626,
+                "completion_tokens": 108,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Tactical_Validator and I agree on c2c4. It immediately challenges the center and creates the dynamic imbalances we need to fight for the initiative. Let's play c2c4."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Tactical_Validator has confirmed c2c4 is tactically sound and supports it. I strongly advocate for c2c4 to immediately challenge the center and create dynamic imbalances. Can we agree on c2c4?",
+                      "member": "Positional_Architect"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 10422,
+                "timestamp": "2026-03-25T21:00:25.806+00:00",
+                "prompt_tokens": 2465,
+                "completion_tokens": 78,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I understand the concerns about c2c4. However, c1f4 is too passive and commits us early. I propose g1f3 as a compromise. It develops a piece, controls the center, and maintains flexibility to play dynamically later without allowing immediate tactical complications. Let's agree on g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 32773,
+                "timestamp": "2026-03-25T21:00:36.229+00:00",
+                "prompt_tokens": 1626,
+                "completion_tokens": 89,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly oppose c1f4 (London). It is too passive and gives Black easy equality. Against Stockfish, passive play leads to a slow squeeze. We must play c2c4 to challenge the center and fight for the initiative. If we want to avoid immediate d5c4 complications, we can play g1f3 first, intending c2c4 next."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 15358,
+                "timestamp": "2026-03-25T21:01:09.002+00:00",
+                "prompt_tokens": 3929,
+                "completion_tokens": 59,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I am willing to finalize g1f3 as a compromise. It develops a piece, controls e5, and keeps the option of c2c4 open for the next move. Let's lock in g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 43199,
+                "timestamp": "2026-03-25T21:01:24.361+00:00",
+                "prompt_tokens": 1480,
+                "completion_tokens": 146,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "I completely agree. c2c4 allows d5c4 or c7c6, leading to sharp, open lines where Stockfish's calculation is unmatched. c1f4 or g1f3 restricts Black's early counterplay and keeps the center solid. Let's push for c1f4 or g1f3."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Dynamic_Aggressor",
+                      "text": "c2c4 allows Stockfish to enter sharp theoretical lines (like d5c4 or c7c6). To neutralize its tactical strength and restrict early counterplay, I strongly recommend c1f4 or g1f3 to keep the position closed."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 7627,
+                "timestamp": "2026-03-25T21:02:07.561+00:00",
+                "prompt_tokens": 1480,
+                "completion_tokens": 173,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "I agree completely. c2c4 allows Stockfish to enter highly theoretical and sharp lines (like the Slav or QGA) where its tactical superiority shines. c1f4 or g1f3 restricts early counterplay, prevents an immediate e7e5, and forces Black into a slower maneuvering game. Let's push for c1f4 or g1f3."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Positional_Architect and I are leaning towards c1f4 or g1f3 to avoid the sharp, theoretical lines of c2c4 (Queen's Gambit). From a prophylactic view, keeping the center solid restricts Stockfish's early tactical counterplay. Do you see any tactical issues with c1f4 or g1f3 here?",
+                      "member": "Tactical_Validator"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 53307,
+                "timestamp": "2026-03-25T21:02:15.189+00:00",
+                "prompt_tokens": 1390,
+                "completion_tokens": 84,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with c2c4. From Black's perspective, c2c4 immediately challenges their central control and prevents them from comfortably developing without addressing the tension on d5. It restricts Black's options and forces them into either accepting the gambit (d5c4) or defending passively (e7e6, c7c6)."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 56420,
+                "timestamp": "2026-03-25T21:03:08.497+00:00",
+                "prompt_tokens": 2901,
+                "completion_tokens": 58,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with g1f3. It is a solid prophylactic move that prevents Black from playing e7e5, develops a piece, and avoids early tactical complications while maintaining flexibility. Let's finalize g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 68204,
+                "timestamp": "2026-03-25T21:04:04.918+00:00",
+                "prompt_tokens": 3793,
+                "completion_tokens": 57,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "We have a clear team consensus on g1f3. It perfectly balances prophylaxis, positional solidity, and flexibility while avoiding early tactical brawls. I am ready for the meta-agent to finalize g1f3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 36651,
+                "timestamp": "2026-03-25T21:05:13.123+00:00",
+                "prompt_tokens": 4925,
+                "completion_tokens": 57,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "reasoning": "The team has reached a clear consensus on g1f3 as a solid, flexible compromise that develops a piece, controls the center, and avoids early tactical complications while keeping options open for a future c2c4 push.",
+                      "move": "g1f3"
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 68296,
+            "completion_tokens": 3242,
+            "total_tokens": 71538,
+            "total_latency_ms": 1300413,
+            "call_count": 33
+          },
+          "timestamp": "2026-03-25T21:05:49.817+00:00",
+          "latency_ms": 1300442,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 1,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "c6",
+            "uci": "c7c6",
+            "fen_before": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
+            "fen_after": "rnbqkbnr/pp2pppp/2p5/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3",
+            "centipawn_eval": 31,
+            "centipawn_eval_delta": 11,
+            "ply": 4
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T21:05:49.864+00:00",
+          "latency_ms": 43
+        },
+        {
+          "turn": 2,
+          "player": "multi_llm",
+          "action": "c1f4",
+          "env_state": {
+            "player": "system",
+            "san": "Bf4",
+            "uci": "c1f4",
+            "fen_before": "rnbqkbnr/pp2pppp/2p5/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3",
+            "fen_after": "rnbqkbnr/pp2pppp/2p5/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 1 3",
+            "centipawn_eval": 22,
+            "centipawn_eval_delta": -9,
+            "ply": 5
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 15912,
+                "timestamp": "2026-03-25T21:05:50.368+00:00",
+                "prompt_tokens": 4187,
+                "completion_tokens": 81,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played c7c6, preparing a solid Slav setup. I strongly propose we continue with our plan and play c1f4 (the London System). It keeps the position closed, avoids early tactical clashes, and leads to a slow, maneuvering game where we can build a long-term positional advantage. What do you all think?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 18822,
+                "timestamp": "2026-03-25T21:06:06.282+00:00",
+                "prompt_tokens": 3215,
+                "completion_tokens": 77,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "c1f4 is tactically safe. There are no immediate checks or captures for Black. The only early tactical idea to watch out for is ...d8b6, attacking our b2 pawn, but we have adequate defenses (like d1c1 or b1c3). I support c1f4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 75282,
+                "timestamp": "2026-03-25T21:06:25.105+00:00",
+                "prompt_tokens": 4094,
+                "completion_tokens": 81,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Dynamic_Aggressor",
+                      "text": "Positional_Architect proposed c1f4. If you still prefer c2c4, it is tactically safe here as well. Let me know your preference."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "c1f4 is tactically safe. Do you agree with this prophylactic choice, or do you prefer another move?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 24909,
+                "timestamp": "2026-03-25T21:07:40.388+00:00",
+                "prompt_tokens": 3259,
+                "completion_tokens": 84,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly oppose c1f4. It is too passive and allows Black to equalize easily with a solid Slav setup. We must play c2c4 to immediately challenge the center, create tension, and fight for the initiative. c2c4 is dynamic and puts pressure on Black's d5 pawn. Let's play c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 145877,
+                "timestamp": "2026-03-25T21:08:05.297+00:00",
+                "prompt_tokens": 1784,
+                "completion_tokens": 120,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I still strongly prefer c2c4. It challenges the center immediately and creates the imbalances we need to fight for the initiative. c1f4 is too passive and allows Black easy equality. Let's play c2c4.",
+                      "member": "Tactical_Validator"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "I strongly advocate for c2c4 over c1f4. c2c4 immediately challenges Black's center and creates dynamic imbalances. c1f4 is too passive and lets Black equalize easily. We need to fight for the initiative."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 48445,
+                "timestamp": "2026-03-25T21:10:31.175+00:00",
+                "prompt_tokens": 4680,
+                "completion_tokens": 209,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "We must play c2c4. Black's c7c6 is solid but passive. If we play c1f4, Black gets a very comfortable game and easily equalizes. c2c4 immediately challenges d5, creates tension, and fights for the initiative. It's the most principled and dynamic response."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Prophylactic_Sentinel",
+                      "text": "Black's c7c6 prepares to support d5. By playing c2c4, we immediately challenge their center and restrict their active development, forcing them to defend. Please support c2c4 over the passive c1f4."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "c2c4 is the classical and most testing response to c7c6 (Slav). It gives us a long-term positional edge by fighting for the center. c1f4 is too easy for Black to equalize against. Let's play c2c4.",
+                      "member": "Positional_Architect"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 51606,
+                "timestamp": "2026-03-25T21:11:19.621+00:00",
+                "prompt_tokens": 1546,
+                "completion_tokens": 154,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "c1f4 is solid prophylactically, but we must be prepared for d8b6 attacking b2. If you are comfortable with defending b2 (e.g., d1c1 or b1c3), I agree with c1f4. Otherwise, c2c4 is a strong alternative.",
+                      "member": "Tactical_Validator"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "member": "Positional_Architect",
+                      "text": "Tactical_Validator confirms c1f4 is safe. However, c1f4 allows Black to play d8b6, pressuring b2. Do you prefer the solid c1f4 (London setup) or the more active c2c4 (Slav main line) to challenge Black's center?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 182681,
+                "timestamp": "2026-03-25T21:12:11.227+00:00",
+                "prompt_tokens": 1535,
+                "completion_tokens": 117,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I agree with c2c4. By challenging d5 immediately, we prevent Black from comfortably developing their Bc8 to f5 or g4 without conceding central tension. It restricts their easy setup.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "Dynamic_Aggressor suggests c2c4. From a prophylactic view, c2c4 challenges d5 and makes it harder for Black to develop their Bc8 smoothly. Do you agree with c2c4, or do you prefer the solid c1f4?",
+                      "member": "Positional_Architect"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 57541,
+                "timestamp": "2026-03-25T21:15:13.909+00:00",
+                "prompt_tokens": 3436,
+                "completion_tokens": 91,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I support c1f4. From Black's perspective, c7c6 prepares to stabilize the center and potentially launch d8b6. c1f4 overprotects the center and keeps the position closed, limiting Stockfish's tactical counterplay. c2c4 plays into Black's hands by justifying c7c6 (Slav Defense) and opening lines."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 363701,
+                "timestamp": "2026-03-25T21:16:11.451+00:00",
+                "prompt_tokens": 4646,
+                "completion_tokens": 87,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I firmly stand by c1f4. Playing c2c4 plays directly into Black's c7c6 preparation, inviting the highly theoretical Slav Defense where Stockfish's tactical precision is lethal. c1f4 keeps the position closed, restricts Black's active counterplay, and forces a slower maneuvering game. Let's finalize c1f4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 7274,
+                "timestamp": "2026-03-25T21:22:15.153+00:00",
+                "prompt_tokens": 6083,
+                "completion_tokens": 74,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "reasoning": "The majority of the team (Positional_Architect, Tactical_Validator, and Prophylactic_Sentinel) have agreed on playing c1f4 to steer the game into a solid London System, keeping the position closed and avoiding the sharp theoretical lines of the Slav Defense that c2c4 would invite.",
+                      "move": "c1f4"
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 38465,
+            "completion_tokens": 1175,
+            "total_tokens": 39640,
+            "total_latency_ms": 992050,
+            "call_count": 11
+          },
+          "timestamp": "2026-03-25T21:22:22.494+00:00",
+          "latency_ms": 992060,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 2,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Bf5",
+            "uci": "c8f5",
+            "fen_before": "rnbqkbnr/pp2pppp/2p5/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 1 3",
+            "fen_after": "rn1qkbnr/pp2pppp/2p5/3p1b2/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 2 4",
+            "centipawn_eval": 45,
+            "centipawn_eval_delta": 23,
+            "ply": 6
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T21:22:22.529+00:00",
+          "latency_ms": 31
+        },
+        {
+          "turn": 3,
+          "player": "multi_llm",
+          "action": "e2e3",
+          "env_state": {
+            "player": "system",
+            "san": "e3",
+            "uci": "e2e3",
+            "fen_before": "rn1qkbnr/pp2pppp/2p5/3p1b2/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 2 4",
+            "fen_after": "rn1qkbnr/pp2pppp/2p5/3p1b2/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+            "centipawn_eval": 22,
+            "centipawn_eval_delta": -23,
+            "ply": 7
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 35141,
+                "timestamp": "2026-03-25T21:22:23.039+00:00",
+                "prompt_tokens": 5010,
+                "completion_tokens": 76,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played c8f5, mirroring our London setup. I strongly propose e2e3. It solidifies our center, blunts their bishop, and prepares to develop our light-squared bishop (often to d3 to challenge f5). It keeps the position completely closed and strategic, exactly our goal."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 12931,
+                "timestamp": "2026-03-25T21:22:58.182+00:00",
+                "prompt_tokens": 3757,
+                "completion_tokens": 49,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "e2e3 is tactically completely safe. It solidifies the center and prepares development without allowing any immediate forcing lines or captures from Black. I fully support e2e3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 56326,
+                "timestamp": "2026-03-25T21:23:11.113+00:00",
+                "prompt_tokens": 4822,
+                "completion_tokens": 59,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "e2e3 is tactically sound. We must be prepared for d8b6 attacking b2, which we can meet with d1c1 or b2b3. I am ready to finalize e2e3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 18603,
+                "timestamp": "2026-03-25T21:24:07.440+00:00",
+                "prompt_tokens": 3825,
+                "completion_tokens": 72,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I prefer c2c4 to immediately challenge the center and create tension, as e2e3 is quite passive and allows Black easy equality. However, if the team insists on e2e3 to prepare development, I will support it provided we aim for a c2c4 break soon."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 26805,
+                "timestamp": "2026-03-25T21:24:26.044+00:00",
+                "prompt_tokens": 5412,
+                "completion_tokens": 64,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I will agree to e2e3 to maintain our solid setup and reach consensus. However, we must actively prepare c2c4 in the near future to challenge Black's center and fight for the initiative. Let's finalize e2e3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 90646,
+                "timestamp": "2026-03-25T21:24:52.851+00:00",
+                "prompt_tokens": 3973,
+                "completion_tokens": 79,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with e2e3. From Black's perspective, e2e3 blunts the f5 bishop, solidifies our d4 pawn, and prepares f1d3 to challenge their active bishop. It restricts Black's options and maintains a solid, closed structure. Let's finalize e2e3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 21155,
+                "timestamp": "2026-03-25T21:26:23.498+00:00",
+                "prompt_tokens": 5179,
+                "completion_tokens": 71,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team has reached a clear consensus on e2e3. It perfectly aligns with our prophylactic and positional goals by solidifying the center and preparing to challenge Black's active bishop. I am ready for the meta-agent to finalize e2e3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 87587,
+                "timestamp": "2026-03-25T21:26:44.654+00:00",
+                "prompt_tokens": 6600,
+                "completion_tokens": 70,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "move": "e2e3",
+                      "reasoning": "All four agents (Positional_Architect, Tactical_Validator, Dynamic_Aggressor, and Prophylactic_Sentinel) have agreed on e2e3. It solidifies the center, blunts Black's bishop on f5, and prepares development while keeping the position closed."
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 38578,
+            "completion_tokens": 540,
+            "total_tokens": 39118,
+            "total_latency_ms": 349194,
+            "call_count": 8
+          },
+          "timestamp": "2026-03-25T21:28:12.265+00:00",
+          "latency_ms": 349203,
+          "quality_category": "good"
+        },
+        {
+          "turn": 3,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Nd7",
+            "uci": "b8d7",
+            "fen_before": "rn1qkbnr/pp2pppp/2p5/3p1b2/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+            "fen_after": "r2qkbnr/pp1npppp/2p5/3p1b2/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 1 5",
+            "centipawn_eval": 38,
+            "centipawn_eval_delta": 16,
+            "ply": 8
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T21:28:12.309+00:00",
+          "latency_ms": 37
+        },
+        {
+          "turn": 4,
+          "player": "multi_llm",
+          "action": "c2c4",
+          "env_state": {
+            "player": "system",
+            "san": "c4",
+            "uci": "c2c4",
+            "fen_before": "r2qkbnr/pp1npppp/2p5/3p1b2/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 1 5",
+            "fen_after": "r2qkbnr/pp1npppp/2p5/3p1b2/2PP1B2/4PN2/PP3PPP/RN1QKB1R b KQkq - 0 5",
+            "centipawn_eval": 33,
+            "centipawn_eval_delta": -5,
+            "ply": 9
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 64370,
+                "timestamp": "2026-03-25T21:28:12.823+00:00",
+                "prompt_tokens": 5070,
+                "completion_tokens": 90,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played b8d7. To maintain our rock-solid London setup, I propose c2c3. It fortifies d4, blunts any future ...c5 breaks, and prepares us to meet ...Qb6 with Qb3. Alternatively, f1d3 challenges their active bishop. I strongly prefer c2c3 to keep the position completely closed and maneuvering."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 249537,
+                "timestamp": "2026-03-25T21:29:17.194+00:00",
+                "prompt_tokens": 3828,
+                "completion_tokens": 66,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Both c2c3 and f1d3 are tactically safe. c2c3 is particularly solid as it prepares to neutralize any immediate ...d8b6 threats against our b2 pawn with d1b3. I fully support c2c3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 104023,
+                "timestamp": "2026-03-25T21:33:26.731+00:00",
+                "prompt_tokens": 4804,
+                "completion_tokens": 54,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I am ready to finalize c2c3. It is tactically bulletproof, defends d4, and prepares d1b3 against any d8b6 ideas. Let's lock it in."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 15192,
+                "timestamp": "2026-03-25T21:35:10.756+00:00",
+                "prompt_tokens": 3914,
+                "completion_tokens": 81,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly oppose c2c3. It is far too passive and allows Black to dictate the pace. We must play c2c4 to immediately challenge the center, create tension, and fight for the initiative. c2c4 is dynamic and puts pressure on Black's d5 pawn. Let's play c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 27053,
+                "timestamp": "2026-03-25T21:35:25.948+00:00",
+                "prompt_tokens": 5398,
+                "completion_tokens": 157,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "c2c4 is the only way to fight for an advantage here. Black's c8f5 leaves b7 unprotected. By playing c2c4, we challenge d5 and prepare d1b3, putting immense pressure on Black's queenside. c2c3 is completely toothless and lets Black equalize effortlessly. Let's play c2c4."
+                    }
+                  },
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "c2c4 is positionally justified because Black's c8f5 leaves b7 weak. We can follow up with d1b3, gaining a significant initiative. c2c3 is too passive and lets Black equalize effortlessly. Please consider c2c4.",
+                      "member": "Positional_Architect"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 90362,
+                "timestamp": "2026-03-25T21:35:53.003+00:00",
+                "prompt_tokens": 4094,
+                "completion_tokens": 96,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with Dynamic_Aggressor on c2c4. From Black's perspective, their early c8f5 leaves b7 vulnerable. By playing c2c4, we prepare d1b3, forcing Black to passively defend b7 (likely with d8b6) and disrupting their smooth kingside development. This active prophylaxis restricts Black's options better than the passive c2c3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 294298,
+                "timestamp": "2026-03-25T21:37:23.366+00:00",
+                "prompt_tokens": 5317,
+                "completion_tokens": 107,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Positional_Architect, c2c4 is actually a powerful prophylactic tool here. By preparing d1b3, we force Black to defend b7 with d8b6. We can then play c4c5, often forcing a queen trade (b6b3 a2b3) that leads to a highly favorable, risk-free endgame. This completely neutralizes Stockfish's middlegame tactical threats. I strongly support c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 138619,
+                "timestamp": "2026-03-25T21:42:17.666+00:00",
+                "prompt_tokens": 6728,
+                "completion_tokens": 69,
+                "response": "",
+                "thinking": "",
+                "raw_response": "The team has not yet reached a consensus on the current move. Positional_Architect and Tactical_Validator are advocating for c2c3, while Dynamic_Aggressor and Prophylactic_Sentinel are strongly pushing for c2c4. \n\nPlease continue your deliberations to resolve this 2-2 split and reach a majority agreement.",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 39351,
+                "timestamp": "2026-03-25T21:44:36.286+00:00",
+                "prompt_tokens": 2154,
+                "completion_tokens": 73,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "talk",
+                    "arguments": {
+                      "text": "I agree with c2c4. By exploiting the early development of Black's c8f5 bishop, we can target the weakened b7 pawn with d1b3. This creates a long-term structural advantage and positional pressure rather than a wild tactical brawl. I support c2c4.",
+                      "member": "Dynamic_Aggressor"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 60666,
+                "timestamp": "2026-03-25T21:45:15.638+00:00",
+                "prompt_tokens": 4313,
+                "completion_tokens": 98,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Prophylactic_Sentinel makes an excellent point. The plan of c2c4 followed by d1b3 and c4c5, aiming for the b6b3 a2b3 queen trade, leads to a closed, maneuvering endgame where we have a long-term space advantage on the queenside. This perfectly aligns with our goal of neutralizing Stockfish's tactics. I fully support c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 172134,
+                "timestamp": "2026-03-25T21:46:16.304+00:00",
+                "prompt_tokens": 5879,
+                "completion_tokens": 72,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "We have a clear consensus on c2c4. It challenges the center while preparing d1b3 to exploit the absence of the c8 bishop, aiming for a favorable structural endgame if Black plays d8b6. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 59343,
+                "timestamp": "2026-03-25T21:49:08.440+00:00",
+                "prompt_tokens": 4462,
+                "completion_tokens": 87,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I confirm that c2c4 is tactically safe. There are no immediate forcing lines or captures from Black that exploit it. If Black plays d5c4, we simply recapture with f1c4. If Black plays d8b6 attacking b2, we are well prepared to meet it with d1b3. I fully support c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 164017,
+                "timestamp": "2026-03-25T21:50:07.784+00:00",
+                "prompt_tokens": 5459,
+                "completion_tokens": 63,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team has reached a clear consensus on c2c4. It is tactically sound and prepares a favorable structure without allowing immediate tactical threats. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 38938,
+                "timestamp": "2026-03-25T21:52:51.802+00:00",
+                "prompt_tokens": 2205,
+                "completion_tokens": 74,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Positional_Architect and I agree on c2c4. It actively challenges the center and prepares d1b3 to exploit the absence of Black's light-squared bishop, targeting the b7 pawn. Tactical_Validator, Prophylactic_Sentinel, do you agree with c2c4?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 37069,
+                "timestamp": "2026-03-25T21:53:30.740+00:00",
+                "prompt_tokens": 4572,
+                "completion_tokens": 60,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree. We have a clear consensus on c2c4. It is dynamic, fights for the initiative, and puts pressure on Black's queenside. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 202140,
+                "timestamp": "2026-03-25T21:54:07.811+00:00",
+                "prompt_tokens": 6248,
+                "completion_tokens": 53,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I stand by our consensus on c2c4. It is the most dynamic choice and exploits Black's early bishop development. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 40312,
+                "timestamp": "2026-03-25T21:57:29.952+00:00",
+                "prompt_tokens": 4762,
+                "completion_tokens": 72,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I confirm my agreement with c2c4. It perfectly aligns with our prophylactic goals by targeting b7 and preparing a favorable queen trade if Black plays d8b6, neutralizing Stockfish's middlegame potential. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 21437,
+                "timestamp": "2026-03-25T21:58:10.265+00:00",
+                "prompt_tokens": 5969,
+                "completion_tokens": 73,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on c2c4. It challenges the center, exploits the absence of Black's light-squared bishop by targeting b7, and prepares a favorable structure. I am ready for the meta-agent to finalize c2c4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 161481,
+                "timestamp": "2026-03-25T21:58:31.702+00:00",
+                "prompt_tokens": 7421,
+                "completion_tokens": 71,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 1,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "reasoning": "All four agents have explicitly agreed on c2c4. They concluded that it actively challenges the center, exploits the early development of Black's light-squared bishop by preparing to target b7 (e.g., with Qb3), and creates a favorable structure while remaining tactically sound.",
+                      "move": "c2c4"
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 92597,
+            "completion_tokens": 1516,
+            "total_tokens": 94113,
+            "total_latency_ms": 1980342,
+            "call_count": 19
+          },
+          "timestamp": "2026-03-25T22:01:13.240+00:00",
+          "latency_ms": 1980361,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 4,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "e6",
+            "uci": "e7e6",
+            "fen_before": "r2qkbnr/pp1npppp/2p5/3p1b2/2PP1B2/4PN2/PP3PPP/RN1QKB1R b KQkq - 0 5",
+            "fen_after": "r2qkbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/4PN2/PP3PPP/RN1QKB1R w KQkq - 0 6",
+            "centipawn_eval": 48,
+            "centipawn_eval_delta": 15,
+            "ply": 10
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T22:01:13.289+00:00",
+          "latency_ms": 38
+        },
+        {
+          "turn": 5,
+          "player": "multi_llm",
+          "action": "d1b3",
+          "env_state": {
+            "player": "system",
+            "san": "Qb3",
+            "uci": "d1b3",
+            "fen_before": "r2qkbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/4PN2/PP3PPP/RN1QKB1R w KQkq - 0 6",
+            "fen_after": "r2qkbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1Q2PN2/PP3PPP/RN2KB1R b KQkq - 1 6",
+            "centipawn_eval": 39,
+            "centipawn_eval_delta": -9,
+            "ply": 11
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 383648,
+                "timestamp": "2026-03-25T22:01:13.798+00:00",
+                "prompt_tokens": 4068,
+                "completion_tokens": 117,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played e7e6. As discussed, I strongly propose d1b3. It immediately targets the b7 pawn, exploiting the absence of Black's light-squared bishop. If Black responds with d8b6, we can push c4c5, aiming for a queen trade (b6b3 a2b3) that gives us a fantastic, risk-free endgame structure with a space advantage on the queenside. This perfectly aligns with our goal of neutralizing Stockfish's tactics."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 58619,
+                "timestamp": "2026-03-25T22:07:37.447+00:00",
+                "prompt_tokens": 3716,
+                "completion_tokens": 105,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "d1b3 is tactically safe. It directly attacks b7. If Black responds with d8b6, our planned c4c5 is completely sound and forces a favorable structure after b6b3 a2b3. There are no immediate forcing lines or checks from Black that exploit d1b3 (if f8b4+, we simply block with b1c3 or b1d2). I fully support d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 30684,
+                "timestamp": "2026-03-25T22:08:36.067+00:00",
+                "prompt_tokens": 4104,
+                "completion_tokens": 68,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on d1b3. It is tactically sound, directly attacks b7, and prepares a favorable structure without allowing immediate tactical threats. I am ready for the meta-agent to finalize d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 215793,
+                "timestamp": "2026-03-25T22:09:06.752+00:00",
+                "prompt_tokens": 3868,
+                "completion_tokens": 67,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I completely agree with d1b3. It is the most dynamic and aggressive move in this position, immediately punishing Black for developing the bishop to f5 by attacking the unprotected b7 pawn. It forces Black onto the defensive. Let's finalize d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 114743,
+                "timestamp": "2026-03-25T22:12:42.547+00:00",
+                "prompt_tokens": 4488,
+                "completion_tokens": 62,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on d1b3. It is the most dynamic choice, immediately attacking b7 and seizing the initiative. I am ready for the meta-agent to finalize d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 121591,
+                "timestamp": "2026-03-25T22:14:37.291+00:00",
+                "prompt_tokens": 3998,
+                "completion_tokens": 88,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I completely agree with d1b3. From Black's perspective, d1b3 is extremely annoying as it forces a passive defense of b7 or invites the d8b6 c4c5 sequence, leading to a structurally inferior endgame for Stockfish. This perfectly executes our prophylactic strategy. I am ready for the meta-agent to finalize d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 212994,
+                "timestamp": "2026-03-25T22:16:38.883+00:00",
+                "prompt_tokens": 4526,
+                "completion_tokens": 67,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on d1b3. It perfectly executes our prophylactic strategy by forcing Black to passively defend b7 or enter a structurally inferior endgame. I am ready for the meta-agent to finalize d1b3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 115612,
+                "timestamp": "2026-03-25T22:20:11.878+00:00",
+                "prompt_tokens": 4879,
+                "completion_tokens": 81,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "reasoning": "All four agents (Positional_Architect, Tactical_Validator, Dynamic_Aggressor, and Prophylactic_Sentinel) have explicitly agreed on d1b3. They note that it attacks the b7 pawn, exploiting the early development of Black's light-squared bishop, and prepares a favorable structure if Black responds with Qb6.",
+                      "move": "d1b3"
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 33647,
+            "completion_tokens": 655,
+            "total_tokens": 34302,
+            "total_latency_ms": 1253684,
+            "call_count": 8
+          },
+          "timestamp": "2026-03-25T22:22:07.547+00:00",
+          "latency_ms": 1253693,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 5,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qc8",
+            "uci": "d8c8",
+            "fen_before": "r2qkbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1Q2PN2/PP3PPP/RN2KB1R b KQkq - 1 6",
+            "fen_after": "r1q1kbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1Q2PN2/PP3PPP/RN2KB1R w KQkq - 2 7",
+            "centipawn_eval": 39,
+            "centipawn_eval_delta": 0,
+            "ply": 12
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T22:22:07.584+00:00",
+          "latency_ms": 31
+        },
+        {
+          "turn": 6,
+          "player": "multi_llm",
+          "action": "b1c3",
+          "env_state": {
+            "player": "system",
+            "san": "Nc3",
+            "uci": "b1c3",
+            "fen_before": "r1q1kbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1Q2PN2/PP3PPP/RN2KB1R w KQkq - 2 7",
+            "fen_after": "r1q1kbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1QN1PN2/PP3PPP/R3KB1R b KQkq - 3 7",
+            "centipawn_eval": 33,
+            "centipawn_eval_delta": -6,
+            "ply": 13
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 356100,
+                "timestamp": "2026-03-25T22:22:08.101+00:00",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": "RemoteProtocolError('Server disconnected without sending a response.')",
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 38754,
+                "timestamp": "2026-03-25T22:28:04.201+00:00",
+                "prompt_tokens": 3764,
+                "completion_tokens": 74,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Black played d8c8 to defend b7. The position remains closed and tactically safe. Developing moves like b1c3, b1d2, or f1e2 are all completely sound with no immediate forcing lines or captures from Black. I will wait for proposals on how to proceed."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 82316,
+                "timestamp": "2026-03-25T22:28:42.957+00:00",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": "RemoteProtocolError('Server disconnected without sending a response.')",
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 107960,
+                "timestamp": "2026-03-25T22:30:05.273+00:00",
+                "prompt_tokens": 3985,
+                "completion_tokens": 83,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Black's d8c8 is a passive concession. We should maintain the tension and develop actively with b1c3. It puts more pressure on d5, controls the center, and keeps our options open for future breaks. I strongly oppose c4c5 as it releases the tension too early. Let's play b1c3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 159322,
+                "timestamp": "2026-03-25T22:31:53.234+00:00",
+                "prompt_tokens": 3866,
+                "completion_tokens": 84,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I agree with b1c3. From Black's perspective, c4c5 releases the tension and gives them a clear plan to undermine our structure with b7-b6. By playing b1c3, we maintain the pressure on d5, develop a piece, and keep Stockfish guessing. It restricts Black's counterplay effectively."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 53245,
+                "timestamp": "2026-03-25T22:34:32.557+00:00",
+                "prompt_tokens": 4017,
+                "completion_tokens": 63,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on b1c3. It maintains the tension, develops a piece, and restricts Black's counterplay. I am ready for the meta-agent to finalize b1c3."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 49801,
+                "timestamp": "2026-03-25T22:35:25.803+00:00",
+                "prompt_tokens": 4110,
+                "completion_tokens": 46,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "move": "b1c3",
+                      "reasoning": "The team has agreed on b1c3 to maintain central tension, develop a piece, and restrict Black's counterplay after their passive d8c8 move."
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 19742,
+            "completion_tokens": 350,
+            "total_tokens": 20092,
+            "total_latency_ms": 847498,
+            "call_count": 7
+          },
+          "timestamp": "2026-03-25T22:36:15.651+00:00",
+          "latency_ms": 847505,
+          "quality_category": "excellent"
+        },
+        {
+          "turn": 6,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "a5",
+            "uci": "a7a5",
+            "fen_before": "r1q1kbnr/pp1n1ppp/2p1p3/3p1b2/2PP1B2/1QN1PN2/PP3PPP/R3KB1R b KQkq - 3 7",
+            "fen_after": "r1q1kbnr/1p1n1ppp/2p1p3/p2p1b2/2PP1B2/1QN1PN2/PP3PPP/R3KB1R w KQkq - 0 8",
+            "centipawn_eval": 62,
+            "centipawn_eval_delta": 29,
+            "ply": 14
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T22:36:15.699+00:00",
+          "latency_ms": 40
+        },
+        {
+          "turn": 7,
+          "player": "multi_llm",
+          "action": "a2a4",
+          "env_state": {
+            "player": "system",
+            "san": "a4",
+            "uci": "a2a4",
+            "fen_before": "r1q1kbnr/1p1n1ppp/2p1p3/p2p1b2/2PP1B2/1QN1PN2/PP3PPP/R3KB1R w KQkq - 0 8",
+            "fen_after": "r1q1kbnr/1p1n1ppp/2p1p3/p2p1b2/P1PP1B2/1QN1PN2/1P3PPP/R3KB1R b KQkq - 0 8",
+            "centipawn_eval": 23,
+            "centipawn_eval_delta": -39,
+            "ply": 15
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 94998,
+                "timestamp": "2026-03-25T22:36:16.213+00:00",
+                "prompt_tokens": 3816,
+                "completion_tokens": 68,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "ZZB",
+                "caller_name": "Positional_Architect",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Stockfish played a7a5, threatening a5a4 to harass our Queen. I propose c4c5 to completely close the queenside, fitting our goal of a maneuvering game. Alternatively, a2a4 stops their pawn expansion directly. What do you think?"
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 136599,
+                "timestamp": "2026-03-25T22:37:51.212+00:00",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": "RemoteProtocolError('Server disconnected without sending a response.')",
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": []
+              },
+              {
+                "latency_ms": 27139,
+                "timestamp": "2026-03-25T22:40:07.812+00:00",
+                "prompt_tokens": 3760,
+                "completion_tokens": 86,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "E0M",
+                "caller_name": "Tactical_Validator",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "Both c4c5 and a2a4 are tactically safe. Note that if we play c4c5, Black will likely follow up with a5a4, forcing our Queen to retreat (e.g., b3d1). If we want to avoid this tempo loss and keep the Queen active, a2a4 directly stops the threat."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 66351,
+                "timestamp": "2026-03-25T22:40:34.952+00:00",
+                "prompt_tokens": 3769,
+                "completion_tokens": 99,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly oppose c4c5. It releases the central tension and gives Black an easy game. We must keep the pressure! a2a4 is a good practical choice to stop a5a4 while maintaining the tension on d5. Another aggressive option is c4d5, creating immediate imbalances (if c6d5, we have c3b5!). I prefer c4d5 or a2a4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 34626,
+                "timestamp": "2026-03-25T22:41:41.304+00:00",
+                "prompt_tokens": 4068,
+                "completion_tokens": 119,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "C55",
+                "caller_name": "Dynamic_Aggressor",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly prefer c4d5 to create immediate imbalances. If Black responds with a5a4, we play b3d1, and after c6d5, we have c3b5 eyeing the weak c7 square. If e6d5, the c-file opens up for our rooks. However, if the team prefers to maintain the tension without allowing a5a4, I can agree to a2a4. I will not accept c4c5 as it completely kills our dynamic potential."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 68081,
+                "timestamp": "2026-03-25T22:42:15.931+00:00",
+                "prompt_tokens": 3985,
+                "completion_tokens": 106,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I strongly support a2a4. From Black's perspective, their current plan revolves around playing a5a4 to displace our Queen and gain queenside space. Allowing this with c4d5 gives Stockfish unnecessary counterplay and a free tempo. By playing a2a4, we prophylactically stop their only active idea, keep our Queen aggressively placed on b3, and maintain the central tension. Let's lock in a2a4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 116637,
+                "timestamp": "2026-03-25T22:43:24.012+00:00",
+                "prompt_tokens": 4158,
+                "completion_tokens": 77,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "DJ7",
+                "caller_name": "Prophylactic_Sentinel",
+                "call_type": "deliberation",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "add_to_common_space",
+                    "arguments": {
+                      "text": "I have nothing further to add. The team is in full agreement on a2a4. It perfectly executes our prophylactic strategy by stopping Black's only active idea (a5a4) while maintaining central tension and keeping our Queen aggressively placed. I am ready for the meta-agent to finalize a2a4."
+                    }
+                  }
+                ]
+              },
+              {
+                "latency_ms": 54679,
+                "timestamp": "2026-03-25T22:45:20.651+00:00",
+                "prompt_tokens": 4265,
+                "completion_tokens": 79,
+                "response": "",
+                "thinking": "",
+                "raw_response": "",
+                "error": null,
+                "caller_id": "000",
+                "caller_name": "Meta",
+                "call_type": "consensus_check",
+                "cycle": 0,
+                "tool_calls": [
+                  {
+                    "name": "consensus",
+                    "arguments": {
+                      "move": "a2a4",
+                      "reasoning": "The team has reached a consensus on a2a4. This move prophylactically stops Black's threat of a5a4, which would displace the White Queen and gain queenside space. By playing a2a4, White maintains central tension and keeps the Queen actively placed on b3 without allowing Black unnecessary counterplay."
+                    }
+                  }
+                ]
+              }
+            ],
+            "prompt_tokens": 27821,
+            "completion_tokens": 634,
+            "total_tokens": 28455,
+            "total_latency_ms": 599110,
+            "call_count": 8
+          },
+          "timestamp": "2026-03-25T22:46:15.395+00:00",
+          "latency_ms": 599118,
+          "quality_category": "inaccuracy"
+        },
+        {
+          "turn": 7,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Be7",
+            "uci": "f8e7",
+            "fen_before": "r1q1kbnr/1p1n1ppp/2p1p3/p2p1b2/P1PP1B2/1QN1PN2/1P3PPP/R3KB1R b KQkq - 0 8",
+            "fen_after": "r1q1k1nr/1p1nbppp/2p1p3/p2p1b2/P1PP1B2/1QN1PN2/1P3PPP/R3KB1R w KQkq - 1 9",
+            "centipawn_eval": 39,
+            "centipawn_eval_delta": 16,
+            "ply": 16
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T22:46:15.428+00:00",
+          "latency_ms": 25
+        }
+      ],
+      "total_plies": 16,
+      "game_id": "20260325_162954_553701",
+      "experiment_id": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_2",
+      "system_type": "multi_agent",
+      "model_name": "gemini-3.1-pro-preview",
+      "error": "KeyboardInterrupt: User interrupted execution",
+      "result": "error",
+      "winner": "error",
+      "end_time": "2026-03-25T22:50:48.794+00:00"
+    },
+    "checksum": "58bda473b7da21848bab5a7cbf67cc48fff16db145797ddb72953c3ef1ce4154"
+  }
+]

@@ -1,0 +1,1277 @@
+[
+  {
+    "record_id": "20260325_123019_372255",
+    "timestamp": "2026-03-25T16:30:19.372+00:00",
+    "config_hash": "1d3d8671ce59a621dec5",
+    "environment": {
+      "platform": "Darwin",
+      "platform_release": "25.3.0",
+      "platform_version": "Darwin Kernel Version 25.3.0: Wed Jan 28 20:56:34 PST 2026; root:xnu-12377.91.3~2/RELEASE_ARM64_T8112",
+      "architecture": "arm64",
+      "processor": "arm",
+      "python_version": "3.14.0 (main, Oct  7 2025, 09:34:52) [Clang 17.0.0 (clang-1700.3.19.1)]",
+      "hostname": "Archits-Computer.local",
+      "timestamp": "2026-03-25T16:30:19.382+00:00",
+      "cuda_gpus": null,
+      "ollama_version": "Warning: could not connect to a running Ollama instance\nWarning: client version is 0.10.1",
+      "env_type": "chess",
+      "cloud_mode": true,
+      "cloud_provider": "vertex",
+      "cloud_meta_model": "gemini-3.1-flash-lite-preview"
+    },
+    "config": {
+      "experiment_id": "single_gemini-3.1-flash-lite-preview_1",
+      "system_type": "single",
+      "meta_model_name": "gemini-3.1-flash-lite-preview",
+      "crew_model_name": null,
+      "temperature": 0.2,
+      "max_context_tokens": 1048576,
+      "max_token": 8192,
+      "think": false,
+      "max_plies": 100,
+      "move_history_limit": 1,
+      "stockfish_elo": 1320,
+      "stockfish_play_depth": 10,
+      "stockfish_eval_depth": 10,
+      "crew_max_context_tokens": null,
+      "crew_max_token": null,
+      "env_type": "chess",
+      "evalplus_dataset": "humaneval",
+      "evalplus_mini": true,
+      "evalplus_task_limit": 20,
+      "evalplus_k": 1,
+      "model_details": {}
+    },
+    "game_result": {
+      "game_id": "20260325_123020_198771",
+      "system_name": "single_llm",
+      "environment_name": "Chess",
+      "start_time": "2026-03-25T16:30:20.198+00:00",
+      "end_time": "2026-03-25T16:33:11.626+00:00",
+      "duration_seconds": 171.43,
+      "result": {
+        "winner": "Stockfish",
+        "result": "0-1",
+        "final_fen": "5b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1B1r1K1 w - - 0 23"
+      },
+      "moves": [
+        {
+          "turn": 0,
+          "player": "single_llm",
+          "action": "e2e4",
+          "env_state": {
+            "player": "system",
+            "san": "e4",
+            "uci": "e2e4",
+            "fen_before": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            "fen_after": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+            "centipawn_eval": 34,
+            "centipawn_eval_delta": 34,
+            "ply": 1
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 2623,
+                "timestamp": "2026-03-25T16:30:20.199+00:00",
+                "prompt_tokens": 806,
+                "completion_tokens": 35,
+                "response": "e2e4",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"e2e4\",\n  \"rationale_brief\": \"Control the center and open lines for the queen and bishop.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 806,
+            "completion_tokens": 35,
+            "total_tokens": 841,
+            "total_latency_ms": 2623,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:22.877+00:00",
+          "latency_ms": 2623
+        },
+        {
+          "turn": 0,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "e5",
+            "uci": "e7e5",
+            "fen_before": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+            "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+            "centipawn_eval": 48,
+            "centipawn_eval_delta": 14,
+            "ply": 2
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:22.933+00:00",
+          "latency_ms": 54
+        },
+        {
+          "turn": 1,
+          "player": "single_llm",
+          "action": "g1f3",
+          "env_state": {
+            "player": "system",
+            "san": "Nf3",
+            "uci": "g1f3",
+            "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+            "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+            "centipawn_eval": 38,
+            "centipawn_eval_delta": -10,
+            "ply": 3
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1354,
+                "timestamp": "2026-03-25T16:30:23.440+00:00",
+                "prompt_tokens": 931,
+                "completion_tokens": 40,
+                "response": "g1f3",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"g1f3\",\n  \"rationale_brief\": \"Develops knight, attacks e5 pawn, and prepares for kingside castling.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 931,
+            "completion_tokens": 40,
+            "total_tokens": 971,
+            "total_latency_ms": 1354,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:24.823+00:00",
+          "latency_ms": 1354
+        },
+        {
+          "turn": 1,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Nc6",
+            "uci": "b8c6",
+            "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+            "fen_after": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+            "centipawn_eval": 44,
+            "centipawn_eval_delta": 6,
+            "ply": 4
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:24.867+00:00",
+          "latency_ms": 42
+        },
+        {
+          "turn": 2,
+          "player": "single_llm",
+          "action": "f1b5",
+          "env_state": {
+            "player": "system",
+            "san": "Bb5",
+            "uci": "f1b5",
+            "fen_before": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+            "fen_after": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+            "centipawn_eval": 36,
+            "centipawn_eval_delta": -8,
+            "ply": 5
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1063,
+                "timestamp": "2026-03-25T16:30:25.370+00:00",
+                "prompt_tokens": 947,
+                "completion_tokens": 37,
+                "response": "f1b5",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"f1b5\",\n  \"rationale_brief\": \"Develops the bishop and prepares to challenge the knight on c6.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 947,
+            "completion_tokens": 37,
+            "total_tokens": 984,
+            "total_latency_ms": 1063,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:26.493+00:00",
+          "latency_ms": 1063
+        },
+        {
+          "turn": 2,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "a6",
+            "uci": "a7a6",
+            "fen_before": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+            "fen_after": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+            "centipawn_eval": 43,
+            "centipawn_eval_delta": 7,
+            "ply": 6
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:26.545+00:00",
+          "latency_ms": 51
+        },
+        {
+          "turn": 3,
+          "player": "single_llm",
+          "action": "b5c6",
+          "env_state": {
+            "player": "system",
+            "san": "Bxc6",
+            "uci": "b5c6",
+            "fen_before": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+            "fen_after": "r1bqkbnr/1ppp1ppp/p1B5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 4",
+            "centipawn_eval": -1,
+            "centipawn_eval_delta": -44,
+            "ply": 7
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1226,
+                "timestamp": "2026-03-25T16:30:27.051+00:00",
+                "prompt_tokens": 1036,
+                "completion_tokens": 36,
+                "response": "b5c6",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"b5c6\",\n  \"rationale_brief\": \"Exchange bishop for knight to weaken Black's central pawn structure.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1036,
+            "completion_tokens": 36,
+            "total_tokens": 1072,
+            "total_latency_ms": 1226,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:28.314+00:00",
+          "latency_ms": 1226
+        },
+        {
+          "turn": 3,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "bxc6",
+            "uci": "b7c6",
+            "fen_before": "r1bqkbnr/1ppp1ppp/p1B5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 4",
+            "fen_after": "r1bqkbnr/2pp1ppp/p1p5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 5",
+            "centipawn_eval": 91,
+            "centipawn_eval_delta": 92,
+            "ply": 8
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:28.373+00:00",
+          "latency_ms": 58
+        },
+        {
+          "turn": 4,
+          "player": "single_llm",
+          "action": "f3e5",
+          "env_state": {
+            "player": "system",
+            "san": "Nxe5",
+            "uci": "f3e5",
+            "fen_before": "r1bqkbnr/2pp1ppp/p1p5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 5",
+            "fen_after": "r1bqkbnr/2pp1ppp/p1p5/4N3/4P3/8/PPPP1PPP/RNBQK2R b KQkq - 0 5",
+            "centipawn_eval": -114,
+            "centipawn_eval_delta": -205,
+            "ply": 9
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 2294,
+                "timestamp": "2026-03-25T16:30:28.881+00:00",
+                "prompt_tokens": 974,
+                "completion_tokens": 36,
+                "response": "f3e5",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"f3e5\",\n  \"rationale_brief\": \"Win the central pawn after Black's exchange on c6.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 974,
+            "completion_tokens": 36,
+            "total_tokens": 1010,
+            "total_latency_ms": 2294,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:31.214+00:00",
+          "latency_ms": 2295
+        },
+        {
+          "turn": 4,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qe7",
+            "uci": "d8e7",
+            "fen_before": "r1bqkbnr/2pp1ppp/p1p5/4N3/4P3/8/PPPP1PPP/RNBQK2R b KQkq - 0 5",
+            "fen_after": "r1b1kbnr/2ppqppp/p1p5/4N3/4P3/8/PPPP1PPP/RNBQK2R w KQkq - 1 6",
+            "centipawn_eval": 49,
+            "centipawn_eval_delta": 163,
+            "ply": 10
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:31.282+00:00",
+          "latency_ms": 66
+        },
+        {
+          "turn": 5,
+          "player": "single_llm",
+          "action": "d2d4",
+          "env_state": {
+            "player": "system",
+            "san": "d4",
+            "uci": "d2d4",
+            "fen_before": "r1b1kbnr/2ppqppp/p1p5/4N3/4P3/8/PPPP1PPP/RNBQK2R w KQkq - 1 6",
+            "fen_after": "r1b1kbnr/2ppqppp/p1p5/4N3/3PP3/8/PPP2PPP/RNBQK2R b KQkq - 0 6",
+            "centipawn_eval": 20,
+            "centipawn_eval_delta": -29,
+            "ply": 11
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1190,
+                "timestamp": "2026-03-25T16:30:31.789+00:00",
+                "prompt_tokens": 1087,
+                "completion_tokens": 32,
+                "response": "d2d4",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"d2d4\",\n  \"rationale_brief\": \"Control the center and open lines for development.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1087,
+            "completion_tokens": 32,
+            "total_tokens": 1119,
+            "total_latency_ms": 1190,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:33.021+00:00",
+          "latency_ms": 1190
+        },
+        {
+          "turn": 5,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "f6",
+            "uci": "f7f6",
+            "fen_before": "r1b1kbnr/2ppqppp/p1p5/4N3/3PP3/8/PPP2PPP/RNBQK2R b KQkq - 0 6",
+            "fen_after": "r1b1kbnr/2ppq1pp/p1p2p2/4N3/3PP3/8/PPP2PPP/RNBQK2R w KQkq - 0 7",
+            "centipawn_eval": 86,
+            "centipawn_eval_delta": 66,
+            "ply": 12
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:33.063+00:00",
+          "latency_ms": 40
+        },
+        {
+          "turn": 6,
+          "player": "single_llm",
+          "action": "e5f3",
+          "env_state": {
+            "player": "system",
+            "san": "Nf3",
+            "uci": "e5f3",
+            "fen_before": "r1b1kbnr/2ppq1pp/p1p2p2/4N3/3PP3/8/PPP2PPP/RNBQK2R w KQkq - 0 7",
+            "fen_after": "r1b1kbnr/2ppq1pp/p1p2p2/8/3PP3/5N2/PPP2PPP/RNBQK2R b KQkq - 1 7",
+            "centipawn_eval": 37,
+            "centipawn_eval_delta": -49,
+            "ply": 13
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 4936,
+                "timestamp": "2026-03-25T16:30:33.566+00:00",
+                "prompt_tokens": 1211,
+                "completion_tokens": 36,
+                "response": "e5f3",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"e5f3\",\n  \"rationale_brief\": \"Retreat the knight to safety while maintaining a solid central position.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1211,
+            "completion_tokens": 36,
+            "total_tokens": 1247,
+            "total_latency_ms": 4936,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:38.523+00:00",
+          "latency_ms": 4936
+        },
+        {
+          "turn": 6,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qxe4+",
+            "uci": "e7e4",
+            "fen_before": "r1b1kbnr/2ppq1pp/p1p2p2/8/3PP3/5N2/PPP2PPP/RNBQK2R b KQkq - 1 7",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3Pq3/5N2/PPP2PPP/RNBQK2R w KQkq - 0 8",
+            "centipawn_eval": 49,
+            "centipawn_eval_delta": 12,
+            "ply": 14
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:38.559+00:00",
+          "latency_ms": 34
+        },
+        {
+          "turn": 7,
+          "player": "single_llm",
+          "action": "d1e2",
+          "env_state": {
+            "player": "system",
+            "san": "Qe2",
+            "uci": "d1e2",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3Pq3/5N2/PPP2PPP/RNBQK2R w KQkq - 0 8",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3Pq3/5N2/PPP1QPPP/RNB1K2R b KQkq - 1 8",
+            "centipawn_eval": -103,
+            "centipawn_eval_delta": -152,
+            "ply": 15
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1237,
+                "timestamp": "2026-03-25T16:30:39.066+00:00",
+                "prompt_tokens": 830,
+                "completion_tokens": 36,
+                "response": "d1e2",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"d1e2\",\n  \"rationale_brief\": \"Interpose the queen to challenge the black queen and force exchange.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 830,
+            "completion_tokens": 36,
+            "total_tokens": 866,
+            "total_latency_ms": 1237,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:40.321+00:00",
+          "latency_ms": 1237
+        },
+        {
+          "turn": 7,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qe6",
+            "uci": "e4e6",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3Pq3/5N2/PPP1QPPP/RNB1K2R b KQkq - 1 8",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p1qp2/8/3P4/5N2/PPP1QPPP/RNB1K2R w KQkq - 2 9",
+            "centipawn_eval": 14,
+            "centipawn_eval_delta": 117,
+            "ply": 16
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:40.361+00:00",
+          "latency_ms": 38
+        },
+        {
+          "turn": 8,
+          "player": "single_llm",
+          "action": "e1g1",
+          "env_state": {
+            "player": "system",
+            "san": "O-O",
+            "uci": "e1g1",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p1qp2/8/3P4/5N2/PPP1QPPP/RNB1K2R w KQkq - 2 9",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p1qp2/8/3P4/5N2/PPP1QPPP/RNB2RK1 b kq - 3 9",
+            "centipawn_eval": -463,
+            "centipawn_eval_delta": -477,
+            "ply": 17
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 4305,
+                "timestamp": "2026-03-25T16:30:40.868+00:00",
+                "prompt_tokens": 1194,
+                "completion_tokens": 36,
+                "response": "e1g1",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"e1g1\",\n  \"rationale_brief\": \"Castle kingside to improve king safety and connect the rooks.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1194,
+            "completion_tokens": 36,
+            "total_tokens": 1230,
+            "total_latency_ms": 4305,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:45.181+00:00",
+          "latency_ms": 4305
+        },
+        {
+          "turn": 8,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qxe2",
+            "uci": "e6e2",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p1qp2/8/3P4/5N2/PPP1QPPP/RNB2RK1 b kq - 3 9",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP1qPPP/RNB2RK1 w kq - 0 10",
+            "centipawn_eval": -481,
+            "centipawn_eval_delta": -18,
+            "ply": 18
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:45.196+00:00",
+          "latency_ms": 13
+        },
+        {
+          "turn": 9,
+          "player": "single_llm",
+          "action": "f1e1",
+          "env_state": {
+            "player": "system",
+            "san": "Re1",
+            "uci": "f1e1",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP1qPPP/RNB2RK1 w kq - 0 10",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP1qPPP/RNB1R1K1 b kq - 1 10",
+            "centipawn_eval": -589,
+            "centipawn_eval_delta": -108,
+            "ply": 19
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 7389,
+                "timestamp": "2026-03-25T16:30:45.701+00:00",
+                "prompt_tokens": 1132,
+                "completion_tokens": 32,
+                "response": "f1e1",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"f1e1\",\n  \"rationale_brief\": \"Attack the black queen and regain material balance.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1132,
+            "completion_tokens": 32,
+            "total_tokens": 1164,
+            "total_latency_ms": 7389,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:30:53.097+00:00",
+          "latency_ms": 7389
+        },
+        {
+          "turn": 9,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Qxe1+",
+            "uci": "e2e1",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP1qPPP/RNB1R1K1 b kq - 1 10",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP2PPP/RNB1q1K1 w kq - 0 11",
+            "centipawn_eval": -558,
+            "centipawn_eval_delta": 31,
+            "ply": 20
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:30:53.111+00:00",
+          "latency_ms": 9
+        },
+        {
+          "turn": 10,
+          "player": "single_llm",
+          "action": "f3e1",
+          "env_state": {
+            "player": "system",
+            "san": "Nxe1",
+            "uci": "f3e1",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/5N2/PPP2PPP/RNB1q1K1 w kq - 0 11",
+            "fen_after": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/8/PPP2PPP/RNB1N1K1 b kq - 0 11",
+            "centipawn_eval": -561,
+            "centipawn_eval_delta": -3,
+            "ply": 21
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 20534,
+                "timestamp": "2026-03-25T16:30:53.619+00:00",
+                "prompt_tokens": 873,
+                "completion_tokens": 32,
+                "response": "f3e1",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"f3e1\",\n  \"rationale_brief\": \"Forced move to capture the black queen.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 873,
+            "completion_tokens": 32,
+            "total_tokens": 905,
+            "total_latency_ms": 20534,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:31:14.173+00:00",
+          "latency_ms": 20534
+        },
+        {
+          "turn": 10,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "c5",
+            "uci": "c6c5",
+            "fen_before": "r1b1kbnr/2pp2pp/p1p2p2/8/3P4/8/PPP2PPP/RNB1N1K1 b kq - 0 11",
+            "fen_after": "r1b1kbnr/2pp2pp/p4p2/2p5/3P4/8/PPP2PPP/RNB1N1K1 w kq - 0 12",
+            "centipawn_eval": -492,
+            "centipawn_eval_delta": 69,
+            "ply": 22
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:31:14.186+00:00",
+          "latency_ms": 8
+        },
+        {
+          "turn": 11,
+          "player": "single_llm",
+          "action": "d4c5",
+          "env_state": {
+            "player": "system",
+            "san": "dxc5",
+            "uci": "d4c5",
+            "fen_before": "r1b1kbnr/2pp2pp/p4p2/2p5/3P4/8/PPP2PPP/RNB1N1K1 w kq - 0 12",
+            "fen_after": "r1b1kbnr/2pp2pp/p4p2/2P5/8/8/PPP2PPP/RNB1N1K1 b kq - 0 12",
+            "centipawn_eval": -523,
+            "centipawn_eval_delta": -31,
+            "ply": 23
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 918,
+                "timestamp": "2026-03-25T16:31:14.693+00:00",
+                "prompt_tokens": 1172,
+                "completion_tokens": 35,
+                "response": "d4c5",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"d4c5\",\n  \"rationale_brief\": \"Capture the pawn to simplify the position and gain central control.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1172,
+            "completion_tokens": 35,
+            "total_tokens": 1207,
+            "total_latency_ms": 918,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:31:15.622+00:00",
+          "latency_ms": 918
+        },
+        {
+          "turn": 11,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Kf7",
+            "uci": "e8f7",
+            "fen_before": "r1b1kbnr/2pp2pp/p4p2/2P5/8/8/PPP2PPP/RNB1N1K1 b kq - 0 12",
+            "fen_after": "r1b2bnr/2pp1kpp/p4p2/2P5/8/8/PPP2PPP/RNB1N1K1 w - - 1 13",
+            "centipawn_eval": -507,
+            "centipawn_eval_delta": 16,
+            "ply": 24
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:31:15.637+00:00",
+          "latency_ms": 11
+        },
+        {
+          "turn": 12,
+          "player": "single_llm",
+          "action": "b1c3",
+          "env_state": {
+            "player": "system",
+            "san": "Nc3",
+            "uci": "b1c3",
+            "fen_before": "r1b2bnr/2pp1kpp/p4p2/2P5/8/8/PPP2PPP/RNB1N1K1 w - - 1 13",
+            "fen_after": "r1b2bnr/2pp1kpp/p4p2/2P5/8/2N5/PPP2PPP/R1B1N1K1 b - - 2 13",
+            "centipawn_eval": -544,
+            "centipawn_eval_delta": -37,
+            "ply": 25
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 4782,
+                "timestamp": "2026-03-25T16:31:16.146+00:00",
+                "prompt_tokens": 1175,
+                "completion_tokens": 35,
+                "response": "b1c3",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"b1c3\",\n  \"rationale_brief\": \"Develop the knight to control the center and prepare for development.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1175,
+            "completion_tokens": 35,
+            "total_tokens": 1210,
+            "total_latency_ms": 4782,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:31:20.933+00:00",
+          "latency_ms": 4782
+        },
+        {
+          "turn": 12,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "a5",
+            "uci": "a6a5",
+            "fen_before": "r1b2bnr/2pp1kpp/p4p2/2P5/8/2N5/PPP2PPP/R1B1N1K1 b - - 2 13",
+            "fen_after": "r1b2bnr/2pp1kpp/5p2/p1P5/8/2N5/PPP2PPP/R1B1N1K1 w - - 0 14",
+            "centipawn_eval": -470,
+            "centipawn_eval_delta": 74,
+            "ply": 26
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:31:20.940+00:00",
+          "latency_ms": 5
+        },
+        {
+          "turn": 13,
+          "player": "single_llm",
+          "action": "c3d5",
+          "env_state": {
+            "player": "system",
+            "san": "Nd5",
+            "uci": "c3d5",
+            "fen_before": "r1b2bnr/2pp1kpp/5p2/p1P5/8/2N5/PPP2PPP/R1B1N1K1 w - - 0 14",
+            "fen_after": "r1b2bnr/2pp1kpp/5p2/p1PN4/8/8/PPP2PPP/R1B1N1K1 b - - 1 14",
+            "centipawn_eval": -555,
+            "centipawn_eval_delta": -85,
+            "ply": 27
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 20256,
+                "timestamp": "2026-03-25T16:31:21.443+00:00",
+                "prompt_tokens": 1245,
+                "completion_tokens": 36,
+                "response": "c3d5",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"c3d5\",\n  \"rationale_brief\": \"Centralize the knight and pressure the black king's position.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1245,
+            "completion_tokens": 36,
+            "total_tokens": 1281,
+            "total_latency_ms": 20256,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:31:41.714+00:00",
+          "latency_ms": 20256
+        },
+        {
+          "turn": 13,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Bb7",
+            "uci": "c8b7",
+            "fen_before": "r1b2bnr/2pp1kpp/5p2/p1PN4/8/8/PPP2PPP/R1B1N1K1 b - - 1 14",
+            "fen_after": "r4bnr/1bpp1kpp/5p2/p1PN4/8/8/PPP2PPP/R1B1N1K1 w - - 2 15",
+            "centipawn_eval": -550,
+            "centipawn_eval_delta": 5,
+            "ply": 28
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:31:41.729+00:00",
+          "latency_ms": 10
+        },
+        {
+          "turn": 14,
+          "player": "single_llm",
+          "action": "d5c7",
+          "env_state": {
+            "player": "system",
+            "san": "Nxc7",
+            "uci": "d5c7",
+            "fen_before": "r4bnr/1bpp1kpp/5p2/p1PN4/8/8/PPP2PPP/R1B1N1K1 w - - 2 15",
+            "fen_after": "r4bnr/1bNp1kpp/5p2/p1P5/8/8/PPP2PPP/R1B1N1K1 b - - 0 15",
+            "centipawn_eval": -532,
+            "centipawn_eval_delta": 18,
+            "ply": 29
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1203,
+                "timestamp": "2026-03-25T16:31:42.237+00:00",
+                "prompt_tokens": 1308,
+                "completion_tokens": 35,
+                "response": "d5c7",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"d5c7\",\n  \"rationale_brief\": \"Forking the black king and rook to gain material advantage.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1308,
+            "completion_tokens": 35,
+            "total_tokens": 1343,
+            "total_latency_ms": 1203,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:31:43.455+00:00",
+          "latency_ms": 1203
+        },
+        {
+          "turn": 14,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Rd8",
+            "uci": "a8d8",
+            "fen_before": "r4bnr/1bNp1kpp/5p2/p1P5/8/8/PPP2PPP/R1B1N1K1 b - - 0 15",
+            "fen_after": "3r1bnr/1bNp1kpp/5p2/p1P5/8/8/PPP2PPP/R1B1N1K1 w - - 1 16",
+            "centipawn_eval": -490,
+            "centipawn_eval_delta": 42,
+            "ply": 30
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:31:43.475+00:00",
+          "latency_ms": 15
+        },
+        {
+          "turn": 15,
+          "player": "single_llm",
+          "action": "c5c6",
+          "env_state": {
+            "player": "system",
+            "san": "c6",
+            "uci": "c5c6",
+            "fen_before": "3r1bnr/1bNp1kpp/5p2/p1P5/8/8/PPP2PPP/R1B1N1K1 w - - 1 16",
+            "fen_after": "3r1bnr/1bNp1kpp/2P2p2/p7/8/8/PPP2PPP/R1B1N1K1 b - - 0 16",
+            "centipawn_eval": -613,
+            "centipawn_eval_delta": -123,
+            "ply": 31
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 26299,
+                "timestamp": "2026-03-25T16:31:43.983+00:00",
+                "prompt_tokens": 1314,
+                "completion_tokens": 36,
+                "response": "c5c6",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"c5c6\",\n  \"rationale_brief\": \"Pushing the pawn creates pressure and restricts black's pieces.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1314,
+            "completion_tokens": 36,
+            "total_tokens": 1350,
+            "total_latency_ms": 26299,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:10.286+00:00",
+          "latency_ms": 26299
+        },
+        {
+          "turn": 15,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "dxc6",
+            "uci": "d7c6",
+            "fen_before": "3r1bnr/1bNp1kpp/2P2p2/p7/8/8/PPP2PPP/R1B1N1K1 b - - 0 16",
+            "fen_after": "3r1bnr/1bN2kpp/2p2p2/p7/8/8/PPP2PPP/R1B1N1K1 w - - 0 17",
+            "centipawn_eval": -511,
+            "centipawn_eval_delta": 102,
+            "ply": 32
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:10.294+00:00",
+          "latency_ms": 4
+        },
+        {
+          "turn": 16,
+          "player": "single_llm",
+          "action": "c7e8",
+          "env_state": {
+            "player": "system",
+            "san": "Ne8",
+            "uci": "c7e8",
+            "fen_before": "3r1bnr/1bN2kpp/2p2p2/p7/8/8/PPP2PPP/R1B1N1K1 w - - 0 17",
+            "fen_after": "3rNbnr/1b3kpp/2p2p2/p7/8/8/PPP2PPP/R1B1N1K1 b - - 1 17",
+            "centipawn_eval": -729,
+            "centipawn_eval_delta": -218,
+            "ply": 33
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 4206,
+                "timestamp": "2026-03-25T16:32:10.801+00:00",
+                "prompt_tokens": 1329,
+                "completion_tokens": 33,
+                "response": "c7e8",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"c7e8\",\n  \"rationale_brief\": \"Forking the rooks to gain material advantage.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1329,
+            "completion_tokens": 33,
+            "total_tokens": 1362,
+            "total_latency_ms": 4206,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:15.009+00:00",
+          "latency_ms": 4206
+        },
+        {
+          "turn": 16,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "a4",
+            "uci": "a5a4",
+            "fen_before": "3rNbnr/1b3kpp/2p2p2/p7/8/8/PPP2PPP/R1B1N1K1 b - - 1 17",
+            "fen_after": "3rNbnr/1b3kpp/2p2p2/8/p7/8/PPP2PPP/R1B1N1K1 w - - 0 18",
+            "centipawn_eval": -592,
+            "centipawn_eval_delta": 137,
+            "ply": 34
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:15.015+00:00",
+          "latency_ms": 4
+        },
+        {
+          "turn": 17,
+          "player": "single_llm",
+          "action": "e8g7",
+          "env_state": {
+            "player": "system",
+            "san": "Nxg7",
+            "uci": "e8g7",
+            "fen_before": "3rNbnr/1b3kpp/2p2p2/8/p7/8/PPP2PPP/R1B1N1K1 w - - 0 18",
+            "fen_after": "3r1bnr/1b3kNp/2p2p2/8/p7/8/PPP2PPP/R1B1N1K1 b - - 0 18",
+            "centipawn_eval": -625,
+            "centipawn_eval_delta": -33,
+            "ply": 35
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 7440,
+                "timestamp": "2026-03-25T16:32:15.523+00:00",
+                "prompt_tokens": 1328,
+                "completion_tokens": 33,
+                "response": "e8g7",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"e8g7\",\n  \"rationale_brief\": \"Capture the pawn and attack the black king position.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1328,
+            "completion_tokens": 33,
+            "total_tokens": 1361,
+            "total_latency_ms": 7440,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:22.967+00:00",
+          "latency_ms": 7440
+        },
+        {
+          "turn": 17,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "h5",
+            "uci": "h7h5",
+            "fen_before": "3r1bnr/1b3kNp/2p2p2/8/p7/8/PPP2PPP/R1B1N1K1 b - - 0 18",
+            "fen_after": "3r1bnr/1b3kN1/2p2p2/7p/p7/8/PPP2PPP/R1B1N1K1 w - - 0 19",
+            "centipawn_eval": -575,
+            "centipawn_eval_delta": 50,
+            "ply": 36
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:22.974+00:00",
+          "latency_ms": 4
+        },
+        {
+          "turn": 18,
+          "player": "single_llm",
+          "action": "g7h5",
+          "env_state": {
+            "player": "system",
+            "san": "Nxh5",
+            "uci": "g7h5",
+            "fen_before": "3r1bnr/1b3kN1/2p2p2/7p/p7/8/PPP2PPP/R1B1N1K1 w - - 0 19",
+            "fen_after": "3r1bnr/1b3k2/2p2p2/7N/p7/8/PPP2PPP/R1B1N1K1 b - - 0 19",
+            "centipawn_eval": -577,
+            "centipawn_eval_delta": -2,
+            "ply": 37
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 1124,
+                "timestamp": "2026-03-25T16:32:23.481+00:00",
+                "prompt_tokens": 1355,
+                "completion_tokens": 32,
+                "response": "g7h5",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"g7h5\",\n  \"rationale_brief\": \"Capture the black pawn to gain material advantage.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1355,
+            "completion_tokens": 32,
+            "total_tokens": 1387,
+            "total_latency_ms": 1124,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:24.618+00:00",
+          "latency_ms": 1124
+        },
+        {
+          "turn": 18,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "c5",
+            "uci": "c6c5",
+            "fen_before": "3r1bnr/1b3k2/2p2p2/7N/p7/8/PPP2PPP/R1B1N1K1 b - - 0 19",
+            "fen_after": "3r1bnr/1b3k2/5p2/2p4N/p7/8/PPP2PPP/R1B1N1K1 w - - 0 20",
+            "centipawn_eval": -506,
+            "centipawn_eval_delta": 71,
+            "ply": 38
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:24.641+00:00",
+          "latency_ms": 18
+        },
+        {
+          "turn": 19,
+          "player": "single_llm",
+          "action": "h5f6",
+          "env_state": {
+            "player": "system",
+            "san": "Nxf6",
+            "uci": "h5f6",
+            "fen_before": "3r1bnr/1b3k2/5p2/2p4N/p7/8/PPP2PPP/R1B1N1K1 w - - 0 20",
+            "fen_after": "3r1bnr/1b3k2/5N2/2p5/p7/8/PPP2PPP/R1B1N1K1 b - - 0 20",
+            "centipawn_eval": -598,
+            "centipawn_eval_delta": -92,
+            "ply": 39
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 7598,
+                "timestamp": "2026-03-25T16:32:25.149+00:00",
+                "prompt_tokens": 1381,
+                "completion_tokens": 36,
+                "response": "h5f6",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"h5f6\",\n  \"rationale_brief\": \"Attacking the black king and creating pressure on the kingside.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1381,
+            "completion_tokens": 36,
+            "total_tokens": 1417,
+            "total_latency_ms": 7598,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:32.772+00:00",
+          "latency_ms": 7598
+        },
+        {
+          "turn": 19,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Nxf6",
+            "uci": "g8f6",
+            "fen_before": "3r1bnr/1b3k2/5N2/2p5/p7/8/PPP2PPP/R1B1N1K1 b - - 0 20",
+            "fen_after": "3r1b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1B1N1K1 w - - 0 21",
+            "centipawn_eval": -566,
+            "centipawn_eval_delta": 32,
+            "ply": 40
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:32.790+00:00",
+          "latency_ms": 13
+        },
+        {
+          "turn": 20,
+          "player": "single_llm",
+          "action": "e1f3",
+          "env_state": {
+            "player": "system",
+            "san": "Nf3",
+            "uci": "e1f3",
+            "fen_before": "3r1b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1B1N1K1 w - - 0 21",
+            "fen_after": "3r1b1r/1b3k2/5n2/2p5/p7/5N2/PPP2PPP/R1B3K1 b - - 1 21",
+            "centipawn_eval": -29998,
+            "centipawn_eval_delta": -29432,
+            "ply": 41
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 10447,
+                "timestamp": "2026-03-25T16:32:33.298+00:00",
+                "prompt_tokens": 1357,
+                "completion_tokens": 35,
+                "response": "e1f3",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"e1f3\",\n  \"rationale_brief\": \"Develop the knight to a central square to improve piece activity.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1357,
+            "completion_tokens": 35,
+            "total_tokens": 1392,
+            "total_latency_ms": 10447,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:32:43.752+00:00",
+          "latency_ms": 10447
+        },
+        {
+          "turn": 20,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Rd1+",
+            "uci": "d8d1",
+            "fen_before": "3r1b1r/1b3k2/5n2/2p5/p7/5N2/PPP2PPP/R1B3K1 b - - 1 21",
+            "fen_after": "5b1r/1b3k2/5n2/2p5/p7/5N2/PPP2PPP/R1Br2K1 w - - 2 22",
+            "centipawn_eval": -29999,
+            "centipawn_eval_delta": -1,
+            "ply": 42
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:32:43.764+00:00",
+          "latency_ms": 6
+        },
+        {
+          "turn": 21,
+          "player": "single_llm",
+          "action": "f3e1",
+          "env_state": {
+            "player": "system",
+            "san": "Ne1",
+            "uci": "f3e1",
+            "fen_before": "5b1r/1b3k2/5n2/2p5/p7/5N2/PPP2PPP/R1Br2K1 w - - 2 22",
+            "fen_after": "5b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1BrN1K1 b - - 3 22",
+            "centipawn_eval": -29999,
+            "centipawn_eval_delta": 0,
+            "ply": 43
+          },
+          "system_move_record": {
+            "calls": [
+              {
+                "latency_ms": 26819,
+                "timestamp": "2026-03-25T16:32:44.274+00:00",
+                "prompt_tokens": 1168,
+                "completion_tokens": 34,
+                "response": "f3e1",
+                "thinking": "",
+                "raw_response": "{\n  \"move\": \"f3e1\",\n  \"rationale_brief\": \"Forced move to capture the rook and escape check.\"\n}",
+                "error": null
+              }
+            ],
+            "prompt_tokens": 1168,
+            "completion_tokens": 34,
+            "total_tokens": 1202,
+            "total_latency_ms": 26819,
+            "call_count": 1
+          },
+          "timestamp": "2026-03-25T16:33:11.099+00:00",
+          "latency_ms": 26819
+        },
+        {
+          "turn": 21,
+          "player": "Stockfish",
+          "action": "",
+          "env_state": {
+            "player": "Stockfish",
+            "san": "Rxe1#",
+            "uci": "d1e1",
+            "fen_before": "5b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1BrN1K1 b - - 3 22",
+            "fen_after": "5b1r/1b3k2/5n2/2p5/p7/8/PPP2PPP/R1B1r1K1 w - - 0 23",
+            "centipawn_eval": -30000,
+            "centipawn_eval_delta": -1,
+            "ply": 44
+          },
+          "system_move_record": {},
+          "timestamp": "2026-03-25T16:33:11.109+00:00",
+          "latency_ms": 5
+        }
+      ],
+      "total_turns": 22,
+      "config": {
+        "experiment_id": "single_gemini-3.1-flash-lite-preview_1",
+        "system_type": "single",
+        "meta_model_name": "gemini-3.1-flash-lite-preview",
+        "crew_model_name": null,
+        "temperature": 0.2,
+        "max_context_tokens": 1048576,
+        "max_token": 8192,
+        "think": false,
+        "max_plies": 100,
+        "move_history_limit": 1,
+        "stockfish_elo": 1320,
+        "stockfish_play_depth": 10,
+        "stockfish_eval_depth": 10,
+        "crew_max_context_tokens": null,
+        "crew_max_token": null,
+        "env_type": "chess",
+        "evalplus_dataset": "humaneval",
+        "evalplus_mini": true,
+        "evalplus_task_limit": 20,
+        "evalplus_k": 1,
+        "model_details": {}
+      },
+      "error": null,
+      "error_type": null,
+      "status": "completed"
+    },
+    "checksum": "782dd2cca0dc5ddc9906b30aef4acbee185289b97880ad6d6672530461d745c0"
+  }
+]

@@ -50,6 +50,7 @@ pnpm-lock.yaml
 # Vite / Build output
 # -------------------------------------------------
 dist/
+build/
 .build/
 .cache/
 .vite/

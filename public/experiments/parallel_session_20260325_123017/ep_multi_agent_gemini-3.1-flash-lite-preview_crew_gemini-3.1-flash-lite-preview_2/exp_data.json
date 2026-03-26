@@ -1,0 +1,62 @@
+[
+  {
+    "record_id": "20260325_185048_834726",
+    "timestamp": "2026-03-25T22:50:48.834+00:00",
+    "config_hash": "97b12e7c1bcdeb108b2d",
+    "environment": {
+      "platform": "Darwin",
+      "platform_release": "25.3.0",
+      "platform_version": "Darwin Kernel Version 25.3.0: Wed Jan 28 20:56:34 PST 2026; root:xnu-12377.91.3~2/RELEASE_ARM64_T8112",
+      "architecture": "arm64",
+      "processor": "arm",
+      "python_version": "3.14.0 (main, Oct  7 2025, 09:34:52) [Clang 17.0.0 (clang-1700.3.19.1)]",
+      "hostname": "Archits-Computer.local",
+      "timestamp": "2026-03-25T22:50:48.834+00:00",
+      "cuda_gpus": null,
+      "ollama_version": "Warning: could not connect to a running Ollama instance\nWarning: client version is 0.10.1",
+      "env_type": "evalplus",
+      "cloud_mode": true,
+      "cloud_provider": "vertex",
+      "cloud_meta_model": "gemini-3.1-flash-lite-preview",
+      "cloud_crew_model": "gemini-3.1-flash-lite-preview"
+    },
+    "config": {
+      "experiment_id": "ep_multi_agent_gemini-3.1-flash-lite-preview_crew_gemini-3.1-flash-lite-preview_2",
+      "system_type": "multi_agent",
+      "meta_model_name": "gemini-3.1-flash-lite-preview",
+      "crew_model_name": "gemini-3.1-flash-lite-preview",
+      "temperature": 0.2,
+      "max_context_tokens": 1048576,
+      "max_token": 8192,
+      "think": false,
+      "max_plies": 100,
+      "move_history_limit": 1,
+      "stockfish_elo": 1320,
+      "stockfish_play_depth": 10,
+      "stockfish_eval_depth": 10,
+      "crew_max_context_tokens": 1048576,
+      "crew_max_token": 8192,
+      "env_type": "evalplus",
+      "evalplus_dataset": "humaneval",
+      "evalplus_mini": true,
+      "evalplus_task_limit": 20,
+      "evalplus_k": 1,
+      "model_details": {}
+    },
+    "game_result": {
+      "status": "error",
+      "start_time": "2026-03-25T22:50:48.834+00:00",
+      "moves": [],
+      "total_plies": 0,
+      "game_id": "20260325_185048_902876",
+      "experiment_id": "ep_multi_agent_gemini-3.1-flash-lite-preview_crew_gemini-3.1-flash-lite-preview_2",
+      "system_type": "multi_agent",
+      "model_name": "gemini-3.1-flash-lite-preview",
+      "error": "KeyboardInterrupt: User interrupted execution",
+      "result": "error",
+      "winner": "error",
+      "end_time": "2026-03-25T22:50:49.250+00:00"
+    },
+    "checksum": "b64fb385ba6fd90c23160246f594dc8941ede05289739e08b36fc8d9e75f89bd"
+  }
+]
