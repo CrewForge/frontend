@@ -96,10 +96,15 @@ export function materialAdvantageFromGame(game: Chess): MaterialAdvantage {
     }
   }
 
+  const whiteIconScore = scoreKinds(whiteIcons);
+  const blackIconScore = scoreKinds(blackIcons);
+  const net = whiteIconScore - blackIconScore;
+
   return {
     whiteIcons,
     blackIcons,
-    whitePlus: scoreKinds(whiteIcons),
-    blackPlus: scoreKinds(blackIcons),
+    // Show only one +N: whichever side is ahead overall.
+    whitePlus: net > 0 ? net : 0,
+    blackPlus: net < 0 ? -net : 0,
   };
 }
