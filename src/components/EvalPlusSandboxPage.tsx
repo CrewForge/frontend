@@ -33,7 +33,10 @@ import {
   SandboxPrimaryCard,
   SandboxSideLogCard,
   SandboxSecondaryPanel,
+  SandboxSidePanelHeader,
 } from './sandbox-visualization/SandboxVisualizationTemplate';
+
+const sandboxSplitLayoutTransition = { type: 'spring' as const, stiffness: 380, damping: 38 };
 
 type StreamPayload = {
   type?: string;
@@ -98,6 +101,7 @@ export function EvalPlusSandboxPage({
   const [manifestEntries, setManifestEntries] = useState<ExperimentManifestEntry[]>([]);
   const [selectedDatasetPath, setSelectedDatasetPath] = useState<string | null>(null);
   const [activeDataset, setActiveDataset] = useState<ExperimentDataset | null>(null);
+  const [wideSidePanel, setWideSidePanel] = useState(false);
   const submissionLogScrollRef = useRef<HTMLDivElement | null>(null);
   const activeSubmissionRef = useRef<HTMLButtonElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -580,8 +584,10 @@ export function EvalPlusSandboxPage({
         />
 
         <div className="p-3 sm:p-4">
-          <div className="sandbox-main-grid sandbox-main-grid--with-graph">
-            <div className="min-w-0">
+          <div
+            className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
+          >
+            <motion.div layout className="min-w-0" transition={sandboxSplitLayoutTransition}>
               <SandboxPrimaryCard
                   title="Code"
                   description={codeDescription}
@@ -665,9 +671,11 @@ export function EvalPlusSandboxPage({
                     </motion.div>
                   </div>
                 </SandboxPrimaryCard>
-            </div>
+            </motion.div>
 
-            <div className="sandbox-side-stack min-w-0">
+            <motion.aside layout className="min-w-0 flex flex-col gap-3" transition={sandboxSplitLayoutTransition}>
+              <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
+              <div className="sandbox-side-stack min-w-0">
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
@@ -744,7 +752,8 @@ export function EvalPlusSandboxPage({
                   </div>
                 )}
               </SandboxSecondaryPanel>
-            </div>
+              </div>
+            </motion.aside>
           </div>
         </div>
       </SandboxVisualizationRoot>

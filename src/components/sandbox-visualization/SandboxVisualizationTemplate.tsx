@@ -1,4 +1,6 @@
 import React from 'react';
+import { Maximize2, Minimize2 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
@@ -160,6 +162,50 @@ export function SandboxVizToolbarBlock({
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Top of the right column: expand/shrink workspace split (~80% side vs default). */
+export function SandboxSidePanelHeader({
+  expanded,
+  onToggle,
+}: {
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="sandbox-side-panel-header">
+      <span className="text-xs font-medium text-muted-foreground">Interaction & logs</span>
+      <motion.div
+        initial={false}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+      >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 px-2.5"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'Shrink side panel to default width' : 'Expand side panel to about eighty percent width'}
+        >
+          {expanded ? (
+            <>
+              <Minimize2 className="size-3.5 shrink-0" aria-hidden />
+              Shrink
+            </>
+          ) : (
+            <>
+              <Maximize2 className="size-3.5 shrink-0" aria-hidden />
+              Expand
+            </>
+          )}
+        </Button>
+      </motion.div>
     </div>
   );
 }

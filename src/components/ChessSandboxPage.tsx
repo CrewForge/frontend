@@ -26,7 +26,10 @@ import {
   SandboxVizToolbarBlock,
   SandboxPrimaryCard,
   SandboxSideLogCard,
+  SandboxSidePanelHeader,
 } from './sandbox-visualization/SandboxVisualizationTemplate';
+
+const sandboxSplitLayoutTransition = { type: 'spring' as const, stiffness: 380, damping: 38 };
 
 export interface ChessSandboxPageProps {
   token: string;
@@ -192,6 +195,7 @@ export function ChessSandboxPage({
   const [manifestEntries, setManifestEntries] = useState<ExperimentManifestEntry[]>([]);
   const [selectedDatasetPath, setSelectedDatasetPath] = useState<string | null>(null);
   const [activeDataset, setActiveDataset] = useState<ExperimentDataset | null>(null);
+  const [wideSidePanel, setWideSidePanel] = useState(false);
 
   const chessMovePayloads = useMemo(
     () => replayPayloads.filter((p) => p?.type === 'event' && p?.uci),
@@ -782,8 +786,10 @@ export function ChessSandboxPage({
         />
 
         <div className="p-3 sm:p-4">
-          <div className="sandbox-main-grid sandbox-main-grid--with-graph">
-            <div className="min-w-0">
+          <div
+            className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
+          >
+            <motion.div layout className="min-w-0" transition={sandboxSplitLayoutTransition}>
               <SandboxPrimaryCard
                   title="Board & analysis"
                   description="UCI stream · chess.js SAN · eval from centipawns"
@@ -854,9 +860,11 @@ export function ChessSandboxPage({
                     />
                   </div>
                 </SandboxPrimaryCard>
-            </div>
+            </motion.div>
 
-            <div className="sandbox-side-stack min-w-0">
+            <motion.aside layout className="min-w-0 flex flex-col gap-3" transition={sandboxSplitLayoutTransition}>
+              <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
+              <div className="sandbox-side-stack min-w-0">
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
@@ -901,7 +909,8 @@ export function ChessSandboxPage({
                   )}
                 </div>
               </SandboxSideLogCard>
-            </div>
+              </div>
+            </motion.aside>
           </div>
         </div>
       </SandboxVisualizationRoot>
