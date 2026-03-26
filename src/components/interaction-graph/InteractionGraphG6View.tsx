@@ -90,9 +90,9 @@ export function InteractionGraphG6View({
       return;
     }
     setSelectedEdge((current) => {
-      if (!current) return pickDefaultEdge(graph);
+      if (!current) return null;
       const match = graph.edges.find((edge) => edge.id === current.id);
-      if (!match) return pickDefaultEdge(graph);
+      if (!match) return null;
       return {
         id: match.id,
         source: match.source,
@@ -142,6 +142,12 @@ export function InteractionGraphG6View({
       sceneRef.current = null;
     };
   }, [graph, evidenceFocusTurn, visible]);
+
+  useEffect(() => {
+    if (visible) return;
+    setSelectedEdge(null);
+    setSelectedNodeId(null);
+  }, [visible]);
 
   useEffect(() => {
     const scene = sceneRef.current;
