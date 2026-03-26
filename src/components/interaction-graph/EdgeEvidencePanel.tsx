@@ -5,6 +5,7 @@ import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { cn } from "../ui/utils";
+import { formatInteractionEvidenceDisplayText } from "../../lib/experiments/interactionEvidenceFormat";
 import type { InteractionEvent } from "../../lib/experiments/types";
 
 function formatWhen(ts: number) {
@@ -36,7 +37,8 @@ function MessageBubble({
   expanded: boolean;
   onToggle: () => void;
 }) {
-  const body = sample.text || "(empty)";
+  const raw = sample.text || "(empty)";
+  const body = formatInteractionEvidenceDisplayText(raw, sample.kind);
   return (
     <button
       type="button"

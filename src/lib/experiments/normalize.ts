@@ -37,8 +37,27 @@ function tsToMillis(ts?: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function callerName(call: ChatCallRecord): string {
-  return call.caller_name?.trim() || call.caller_id?.trim() || "Unknown agent";
+function shortModelLabel(model: string): string {
+  const s = model.trim();
+  if (!s) return "";
+  const tail = s.split("/").pop()?.trim();
+  return tail && tail.length > 0 ? tail : s;
+}
+
+function callerName(call: ChatCallRecord, move: ExperimentMove, dataset: ExperimentDataset): string {
+  const fromCall = call.caller_name?.trim() || call.caller_id?.trim();
+  if (fromCall) return fromCall;
+  const player = move.player?.trim();
+  if (player) return player;
+  const crew = dataset.config?.crew_model_name;
+  if (crew && typeof crew === "string") {
+    return `Crew (${shortModelLabel(crew)})`;
+  }
+  const meta = dataset.config?.meta_model_name;
+  if (meta && typeof meta === "string") {
+    return `Meta (${shortModelLabel(meta)})`;
+  }
+  return "Agent";
 }
 
 function inferRole(name: string): string | undefined {
@@ -76,7 +95,7 @@ export function extractInteractionEvents(
     for (const call of calls) {
       const cycle = typeof call.cycle === "number" ? call.cycle : 0;
       if (!inRange(cycle, options.cycleRange)) continue;
-      const from = callerName(call);
+      const from = callerName(call, move, dataset);
       const t = tsToMillis(call.timestamp ?? move.timestamp);
       const tokens = (call.prompt_tokens ?? 0) + (call.completion_tokens ?? 0);
       const latencyMs = typeof call.latency_ms === "number" ? call.latency_ms : undefined;
@@ -198,7 +217,7 @@ export function extractAgents(dataset: ExperimentDataset): string[] {
   for (const move of moves) {
     const calls = move.system_move_record?.calls ?? [];
     for (const call of calls) {
-      set.add(callerName(call));
+      set.add(callerName(call, move, dataset));
       const toolCalls = Array.isArray(call.tool_calls) ? call.tool_calls : [];
       for (const tool of toolCalls) {
         if (tool?.name === "talk") {

@@ -225,6 +225,39 @@ export function findDefaultMetaToCommonEdge(
   return null;
 }
 
+function edgeWeight(e: Edge): number {
+  const w = (e.data as { weight?: number } | undefined)?.weight;
+  return typeof w === "number" ? w : 0;
+}
+
+/**
+ * Default selected edge for the evidence panel: Meta→Common when present;
+ * otherwise for a single crew agent prefer self-loop (tool messages to self), then agent→CommonSpace.
+ */
+export function findDefaultSelectedEdge(edges: Edge[], graph: InteractionGraphData): Edge | null {
+  const metaCommon = findDefaultMetaToCommonEdge(edges, graph);
+  if (metaCommon) return metaCommon;
+
+  const crewNodes = graph.nodes.filter(
+    (n) => n.id !== COMMON_SPACE_ID && nodeTypeFor(n.label) !== "meta",
+  );
+
+  if (crewNodes.length === 1) {
+    const agentId = crewNodes[0].id;
+    const self = edges.find((e) => e.source === e.target && e.source === agentId);
+    if (self) return self;
+    const toCommon = edges.find((e) => e.source === agentId && e.target === COMMON_SPACE_ID);
+    if (toCommon) return toCommon;
+  }
+
+  const selfLoops = edges.filter((e) => e.source === e.target);
+  if (selfLoops.length > 0) {
+    return selfLoops.reduce((a, b) => (edgeWeight(a) >= edgeWeight(b) ? a : b));
+  }
+
+  return null;
+}
+
 /** Stable signature when agents/edges are added or removed — use for keys + fitView. */
 export function graphTopologySignature(graph: InteractionGraphData): string {
   if (graph.nodes.length === 0 && graph.edges.length === 0) return "∅";

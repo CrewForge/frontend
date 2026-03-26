@@ -13,7 +13,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { Card } from "../ui/card";
-import { buildFlowGraph, findDefaultMetaToCommonEdge, graphTopologySignature } from "./graphLayout";
+import { buildFlowGraph, findDefaultSelectedEdge, graphTopologySignature } from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
 import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
 import type { InteractionGraphData } from "../../lib/experiments/types";
@@ -99,7 +99,7 @@ export function InteractionGraphView({
         if (synced) return synced;
       }
       if (userClearedSelectionRef.current) return null;
-      const def = findDefaultMetaToCommonEdge(built.edges, graph);
+      const def = findDefaultSelectedEdge(built.edges, graph);
       return def ? byId.get(def.id) ?? def : null;
     });
   }, [built.edges, graph]);
