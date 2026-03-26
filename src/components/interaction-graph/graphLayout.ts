@@ -210,6 +210,21 @@ function manualLayoutPositions(graph: InteractionGraphData): Map<string, { x: nu
   return out;
 }
 
+/** Default panel selection: first meta-model node → CommonSpace (if that edge exists). */
+export function findDefaultMetaToCommonEdge(
+  edges: Edge[],
+  graph: InteractionGraphData,
+): Edge | null {
+  const metaIds = new Set(
+    graph.nodes.filter((n) => nodeTypeFor(n.label) === "meta").map((n) => n.id),
+  );
+  if (metaIds.size === 0) return null;
+  for (const e of edges) {
+    if (e.target === COMMON_SPACE_ID && metaIds.has(e.source)) return e;
+  }
+  return null;
+}
+
 /** Stable signature when agents/edges are added or removed — use for keys + fitView. */
 export function graphTopologySignature(graph: InteractionGraphData): string {
   if (graph.nodes.length === 0 && graph.edges.length === 0) return "∅";

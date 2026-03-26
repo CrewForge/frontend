@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -13,7 +13,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { Card } from "../ui/card";
-import { buildFlowGraph, graphTopologySignature } from "./graphLayout";
+import { buildFlowGraph, findDefaultMetaToCommonEdge, graphTopologySignature } from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
 import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
 import type { InteractionGraphData } from "../../lib/experiments/types";
@@ -74,6 +74,7 @@ export function InteractionGraphView({
   evidenceFocusTurn?: number | null;
 }) {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+  const userClearedSelectionRef = useRef(false);
   const built = useMemo(
     () => buildFlowGraph(graph, { focusTurn: evidenceFocusTurn ?? null }),
     [graph, evidenceFocusTurn],
@@ -81,12 +82,34 @@ export function InteractionGraphView({
   const [nodes, setNodes, onNodesChange] = useNodesState(built.nodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(built.edges);
 
+  const topologySig = useMemo(() => graphTopologySignature(graph), [graph]);
+
+  useEffect(() => {
+    userClearedSelectionRef.current = false;
+  }, [topologySig]);
+
+  useEffect(() => {
+    const byId = new Map(built.edges.map((e) => [e.id, e]));
+    setSelectedEdge((prev) => {
+      if (prev) {
+        const synced = byId.get(prev.id);
+        if (synced) return synced;
+      }
+      if (userClearedSelectionRef.current) return null;
+      const def = findDefaultMetaToCommonEdge(built.edges, graph);
+      return def ? byId.get(def.id) ?? def : null;
+    });
+  }, [built.edges, graph]);
+
   useEffect(() => {
     setNodes(built.nodes as Node[]);
-    setEdges(built.edges);
-  }, [built, setNodes, setEdges]);
-
-  const topologySig = useMemo(() => graphTopologySignature(graph), [graph]);
+    setEdges(
+      built.edges.map((e) => ({
+        ...e,
+        selected: selectedEdge?.id === e.id,
+      })),
+    );
+  }, [built, setNodes, setEdges, selectedEdge?.id]);
 
   if (built.nodes.length === 0) {
     return (
@@ -112,8 +135,14 @@ export function InteractionGraphView({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           fitView
-          onEdgeClick={(_, edge) => setSelectedEdge(edge)}
-          onPaneClick={() => setSelectedEdge(null)}
+          onEdgeClick={(_, edge) => {
+            userClearedSelectionRef.current = false;
+            setSelectedEdge(edge);
+          }}
+          onPaneClick={() => {
+            userClearedSelectionRef.current = true;
+            setSelectedEdge(null);
+          }}
           proOptions={{ hideAttribution: true }}
         >
           <FlowFitWhenVisible visible={visible} graphSignature={topologySig} />

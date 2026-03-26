@@ -89,6 +89,11 @@ export function EdgeEvidencePanel({
     return samples.filter((s) => s.turn === focus);
   }, [samples, focus]);
 
+  const otherTurnSamples = useMemo(() => {
+    if (focus === null) return [];
+    return samples.filter((s) => s.turn !== focus);
+  }, [samples, focus]);
+
   const mainSamples = focus === null ? samples : stepSamples;
 
   if (!edge) {
@@ -101,7 +106,7 @@ export function EdgeEvidencePanel({
   }
 
   const kindEntries = Object.entries(payload.kinds ?? {}).filter(([, count]) => Number(count) > 0);
-  const showHistoryCollapsible = focus !== null && samples.length > 0;
+  const showOtherTurnsCollapsible = focus !== null && otherTurnSamples.length > 0;
 
   return (
     <Card className="sandbox-log-panel p-3">
@@ -150,20 +155,20 @@ export function EdgeEvidencePanel({
         )}
       </div>
 
-      {showHistoryCollapsible && (
+      {showOtherTurnsCollapsible && (
         <Collapsible defaultOpen={false} className="mt-3 border-t border-border/60 pt-3">
           <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 rounded-lg px-1 py-1.5 text-left text-xs font-medium text-muted-foreground hover:bg-muted/40 hover:text-foreground">
-            <span>All captured messages on this connection ({samples.length})</span>
+            <span>Messages from other turns ({otherTurnSamples.length})</span>
             <ChevronDown className="interaction-edge-collapse-chevron h-4 w-4 shrink-0" />
           </CollapsibleTrigger>
           <CollapsibleContent className="interaction-edge-history-scroll mt-2 space-y-2 pr-1">
-            {samples.map((sample) => (
+            {otherTurnSamples.map((sample) => (
               <MessageBubble
-                key={`all-${sample.id}`}
+                key={`other-${sample.id}`}
                 sample={sample}
-                expanded={expandedId === `all-${sample.id}`}
+                expanded={expandedId === `other-${sample.id}`}
                 onToggle={() =>
-                  setExpandedId((id) => (id === `all-${sample.id}` ? null : `all-${sample.id}`))
+                  setExpandedId((id) => (id === `other-${sample.id}` ? null : `other-${sample.id}`))
                 }
               />
             ))}
