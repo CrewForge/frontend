@@ -405,6 +405,14 @@
   overscroll-behavior: contain;
 }
 
+.step-messages-outline[data-state="open"] .step-messages-outline__chev {
+  transform: rotate(90deg);
+}
+
+.step-thread[data-state="open"] .step-thread__chev {
+  transform: rotate(90deg);
+}
+
 /* One scrollbar on the wrapper — avoid nested scroll areas fighting the graph height. */
 .interaction-graph-evidence-scroll .interaction-edge-main-scroll,
 .interaction-graph-evidence-scroll .interaction-edge-history-scroll {
@@ -536,10 +544,64 @@
   );
 }
 
-/* Fixed log height: slightly taller than the primary board/code column (~28rem) */
+/* Side column: match edge evidence scroll band (~260px / 42vh) so move log doesn’t dominate */
 .sandbox-side-stack .sandbox-move-log {
-  height: min(36rem, 52vh);
-  max-height: min(36rem, 52vh);
+  height: min(280px, 44vh);
+  max-height: min(280px, 44vh);
+}
+
+/* Match interaction-edge-panel density: padding, header, scroll chrome */
+.sandbox-side-stack .sandbox-move-log.sandbox-log-panel {
+  padding: 0.4rem 0.5rem 0.45rem;
+  gap: 0.35rem !important;
+}
+
+.sandbox-side-stack .sandbox-move-log .sandbox-move-log__header {
+  margin-bottom: 0.2rem;
+  gap: 0.35rem 0.5rem;
+}
+
+.sandbox-side-stack .sandbox-move-log .sandbox-log-title {
+  font-size: 0.88rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.sandbox-side-stack .sandbox-move-log .sandbox-log-subtitle {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  margin: 0.06rem 0 0;
+}
+
+.sandbox-side-stack .sandbox-move-log-scroll {
+  margin-top: 0;
+  padding: 0.2rem 0.2rem 0.35rem 0.3rem;
+  border-radius: 0.45rem;
+}
+
+.sandbox-side-stack .sandbox-move-item {
+  padding: 0.4rem 0.45rem;
+  border-radius: 0.5rem;
+}
+
+.sandbox-side-stack .sandbox-move-uci {
+  font-size: 0.82rem;
+}
+
+.sandbox-side-stack .sandbox-move-meta {
+  gap: 0.4rem 0.65rem;
+  font-size: 0.72rem;
+  margin-top: 0.35rem;
+}
+
+.sandbox-side-stack .sandbox-move-item .sandbox-move-meta {
+  margin-top: 0.35rem !important;
+}
+
+.sandbox-side-stack .sandbox-reasoning {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .sandbox-passatk-panel {

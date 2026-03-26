@@ -701,18 +701,18 @@ export function EvalPlusSandboxPage({
                 }
               />
               <SandboxSideLogCard
-                className="sandbox-move-log sandbox-log-panel gap-0 p-3"
+                className="sandbox-move-log sandbox-log-panel gap-0"
                 title="Submission log"
                 subtitle="Turn, task, and latency"
                 entryCount={moves.length}
               >
                 <div ref={submissionLogScrollRef} className="sandbox-move-log-scroll">
                   {moves.length === 0 ? (
-                    <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    <div className="rounded-md border border-dashed px-2 py-2 text-xs leading-snug text-muted-foreground">
                       No submissions yet. Replay the loaded experiment or connect to the live backend.
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {moves.map((m, idx) => (
                         <button
                           key={`${m.turn}-${idx}`}

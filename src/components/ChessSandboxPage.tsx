@@ -877,11 +877,11 @@ export function ChessSandboxPage({
               >
                 <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
                   {moveLogEntries.length === 0 ? (
-                    <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    <div className="rounded-md border border-dashed px-2 py-2 text-xs leading-snug text-muted-foreground">
                       No moves yet. Start a live stream or replay the loaded experiment.
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {moveLogEntries.map((entry, idx) => (
                         <div
                           key={`${entry.ply}-${entry.uci}-${idx}`}
@@ -895,7 +895,7 @@ export function ChessSandboxPage({
                               </div>
                               <Badge variant="secondary">{entry.player}</Badge>
                             </div>
-                            <div className="sandbox-move-meta mt-1.5">
+                            <div className="sandbox-move-meta">
                               <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
                               <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
                               <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>

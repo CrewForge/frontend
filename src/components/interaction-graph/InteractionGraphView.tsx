@@ -16,7 +16,8 @@ import { Card } from "../ui/card";
 import { buildFlowGraph, findDefaultSelectedEdge, graphTopologySignature } from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
 import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
-import type { InteractionGraphData } from "../../lib/experiments/types";
+import type { InteractionGraphData, InteractionEvent } from "../../lib/experiments/types";
+import { StepMessagesOutline } from "./StepMessagesOutline";
 
 const nodeTypes = { interactionNode: InteractionGraphNode };
 
@@ -66,6 +67,7 @@ export function InteractionGraphView({
   layout = "default",
   evidenceFocusTurn = null,
   sideColumnExpanded = false,
+  interactionEvents,
 }: {
   graph: InteractionGraphData;
   emptyLabel?: string;
@@ -75,8 +77,12 @@ export function InteractionGraphView({
   evidenceFocusTurn?: number | null;
   /** When true with `sideColumn` layout, graph pane height is doubled (wide right panel). */
   sideColumnExpanded?: boolean;
+  /** Full interaction log for expandable step transcript (side column only). */
+  interactionEvents?: InteractionEvent[];
 }) {
+  const HOVER_EDGE_STROKE = "#f59e0b"; // amber-500: distinct from primary/status hues, strong affordance
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+  const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
   const userClearedSelectionRef = useRef(false);
   const built = useMemo(
     () => buildFlowGraph(graph, { focusTurn: evidenceFocusTurn ?? null }),
@@ -89,6 +95,7 @@ export function InteractionGraphView({
 
   useEffect(() => {
     userClearedSelectionRef.current = false;
+    setHoveredEdgeId(null);
   }, [topologySig]);
 
   useEffect(() => {
@@ -110,9 +117,21 @@ export function InteractionGraphView({
       built.edges.map((e) => ({
         ...e,
         selected: selectedEdge?.id === e.id,
+        style:
+          hoveredEdgeId === e.id
+            ? {
+                ...(e.style ?? {}),
+                stroke: HOVER_EDGE_STROKE,
+                opacity: 1,
+                strokeWidth: Math.min(
+                  8,
+                  (typeof e.style?.strokeWidth === "number" ? e.style.strokeWidth : 2) + 1.4,
+                ),
+              }
+            : e.style,
       })),
     );
-  }, [built, setNodes, setEdges, selectedEdge?.id]);
+  }, [built, setNodes, setEdges, selectedEdge?.id, hoveredEdgeId]);
 
   if (built.nodes.length === 0) {
     return (
@@ -142,9 +161,16 @@ export function InteractionGraphView({
             userClearedSelectionRef.current = false;
             setSelectedEdge(edge);
           }}
+          onEdgeMouseEnter={(_, edge) => {
+            setHoveredEdgeId(edge.id);
+          }}
+          onEdgeMouseLeave={() => {
+            setHoveredEdgeId(null);
+          }}
           onPaneClick={() => {
             userClearedSelectionRef.current = true;
             setSelectedEdge(null);
+            setHoveredEdgeId(null);
           }}
           proOptions={{ hideAttribution: true }}
         >
@@ -166,6 +192,9 @@ export function InteractionGraphView({
         <div className="interaction-graph-evidence-scroll">
           <EdgeEvidencePanel edge={selectedEdge} focusTurn={evidenceFocusTurn} />
         </div>
+        {interactionEvents && (
+          <StepMessagesOutline events={interactionEvents} focusTurn={evidenceFocusTurn} />
+        )}
       </div>
     );
   }

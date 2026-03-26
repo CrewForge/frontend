@@ -259,13 +259,15 @@ type SandboxSideLogCardProps = {
 /** Right-column log panel with Strategy-style header and scroll region. */
 export function SandboxSideLogCard({ title, subtitle, entryCount, children, className }: SandboxSideLogCardProps) {
   return (
-    <Card className={className ?? 'sandbox-move-log sandbox-log-panel gap-0 p-3'}>
-      <div className="sandbox-move-log__header mb-1 flex flex-wrap items-center justify-between gap-2">
+    <Card className={className ?? 'sandbox-move-log sandbox-log-panel gap-0'}>
+      <div className="sandbox-move-log__header mb-0.5 flex flex-wrap items-center justify-between gap-1.5">
         <div className="min-w-0">
           <h3 className="sandbox-log-title">{title}</h3>
           <p className="sandbox-log-subtitle">{subtitle}</p>
         </div>
-        <Badge variant="outline">{entryCount} entries</Badge>
+        <Badge variant="outline" className="shrink-0 text-[10px] font-normal">
+          {entryCount} entries
+        </Badge>
       </div>
       {children}
     </Card>

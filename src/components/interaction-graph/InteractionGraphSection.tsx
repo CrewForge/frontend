@@ -45,6 +45,7 @@ export function InteractionGraphSection({
         layout={layout}
         evidenceFocusTurn={evidenceFocusTurn}
         sideColumnExpanded={sideColumnExpanded}
+        interactionEvents={allEvents}
       />
     </div>
   );
