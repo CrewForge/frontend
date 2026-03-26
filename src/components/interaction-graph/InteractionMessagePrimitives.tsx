@@ -23,11 +23,14 @@ export function InteractionMessageRow({
   expanded,
   onToggle,
   tone = "default",
+  focusTurnHighlight = false,
 }: {
   event: InteractionEvent;
   expanded: boolean;
   onToggle: () => void;
   tone?: "default" | "main" | "talk" | "internal";
+  /** Replay / evidence focus: emphasize messages for the active turn. */
+  focusTurnHighlight?: boolean;
 }) {
   const full = formatInteractionEvidenceDisplayText(event.text, event.kind);
   const hasBody = full.trim().length > 0;
@@ -72,6 +75,7 @@ export function InteractionMessageRow({
       className={cn(
         "min-w-0 w-full cursor-pointer rounded-md border border-border/60 bg-background/95 px-2 py-1.5 text-left text-xs shadow-sm transition hover:border-primary/35 hover:bg-muted/30",
         expanded && "ring-1 ring-primary/30",
+        focusTurnHighlight && "interaction-message-row--focus-turn",
         tone === "main" && "border-violet-400/30 bg-violet-500/[0.05]",
         tone === "talk" && "border-teal-500/28 bg-teal-500/[0.05]",
         tone === "internal" && "border-amber-500/28 bg-amber-500/[0.05]",

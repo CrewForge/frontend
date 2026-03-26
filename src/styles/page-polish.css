@@ -527,6 +527,20 @@
   color: var(--foreground);
 }
 
+/* Replay turn: messages for the active step pinned to top of each tab */
+.g6-expand-card .interaction-message-row--focus-turn {
+  border-color: color-mix(in oklab, var(--primary) 42%, var(--border));
+  background: color-mix(in oklab, var(--primary) 12%, var(--card));
+  box-shadow:
+    inset 3px 0 0 0 var(--primary),
+    0 0 0 1px color-mix(in oklab, var(--primary) 22%, transparent);
+}
+
+.g6-expand-card .interaction-message-row--focus-turn:hover {
+  border-color: color-mix(in oklab, var(--primary) 52%, var(--border));
+  background: color-mix(in oklab, var(--primary) 16%, var(--card));
+}
+
 /* Segmented tabs in expanded graph cards — strong active vs idle contrast */
 .g6-expand-card .graph-console-tabs [data-slot="tabs-list"],
 .unified-graph-detail-card .graph-console-tabs [data-slot="tabs-list"] {

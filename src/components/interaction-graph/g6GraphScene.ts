@@ -26,6 +26,36 @@ function hasTurn(edge: { samples?: { turn: number }[] }, turn: number) {
   return (edge.samples ?? []).some((sample) => sample.turn === turn);
 }
 
+/** Edges with traffic on the replay focus turn (non–self-loops) — animated flow along source→target. */
+function computeFlowingEdgeIds(source: InteractionGraphData, focus: number | null): string[] {
+  if (focus == null) return [];
+  return source.edges
+    .filter((edge) => edge.source !== edge.target && hasTurn(edge, focus))
+    .map((edge) => edge.id);
+}
+
+const FLOW_DASH_PATTERN: [number, number] = [8, 6];
+const FLOW_DASH_PERIOD = FLOW_DASH_PATTERN[0] + FLOW_DASH_PATTERN[1];
+
+function positiveMod(n: number, m: number): number {
+  return ((n % m) + m) % m;
+}
+
+/** Flush queued edge style updates to the canvas (updateEdgeData alone does not always redraw each frame). */
+function flushG6StyleDraw(graph: Graph) {
+  const ctx = (
+    graph as unknown as {
+      context?: {
+        element?: {
+          draw: (opts?: { animation?: boolean }) => { finished?: Promise<void> } | undefined;
+        };
+      };
+    }
+  ).context;
+  const task = ctx?.element?.draw({ animation: false });
+  void task?.finished;
+}
+
 function resolveEdgeIdFromEvent(graph: Graph, event: unknown): string | null {
   const evt = event as Record<string, unknown> | undefined;
   const target = (evt?.target as Record<string, unknown> | undefined) ?? undefined;
@@ -102,7 +132,8 @@ function buildG6Data(source: InteractionGraphData, focusTurn?: number | null): G
         style: {
           lineWidth: edgeStrokeWidth(edge.weight),
           stroke: edgeColor(stepActive, dimmed),
-          lineDash: dimmed ? [4, 4] : undefined,
+          lineDash: stepActive ? [...FLOW_DASH_PATTERN] : dimmed ? [4, 4] : undefined,
+          lineDashOffset: stepActive ? 0 : undefined,
           opacity: stepActive ? 0.95 : dimmed ? 0.28 : 0.62,
           endArrow: false,
           label: true,
@@ -149,6 +180,9 @@ export async function createG6GraphScene(
   focusTurn: number | null | undefined,
   callbacks: G6SceneCallbacks,
 ) {
+  const focus =
+    focusTurn == null || Number.isNaN(Number(focusTurn)) ? null : Number(focusTurn);
+  const flowingEdgeIds = computeFlowingEdgeIds(source, focus);
   const data = buildG6Data(source, focusTurn);
   const width = Math.max(320, Math.floor(container.clientWidth || 320));
   const height = Math.max(280, Math.floor(container.clientHeight || 280));
@@ -179,11 +213,14 @@ export async function createG6GraphScene(
           lineWidth: 4.5,
           opacity: 1,
           labelBackgroundStroke: "#60a5fa",
+          /* Keep dash/offset from data so replay (blue) flow keeps animating when selected. */
         },
         hover: {
           stroke: "#f59e0b",
           opacity: 1,
           labelBackgroundStroke: "#f59e0b",
+          /* Solid line on hover — no dashed “flow” from mouseover; only replay step-active data uses dashes. */
+          lineDash: 0,
         },
       },
     },
@@ -240,6 +277,32 @@ export async function createG6GraphScene(
   graph.fitView({ animation: false, padding: [56, 24, 24, 24] });
   await applyEdgeState(graph, selectedEdgeId, hoveredEdgeId);
 
+  let flowOffset = 0;
+  let flowRaf = 0;
+  let flowLastTs = performance.now();
+  /** Offset units/sec along the dash pattern — time-based for smooth continuous motion. */
+  const FLOW_OFFSET_SPEED = 16;
+  const stepFlow = (now: number) => {
+    if (graph.destroyed) return;
+    const dt = Math.min(0.05, (now - flowLastTs) / 1000);
+    flowLastTs = now;
+    flowOffset = positiveMod(flowOffset - FLOW_OFFSET_SPEED * dt, FLOW_DASH_PERIOD);
+    graph.updateEdgeData(
+      flowingEdgeIds.map((id) => ({
+        id,
+        style: {
+          lineDash: [...FLOW_DASH_PATTERN],
+          lineDashOffset: flowOffset,
+        },
+      })),
+    );
+    flushG6StyleDraw(graph);
+    flowRaf = requestAnimationFrame(stepFlow);
+  };
+  if (flowingEdgeIds.length > 0) {
+    flowRaf = requestAnimationFrame(stepFlow);
+  }
+
   const resizeObserver = new ResizeObserver(() => {
     const nextW = Math.max(320, Math.floor(container.clientWidth || 320));
     const nextH = Math.max(280, Math.floor(container.clientHeight || 280));
@@ -251,6 +314,7 @@ export async function createG6GraphScene(
   return {
     graph,
     destroy() {
+      if (flowRaf) cancelAnimationFrame(flowRaf);
       resizeObserver.disconnect();
       graph.destroy();
     },

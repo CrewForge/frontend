@@ -236,6 +236,7 @@ export function InteractionGraphG6View({
             <InCanvasNodeCard
               nodeId={selectedNodeId}
               groups={nodeGroups}
+              focusTurn={evidenceFocusTurn}
               onClose={() => setSelectedNodeId(null)}
             />
           </div>
