@@ -301,6 +301,20 @@ export function EvalPlusSandboxPage({
     setResultsOpen(false);
   }, [handleStopStream, resetState]);
 
+  const handleSwitchToLive = useCallback(() => {
+    handleStopStream();
+    resetState();
+    setResultsOpen(false);
+    onSetDataSource?.('live');
+  }, [handleStopStream, onSetDataSource, resetState]);
+
+  const handleSwitchToSample = useCallback(() => {
+    handleStopStream();
+    resetState();
+    setResultsOpen(false);
+    onSetDataSource?.('sample');
+  }, [handleStopStream, onSetDataSource, resetState]);
+
   const loadEvalSample = useCallback(async () => {
     resetState();
     setResultsOpen(false);
@@ -470,6 +484,28 @@ export function EvalPlusSandboxPage({
                   <Badge variant={autoError ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
                     {autoError ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
                   </Badge>
+                  <div className="flex flex-wrap gap-1">
+                    <Button
+                      type="button"
+                      variant={dataSource === 'sample' ? 'secondary' : 'outline'}
+                      size="sm"
+                      className="h-8"
+                      onClick={handleSwitchToSample}
+                      disabled={dataSource === 'sample'}
+                    >
+                      Replay
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={dataSource === 'live' ? 'secondary' : 'outline'}
+                      size="sm"
+                      className="h-8"
+                      onClick={handleSwitchToLive}
+                      disabled={dataSource === 'live'}
+                    >
+                      Live
+                    </Button>
+                  </div>
                 </div>
                 <SandboxPlaybackControls
                   isLive={dataSource === 'live'}

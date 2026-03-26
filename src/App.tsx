@@ -93,6 +93,13 @@ export default function App() {
     setCurrentPage('sandbox');
   };
 
+  const handleGoToLogin = () => {
+    setDemoMode(false);
+    setSelectedEnvironment(null);
+    setSandboxSource('sample');
+    setCurrentPage('login');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentPage(demoMode ? 'landing' : 'dashboard');
     setSelectedEnvironment(null);
@@ -115,7 +122,7 @@ export default function App() {
   return (
     <>
       {currentPage === 'landing' && (
-        <LandingPage onSignIn={handleOpenDemo} onViewDemo={handleOpenDemo} />
+        <LandingPage onSignIn={handleGoToLogin} onViewDemo={handleOpenDemo} />
       )}
 
       {currentPage === 'login' && (
