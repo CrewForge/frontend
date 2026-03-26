@@ -458,11 +458,88 @@
   padding: 0.2rem 0.45rem;
 }
 
+.interaction-graph-thought-bubble {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.6rem;
+  z-index: 3;
+  min-width: 2.05rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--card) 92%, var(--muted));
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+  transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.interaction-graph-thought-bubble__dots {
+  pointer-events: none;
+}
+
+.interaction-graph-thought-bubble__tail {
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--card) 92%, var(--muted));
+  pointer-events: none;
+}
+
+.interaction-graph-thought-bubble__tail--a {
+  width: 0.42rem;
+  height: 0.42rem;
+  right: 0.35rem;
+  bottom: -0.26rem;
+}
+
+.interaction-graph-thought-bubble__tail--b {
+  width: 0.28rem;
+  height: 0.28rem;
+  right: 0.12rem;
+  bottom: -0.42rem;
+}
+
+.interaction-graph-thought-bubble--step-active {
+  border-color: color-mix(in oklab, var(--primary) 56%, var(--border));
+  background: color-mix(in oklab, var(--primary) 14%, var(--card));
+  color: var(--primary);
+}
+
+.interaction-graph-thought-bubble--selected {
+  border-color: color-mix(in oklab, var(--primary) 72%, var(--border));
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--primary) 30%, transparent),
+    0 1px 5px rgba(0, 0, 0, 0.16);
+}
+
+.interaction-graph-thought-bubble--hovered {
+  border-color: #f59e0b;
+  background: color-mix(in oklab, #f59e0b 20%, var(--card));
+  color: color-mix(in oklab, #f59e0b 85%, var(--foreground));
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, #f59e0b 26%, transparent),
+    0 1px 6px rgba(0, 0, 0, 0.16);
+}
+
 .interaction-graph-node-card .interaction-graph-node-handle {
   width: 6px !important;
   height: 6px !important;
   min-width: 6px !important;
   min-height: 6px !important;
+}
+
+/* Keep routing handles functional but visually hidden. */
+.interaction-graph-node-card .interaction-graph-node-handle {
+  opacity: 0 !important;
 }
 
 /* Replay step: edges with traffic this turn use primary stroke + soft glow */
@@ -525,6 +602,13 @@
 /* Expanded: ~20% primary viz / ~80% graph + logs (button on side panel) */
 .sandbox-main-grid--with-graph.sandbox-main-grid--side-focus {
   grid-template-columns: minmax(0, 20%) minmax(0, 80%);
+}
+
+/* Expanded side-focus mode: keep left primary panel in-frame while scrolling the page. */
+.sandbox-main-grid--with-graph.sandbox-main-grid--side-focus > :first-child {
+  position: sticky;
+  top: 0.75rem;
+  align-self: start;
 }
 
 .sandbox-side-panel-header {

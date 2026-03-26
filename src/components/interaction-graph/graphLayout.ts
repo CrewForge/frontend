@@ -17,6 +17,7 @@ export const GRAPH_NODE_LAYOUT_H = 76;
 
 const NODE_W = GRAPH_NODE_LAYOUT_W;
 const NODE_H = GRAPH_NODE_LAYOUT_H;
+const EDGE_PAD = 14;
 
 function normalizeLabel(v: string) {
   return v.toLowerCase();
@@ -33,14 +34,87 @@ function edgeHasSamplesForTurn(edge: InteractionGraphEdge, turn: number): boolea
   return (edge.samples ?? []).some((s) => s.turn === turn);
 }
 
-function buildReactFlowEdges(graph: InteractionGraphData, focusTurn: number | null): Edge[] {
+type EdgeHandles = {
+  sourceHandle: "out-top" | "out-right" | "out-bottom" | "out-left";
+  targetHandle: "in-top" | "in-right" | "in-bottom" | "in-left";
+};
+
+function chooseEdgeHandles(
+  sourcePos: { x: number; y: number },
+  targetPos: { x: number; y: number },
+  isSelfLoop: boolean,
+): EdgeHandles {
+  if (isSelfLoop) {
+    return { sourceHandle: "out-right", targetHandle: "in-left" };
+  }
+  const sourceCx = sourcePos.x + NODE_W / 2;
+  const sourceCy = sourcePos.y + NODE_H / 2;
+  const targetCx = targetPos.x + NODE_W / 2;
+  const targetCy = targetPos.y + NODE_H / 2;
+  const dx = targetCx - sourceCx;
+  const dy = targetCy - sourceCy;
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    return dx >= 0
+      ? { sourceHandle: "out-right", targetHandle: "in-left" }
+      : { sourceHandle: "out-left", targetHandle: "in-right" };
+  }
+  return dy >= 0
+    ? { sourceHandle: "out-bottom", targetHandle: "in-top" }
+    : { sourceHandle: "out-top", targetHandle: "in-bottom" };
+}
+
+function buildReactFlowEdges(
+  graph: InteractionGraphData,
+  focusTurn: number | null,
+  positions: Map<string, { x: number; y: number }>,
+): Edge[] {
   const focus =
     focusTurn != null && !Number.isNaN(Number(focusTurn)) ? Number(focusTurn) : null;
+  const pairTotals = new Map<string, { forward: number; reverse: number }>();
+  const dirTotals = new Map<string, number>();
+
+  for (const e of graph.edges) {
+    if (e.source === e.target) continue;
+    const [a, b] = [e.source, e.target].sort((x, y) => x.localeCompare(y));
+    const pairKey = `${a}\u0001${b}`;
+    const isForward = e.source === a;
+    const pair = pairTotals.get(pairKey) ?? { forward: 0, reverse: 0 };
+    if (isForward) pair.forward += 1;
+    else pair.reverse += 1;
+    pairTotals.set(pairKey, pair);
+    const dirKey = `${e.source}\u0001${e.target}`;
+    dirTotals.set(dirKey, (dirTotals.get(dirKey) ?? 0) + 1);
+  }
+  const dirSeen = new Map<string, number>();
 
   return graph.edges.map((e, i) => {
-    const spread = ((i % 11) - 5) * 4;
+    const isSelfLoop = e.source === e.target;
     const baseW = Math.min(5.5, Math.max(1.5, 1 + e.weight / 2.5));
     const stepActive = focus !== null && edgeHasSamplesForTurn(e, focus);
+    const sourcePos = positions.get(e.source) ?? { x: 0, y: 0 };
+    const targetPos = positions.get(e.target) ?? { x: 0, y: 0 };
+    const handles = chooseEdgeHandles(sourcePos, targetPos, isSelfLoop);
+    let laneShift = 0;
+    if (!isSelfLoop) {
+      const [a, b] = [e.source, e.target].sort((x, y) => x.localeCompare(y));
+      const pairKey = `${a}\u0001${b}`;
+      const pair = pairTotals.get(pairKey);
+      const hasBidirectional = !!pair && pair.forward > 0 && pair.reverse > 0;
+      const dirKey = `${e.source}\u0001${e.target}`;
+      const seen = dirSeen.get(dirKey) ?? 0;
+      dirSeen.set(dirKey, seen + 1);
+      const total = dirTotals.get(dirKey) ?? 1;
+      const withinDirOffset = (seen - (total - 1) / 2) * 4;
+      if (hasBidirectional) {
+        const isForward = e.source === a;
+        laneShift = (isForward ? -5 : 5) + withinDirOffset;
+      } else {
+        laneShift = withinDirOffset;
+      }
+    } else {
+      laneShift = ((i % 3) - 1) * 4;
+    }
+    const laneOffset = Math.abs(laneShift);
 
     let style: CSSProperties;
     if (focus === null) {
@@ -66,20 +140,48 @@ function buildReactFlowEdges(graph: InteractionGraphData, focusTurn: number | nu
       id: e.id,
       source: e.source,
       target: e.target,
+      sourceHandle: handles.sourceHandle,
+      targetHandle: handles.targetHandle,
       type: "smoothstep",
-      pathOptions: { borderRadius: 20, offset: spread },
+      pathOptions: {
+        borderRadius: 14,
+        offset: EDGE_PAD + laneOffset,
+      },
       animated: focus !== null ? stepActive : e.weight > 6,
       label: `${e.weight}`,
+      labelShowBg: true,
+      labelBgPadding: [5, 2],
+      labelBgBorderRadius: 999,
+      labelBgStyle: {
+        fill: "color-mix(in oklab, var(--card) 92%, var(--muted))",
+        fillOpacity: 1,
+        stroke: "color-mix(in oklab, var(--border) 82%, transparent)",
+        strokeWidth: 1,
+      },
+      labelStyle: {
+        fill: "var(--foreground)",
+        fontSize: 10,
+        fontWeight: 700,
+      },
       data: {
         weight: e.weight,
         kinds: e.kinds,
         samples: e.samples,
         lastTimestamp: e.lastTimestamp,
+        baseStyle: style,
       },
       style,
       className: focus === null ? undefined : stepActive ? "interaction-graph-edge--step-active" : "interaction-graph-edge--step-dim",
     };
   });
+}
+
+export function rerouteFlowEdgesForPositions(
+  graph: InteractionGraphData,
+  focusTurn: number | null,
+  positions: Map<string, { x: number; y: number }>,
+): Edge[] {
+  return buildReactFlowEdges(graph, focusTurn, positions);
 }
 
 function nodeData(n: { id: string; label: string; messageCount: number }, kind: string) {
@@ -99,8 +201,9 @@ function layoutWithDagre(graph: InteractionGraphData): Map<string, { x: number; 
 
   const n = graph.nodes.length;
   const eCount = graph.edges.length;
-  const nodesep = Math.min(120, Math.max(52, 40 + n * 3 + eCount * 0.5));
-  const ranksep = Math.min(140, Math.max(64, 48 + n * 2));
+  // Wider default spacing reduces chance of edge paths clipping through cards.
+  const nodesep = Math.min(180, Math.max(88, 64 + n * 3 + eCount * 0.7));
+  const ranksep = Math.min(210, Math.max(96, 72 + n * 2.2));
   const margin = Math.max(32, 20 + n * 2);
 
   g.setGraph({
@@ -184,7 +287,7 @@ function manualLayoutPositions(graph: InteractionGraphData): Map<string, { x: nu
   const CANVAS_W = 440;
   const centerX = () => CANVAS_W / 2 - NODE_W / 2;
   const COL_X = 20;
-  const rowGap = NODE_H + 24;
+  const rowGap = NODE_H + 38;
 
   const out = new Map<string, { x: number; y: number }>();
   let yCursor = 16;
@@ -271,8 +374,6 @@ export function buildFlowGraph(
   options?: { focusTurn?: number | null },
 ): { nodes: Node[]; edges: Edge[] } {
   const focusTurn = options?.focusTurn ?? null;
-  const edges = buildReactFlowEdges(graph, focusTurn);
-
   if (graph.nodes.length === 0) {
     return { nodes: [], edges: [] };
   }
@@ -281,6 +382,8 @@ export function buildFlowGraph(
   if (!positions || positions.size < graph.nodes.length) {
     positions = manualLayoutPositions(graph);
   }
+
+  const edges = buildReactFlowEdges(graph, focusTurn, positions);
 
   const nodes: Node[] = graph.nodes.map((n) => {
     const kind = nodeTypeFor(n.label);

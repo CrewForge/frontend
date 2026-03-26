@@ -433,8 +433,12 @@ export function EvalPlusSandboxPage({
         return;
       }
     }
+    const total = movesRef.current.length;
+    if (total > 0 && stepIndex >= total - 1) {
+      setStepIndex(0);
+    }
     setSamplePlaybackPlaying(true);
-  }, [dataSource, loadEvalSample, startLiveStream]);
+  }, [dataSource, loadEvalSample, startLiveStream, stepIndex]);
 
   const handlePlaybackPause = useCallback(() => {
     if (dataSource === 'live') {

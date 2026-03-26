@@ -13,7 +13,11 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { Card } from "../ui/card";
-import { buildFlowGraph, findDefaultSelectedEdge, graphTopologySignature } from "./graphLayout";
+import {
+  buildFlowGraph,
+  findDefaultSelectedEdge,
+  graphTopologySignature,
+} from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
 import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
 import type { InteractionGraphData, InteractionEvent } from "../../lib/experiments/types";
@@ -90,6 +94,13 @@ export function InteractionGraphView({
   );
   const [nodes, setNodes, onNodesChange] = useNodesState(built.nodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(built.edges);
+  const selfLoopEdgeByNode = useMemo(() => {
+    const m = new Map<string, Edge>();
+    for (const e of built.edges) {
+      if (e.source === e.target) m.set(e.source, e);
+    }
+    return m;
+  }, [built.edges]);
 
   const topologySig = useMemo(() => graphTopologySignature(graph), [graph]);
 
@@ -111,27 +122,89 @@ export function InteractionGraphView({
     });
   }, [built.edges, graph]);
 
+  const applyEdgeVisualState = useCallback(
+    (input: Edge[]) =>
+      input
+        .filter((e) => e.source !== e.target) // self-connections are rendered as thought bubbles only
+        .map((e) => {
+        const baseStyle =
+          ((e.data as { baseStyle?: Edge["style"] } | undefined)?.baseStyle as Edge["style"]) ?? e.style;
+        return {
+          ...e,
+          hidden: false,
+          selectable: e.source !== e.target,
+          selected: selectedEdge?.id === e.id,
+          style:
+            hoveredEdgeId === e.id
+              ? {
+                  ...(baseStyle ?? {}),
+                  stroke: HOVER_EDGE_STROKE,
+                  opacity: 1,
+                  strokeWidth: Math.min(
+                    8,
+                    (typeof baseStyle?.strokeWidth === "number" ? baseStyle.strokeWidth : 2) + 1.4,
+                  ),
+                }
+              : baseStyle,
+        };
+      }),
+    [hoveredEdgeId, selectedEdge?.id],
+  );
+
+  const applyNodeSelfLoopState = useCallback(
+    (input: Node[]) =>
+      input.map((n) => {
+        const selfEdge = selfLoopEdgeByNode.get(n.id);
+        const isStepActive = selfEdge?.className === "interaction-graph-edge--step-active";
+        const isSelected = !!selfEdge && selectedEdge?.id === selfEdge.id;
+        const isHovered = !!selfEdge && hoveredEdgeId === selfEdge.id;
+        return {
+          ...n,
+          data: {
+            ...(n.data as Record<string, unknown>),
+            selfLoop: selfEdge
+              ? {
+                  edgeId: selfEdge.id,
+                  hovered: isHovered,
+                  selected: isSelected,
+                  stepActive: !!isStepActive,
+                }
+              : undefined,
+            onSelfLoopClick: selfEdge
+              ? (edgeId: string) => {
+                  if (edgeId !== selfEdge.id) return;
+                  userClearedSelectionRef.current = false;
+                  setSelectedEdge(selfEdge);
+                }
+              : undefined,
+            onSelfLoopHoverChange: selfEdge
+              ? (edgeId: string, hover: boolean) => {
+                  if (edgeId !== selfEdge.id) return;
+                  setHoveredEdgeId((current) => (hover ? edgeId : current === edgeId ? null : current));
+                }
+              : undefined,
+          },
+        };
+      }),
+    [hoveredEdgeId, selectedEdge?.id, selfLoopEdgeByNode],
+  );
+
   useEffect(() => {
-    setNodes(built.nodes as Node[]);
-    setEdges(
-      built.edges.map((e) => ({
-        ...e,
-        selected: selectedEdge?.id === e.id,
-        style:
-          hoveredEdgeId === e.id
-            ? {
-                ...(e.style ?? {}),
-                stroke: HOVER_EDGE_STROKE,
-                opacity: 1,
-                strokeWidth: Math.min(
-                  8,
-                  (typeof e.style?.strokeWidth === "number" ? e.style.strokeWidth : 2) + 1.4,
-                ),
-              }
-            : e.style,
-      })),
-    );
-  }, [built, setNodes, setEdges, selectedEdge?.id, hoveredEdgeId]);
+    setNodes((prev) => {
+      const prevPosById = new Map(prev.map((n) => [n.id, n.position]));
+      const nextBase = (built.nodes as Node[]).map((n) => ({
+        ...n,
+        position: prevPosById.get(n.id) ?? n.position,
+      }));
+      return applyNodeSelfLoopState(nextBase);
+    });
+    setEdges(applyEdgeVisualState(built.edges));
+  }, [built.nodes, built.edges, setNodes, setEdges, applyEdgeVisualState, applyNodeSelfLoopState]);
+
+  useEffect(() => {
+    setNodes((prev) => applyNodeSelfLoopState(prev));
+    setEdges((prev) => applyEdgeVisualState(prev));
+  }, [applyEdgeVisualState, applyNodeSelfLoopState, setEdges, setNodes]);
 
   if (built.nodes.length === 0) {
     return (

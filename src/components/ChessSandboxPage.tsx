@@ -590,8 +590,12 @@ export function ChessSandboxPage({
         return;
       }
     }
+    const total = replayPayloadsRef.current.length;
+    if (total > 0 && replayCursor >= total - 1) {
+      applyReplayUpToStep(-1);
+    }
     setSamplePlaybackPlaying(true);
-  }, [dataSource, loadChessSample, startAutoStream]);
+  }, [dataSource, loadChessSample, startAutoStream, replayCursor, applyReplayUpToStep]);
 
   const handlePlaybackPause = useCallback(() => {
     if (dataSource === 'live') {
