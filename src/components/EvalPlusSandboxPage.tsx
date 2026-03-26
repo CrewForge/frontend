@@ -678,6 +678,7 @@ export function EvalPlusSandboxPage({
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
+                sideColumnExpanded={wideSidePanel}
                 evidenceFocusTurn={
                   moves.length > 0 && typeof moves[safeStep]?.turn === 'number' ? moves[safeStep]!.turn : null
                 }

@@ -9,12 +9,15 @@ export function InteractionGraphSection({
   className,
   layout = "default",
   evidenceFocusTurn = null,
+  sideColumnExpanded = false,
 }: {
   dataset: ExperimentDataset | null;
   className?: string;
   layout?: "default" | "sideColumn";
   /** Align edge evidence with replay step (EvalPlus move turn / chess UCI step). */
   evidenceFocusTurn?: number | null;
+  /** Wide right panel: taller graph area in side column layout. */
+  sideColumnExpanded?: boolean;
 }) {
   const allEvents = useMemo(
     () => (dataset ? extractInteractionEvents(dataset) : []),
@@ -41,6 +44,7 @@ export function InteractionGraphSection({
         visible
         layout={layout}
         evidenceFocusTurn={evidenceFocusTurn}
+        sideColumnExpanded={sideColumnExpanded}
       />
     </div>
   );

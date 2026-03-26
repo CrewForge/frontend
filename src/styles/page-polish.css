@@ -383,6 +383,13 @@
   height: min(360px, 42vh);
   min-height: 280px;
   background: color-mix(in oklab, var(--muted) 20%, transparent);
+  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1), min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Right column ~80% wide: give the React Flow pane twice the default side-column height */
+.sandbox-graph-flow-side--expanded {
+  height: min(720px, 84vh);
+  min-height: 560px;
 }
 
 .sandbox-graph-flow-default {

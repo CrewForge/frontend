@@ -867,6 +867,7 @@ export function ChessSandboxPage({
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
+                sideColumnExpanded={wideSidePanel}
                 evidenceFocusTurn={
                   activeDataset && replayCursor >= 0 ? turnAtChessReplayStep(activeDataset, replayCursor) : null
                 }

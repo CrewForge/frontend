@@ -65,6 +65,7 @@ export function InteractionGraphView({
   visible = true,
   layout = "default",
   evidenceFocusTurn = null,
+  sideColumnExpanded = false,
 }: {
   graph: InteractionGraphData;
   emptyLabel?: string;
@@ -72,6 +73,8 @@ export function InteractionGraphView({
   /** Narrow sidebar: shorter flow area, evidence stacked below. */
   layout?: "default" | "sideColumn";
   evidenceFocusTurn?: number | null;
+  /** When true with `sideColumn` layout, graph pane height is doubled (wide right panel). */
+  sideColumnExpanded?: boolean;
 }) {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const userClearedSelectionRef = useRef(false);
@@ -121,7 +124,7 @@ export function InteractionGraphView({
 
   const flowShell =
     layout === "sideColumn"
-      ? "sandbox-graph-flow-side w-full"
+      ? `sandbox-graph-flow-side w-full${sideColumnExpanded ? " sandbox-graph-flow-side--expanded" : ""}`
       : "sandbox-graph-flow-default w-full bg-muted/30";
 
   const shell = (
