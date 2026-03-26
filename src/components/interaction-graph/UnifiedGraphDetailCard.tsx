@@ -99,15 +99,15 @@ export function UnifiedGraphDetailCard({
         </div>
       </div>
 
-      <Tabs defaultValue="edge" className="gap-1">
-        <TabsList className="h-7 w-full rounded-md bg-muted/70 p-0.5">
-          <TabsTrigger value="edge" className="h-6 text-[10px]">
+      <Tabs defaultValue="edge" className="graph-console-tabs gap-1.5">
+        <TabsList className="w-full min-h-0">
+          <TabsTrigger value="edge" className="text-[10px] font-semibold">
             Edge detail
           </TabsTrigger>
-          <TabsTrigger value="transcript" className="h-6 text-[10px]">
+          <TabsTrigger value="transcript" className="text-[10px] font-semibold">
             Step transcript
           </TabsTrigger>
-          <TabsTrigger value="overview" className="h-6 text-[10px]">
+          <TabsTrigger value="overview" className="text-[10px] font-semibold">
             Overview
           </TabsTrigger>
         </TabsList>
@@ -144,15 +144,15 @@ export function UnifiedGraphDetailCard({
                 </div>
               </div>
 
-              <Tabs defaultValue="current" className="gap-1">
-                <TabsList className="h-7 w-full rounded-md p-0.5">
-                  <TabsTrigger value="current" className="h-6 text-[10px]">
+              <Tabs defaultValue="current" className="graph-console-tabs graph-console-tabs--nested gap-1.5">
+                <TabsList className="w-full min-h-0">
+                  <TabsTrigger value="current" className="text-[10px] font-semibold">
                     Current ({edgeModel.currentTurnMessages.length})
                   </TabsTrigger>
-                  <TabsTrigger value="other" className="h-6 text-[10px]">
+                  <TabsTrigger value="other" className="text-[10px] font-semibold">
                     Other ({edgeModel.otherTurnMessages.length})
                   </TabsTrigger>
-                  <TabsTrigger value="all" className="h-6 text-[10px]">
+                  <TabsTrigger value="all" className="text-[10px] font-semibold">
                     All ({edgeModel.allMessages.length})
                   </TabsTrigger>
                 </TabsList>

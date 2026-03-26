@@ -38,15 +38,15 @@ export function InCanvasEdgeCard({
           </button>
         </div>
       </div>
-      <Tabs defaultValue="current" className="gap-1">
-        <TabsList className="h-7 w-full rounded-md p-0.5">
-          <TabsTrigger value="current" className="h-6 text-[10px]">
+      <Tabs defaultValue="current" className="graph-console-tabs gap-1.5">
+        <TabsList className="w-full min-h-0">
+          <TabsTrigger value="current" className="text-[10px] font-semibold">
             Current ({model.currentTurnMessages.length})
           </TabsTrigger>
-          <TabsTrigger value="other" className="h-6 text-[10px]">
+          <TabsTrigger value="other" className="text-[10px] font-semibold">
             Other ({model.otherTurnMessages.length})
           </TabsTrigger>
-          <TabsTrigger value="all" className="h-6 text-[10px]">
+          <TabsTrigger value="all" className="text-[10px] font-semibold">
             All ({model.allMessages.length})
           </TabsTrigger>
         </TabsList>

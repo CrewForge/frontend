@@ -15,6 +15,8 @@ type EdgePayload = {
 };
 
 const PREVIEW_CHARS = 96;
+/** Tighter clip for stacked rows on G6 node cards. */
+const NODE_ROW_PREVIEW_CHARS = 56;
 const COMMON_SPACE_ID = "CommonSpace";
 
 export type EdgeCardModel = {
@@ -47,6 +49,12 @@ function previewText(text: string) {
   const t = text.trim() || "(empty)";
   if (t.length <= PREVIEW_CHARS) return t;
   return `${t.slice(0, PREVIEW_CHARS).trim()}…`;
+}
+
+function previewTextNodeRow(text: string) {
+  const t = text.trim() || "(empty)";
+  if (t.length <= NODE_ROW_PREVIEW_CHARS) return t;
+  return `${t.slice(0, NODE_ROW_PREVIEW_CHARS).trim()}…`;
 }
 
 export function buildEdgeCardModel(
@@ -226,4 +234,51 @@ export function buildNodeLatestPreview(
     )
     .sort(compareEventsChronologically);
   return pickPreview(outbound);
+}
+
+/** Where an outbound message is going (for graph node mini-ports). */
+export type NodeOutboundDestKind = "self" | "common" | "meta" | "agent";
+
+export type NodeTurnOutboundLine = {
+  id: string;
+  preview: string;
+  destKind: NodeOutboundDestKind;
+  targetId: string;
+};
+
+function classifyOutboundDestination(nodeId: string, target: string): NodeOutboundDestKind {
+  if (target === nodeId) return "self";
+  if (target === COMMON_SPACE_ID) return "common";
+  if (target.toLowerCase().includes("meta")) return "meta";
+  return "agent";
+}
+
+/**
+ * All messages sent from this node during the replay focus turn, in cycle order.
+ * Returns `null` when there is no focus turn (caller should show a single replay-aware preview instead).
+ */
+export function buildNodeTurnOutboundStack(
+  nodeId: string,
+  edges: { source: string; target: string; samples: InteractionEvent[] }[],
+  focusTurn?: number | null,
+): NodeTurnOutboundLine[] | null {
+  const normalizedFocus =
+    focusTurn == null || Number.isNaN(Number(focusTurn)) ? null : Number(focusTurn);
+  if (normalizedFocus == null) return null;
+
+  const collected: InteractionEvent[] = [];
+  for (const edge of edges) {
+    if (edge.source !== nodeId) continue;
+    for (const sample of edge.samples ?? []) {
+      if (sample.turn !== normalizedFocus) continue;
+      collected.push(sample);
+    }
+  }
+  collected.sort((a, b) => a.cycle - b.cycle || compareEventsChronologically(a, b));
+  return collected.map((ev) => ({
+    id: ev.id,
+    preview: previewTextNodeRow(formatInteractionEvidenceDisplayText(ev.text, ev.kind)),
+    destKind: classifyOutboundDestination(nodeId, ev.to),
+    targetId: ev.to,
+  }));
 }

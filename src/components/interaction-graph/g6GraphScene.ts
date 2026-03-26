@@ -10,6 +10,7 @@ import type { InteractionGraphData } from "../../lib/experiments/types";
 import {
   buildNodeLatestPreview,
   buildNodeTabSummary,
+  buildNodeTurnOutboundStack,
   type InteractionEdgeLike,
 } from "./interactionCardModel";
 import {
@@ -19,7 +20,7 @@ import {
   edgeStrokeWidth,
   edgeToSelectionLike,
 } from "./g6EdgeFactories";
-import { renderNodeCardHtml } from "./g6NodeFactories";
+import { estimateG6NodeCardSize, renderNodeCardHtml } from "./g6NodeFactories";
 
 function hasTurn(edge: { samples?: { turn: number }[] }, turn: number) {
   return (edge.samples ?? []).some((sample) => sample.turn === turn);
@@ -57,6 +58,8 @@ function buildG6Data(source: InteractionGraphData, focusTurn?: number | null): G
     nodes: source.nodes.map((node) => {
       const tabs = buildNodeTabSummary(node.id, compactEdges);
       const latestPreview = buildNodeLatestPreview(node.id, compactEdges, focusTurn);
+      const turnOutboundStack = buildNodeTurnOutboundStack(node.id, compactEdges, focusTurn);
+      const { width: nodeW, height: nodeH } = estimateG6NodeCardSize(turnOutboundStack);
       const selfEdge = source.edges.find((edge) => edge.source === node.id && edge.target === node.id);
       const selfEdgeStepActive = focus != null && !!selfEdge && hasTurn(selfEdge, focus);
       return {
@@ -69,10 +72,17 @@ function buildG6Data(source: InteractionGraphData, focusTurn?: number | null): G
           tabs,
         },
         style: {
-          size: [200, 122],
-          innerHTML: renderNodeCardHtml(node, tabs, latestPreview, selfEdge?.id ?? null, selfEdgeStepActive),
-          dx: -100,
-          dy: -61,
+          size: [nodeW, nodeH],
+          innerHTML: renderNodeCardHtml(
+            node,
+            tabs,
+            latestPreview,
+            selfEdge?.id ?? null,
+            selfEdgeStepActive,
+            turnOutboundStack,
+          ),
+          dx: -Math.round(nodeW / 2),
+          dy: -Math.round(nodeH / 2),
           cursor: "pointer",
         },
       };

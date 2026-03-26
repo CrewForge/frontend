@@ -27,16 +27,16 @@ export function InCanvasNodeCard({
           Close
         </button>
       </div>
-      <Tabs defaultValue="inbound" className="gap-1">
-        <TabsList className="h-7 w-full rounded-md p-0.5">
-          <TabsTrigger value="inbound" className="h-6 text-[10px]">
-            Inbound <Badge variant="outline" className="ml-1 text-[9px]">{groups.inbound.length}</Badge>
+      <Tabs defaultValue="inbound" className="graph-console-tabs gap-1.5">
+        <TabsList className="w-full min-h-0">
+          <TabsTrigger value="inbound" className="text-[10px] font-semibold">
+            Inbound <Badge variant="outline" className="ml-1 border-border/70 text-[9px]">{groups.inbound.length}</Badge>
           </TabsTrigger>
-          <TabsTrigger value="outbound" className="h-6 text-[10px]">
-            Outbound <Badge variant="outline" className="ml-1 text-[9px]">{groups.outbound.length}</Badge>
+          <TabsTrigger value="outbound" className="text-[10px] font-semibold">
+            Outbound <Badge variant="outline" className="ml-1 border-border/70 text-[9px]">{groups.outbound.length}</Badge>
           </TabsTrigger>
-          <TabsTrigger value="self" className="h-6 text-[10px]">
-            Self <Badge variant="outline" className="ml-1 text-[9px]">{groups.self.length}</Badge>
+          <TabsTrigger value="self" className="text-[10px] font-semibold">
+            Self <Badge variant="outline" className="ml-1 border-border/70 text-[9px]">{groups.self.length}</Badge>
           </TabsTrigger>
         </TabsList>
         {(["inbound", "outbound", "self"] as const).map((tab) => {
