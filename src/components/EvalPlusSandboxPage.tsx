@@ -29,7 +29,6 @@ import { scrollChildIntoContainer } from '../lib/scrollChildIntoContainer';
 import {
   SandboxVisualizationRoot,
   SandboxEnvironmentHeader,
-  SandboxMetricsStrip,
   SandboxVizToolbarBlock,
   SandboxPrimaryCard,
   SandboxSideLogCard,
@@ -78,7 +77,7 @@ export function EvalPlusSandboxPage({
   onAuthFailure,
   backendLiveAvailable = true,
 }: ChessSandboxPageProps) {
-  const environmentLabel = 'EvalPlus workspace';
+  const environmentLabel = 'Code Workspace';
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [moves, setMoves] = useState<EvalPlusRunnerMove[]>([]);
@@ -557,9 +556,9 @@ export function EvalPlusSandboxPage({
 
   const codeDescription = showDiff
     ? safeStep === 0
-      ? 'First submission: the diff compares to an empty starting point. Copy still copies the full file.'
-      : 'Compared to the previous step: green lines were added, red lines were removed. Copy copies the full solution only (not the diff).'
-    : 'Full solution for this step. Turn on “Show diff” to see additions and removals vs. the previous step.';
+      ? ''
+      : ''
+    : '';
 
   return (
     <>
@@ -579,21 +578,16 @@ export function EvalPlusSandboxPage({
               : 'Bundled datasets only. Add a CrewForge API server to enable live streams.'
           }
           metricsStrip={
-            <>
-              <SandboxMetricsStrip items={evalMetricsItems} />
-              <div className="mt-2.5">
-                <ExperimentPicker
-                  entries={manifestEntries}
-                  envType="evalplus"
-                  selectedPath={selectedDatasetPath}
-                  onSelectPath={setSelectedDatasetPath}
-                />
-              </div>
-            </>
+            <ExperimentPicker
+              entries={manifestEntries}
+              envType="evalplus"
+              selectedPath={selectedDatasetPath}
+              onSelectPath={setSelectedDatasetPath}
+            />
           }
         />
 
-        <div className="sandbox-main-stage p-3 sm:p-4">
+        <div className="sandbox-main-stage p-4 sm:p-5">
           <div
             className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
           >
@@ -638,7 +632,7 @@ export function EvalPlusSandboxPage({
                       <Badge variant="outline">{currentMove?.task_label ?? '—'}</Badge>
                     </div>
                     {currentMove && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground mt-1">
                         {currentMove.player} · latency {typeof currentMove.latency_ms === 'number' ? `${currentMove.latency_ms} ms` : '—'}
                         {typeof currentMove.system_move_record?.total_tokens === 'number'
                           ? ` · ${currentMove.system_move_record.total_tokens} tok`
@@ -693,9 +687,9 @@ export function EvalPlusSandboxPage({
                 </SandboxPrimaryCard>
             </div>
 
-            <aside className="min-w-0 flex flex-col gap-3">
+            <aside className="min-w-0 flex flex-col gap-4">
               <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
-              <div className="sandbox-side-stack min-w-0">
+              <div className="sandbox-side-stack min-w-0 gap-3.5">
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
@@ -712,7 +706,7 @@ export function EvalPlusSandboxPage({
               >
                 <div ref={submissionLogScrollRef} className="sandbox-move-log-scroll">
                   {moves.length === 0 ? (
-                    <div className="rounded-md border border-dashed px-2 py-2 text-xs leading-snug text-muted-foreground">
+                    <div className="rounded-md border border-dashed px-3 py-2.5 text-xs leading-snug text-muted-foreground">
                       No submissions yet. Replay the loaded experiment or connect to the live backend.
                     </div>
                   ) : (
@@ -746,7 +740,7 @@ export function EvalPlusSandboxPage({
               </SandboxSideLogCard>
 
               <SandboxSecondaryPanel
-                className="sandbox-passatk-panel p-3"
+                className="sandbox-passatk-panel p-4"
                 title="Pass@k"
                 subtitle="End event or bundle"
                 headerRight={
