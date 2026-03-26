@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import type { ExperimentDataset } from "../../lib/experiments/types";
 import { buildInteractionGraph, extractInteractionEvents } from "../../lib/experiments/normalize";
-import { graphTopologySignature } from "./graphLayout";
-import { InteractionGraphView } from "./InteractionGraphView";
+import { InteractionGraphG6View } from "./InteractionGraphG6View";
 
 export function InteractionGraphSection({
   dataset,
@@ -26,9 +25,6 @@ export function InteractionGraphSection({
 
   const graph = useMemo(() => buildInteractionGraph(allEvents), [allEvents]);
 
-  /** Remount + full Dagre relayout whenever an agent (node) or edge is created or destroyed. */
-  const graphViewKey = useMemo(() => graphTopologySignature(graph), [graph]);
-
   return (
     <div className={className ?? "space-y-3"}>
       <div className="px-0.5">
@@ -38,8 +34,7 @@ export function InteractionGraphSection({
           Replay scopes message text to the current step.
         </p>
       </div>
-      <InteractionGraphView
-        key={graphViewKey}
+      <InteractionGraphG6View
         graph={graph}
         visible
         layout={layout}

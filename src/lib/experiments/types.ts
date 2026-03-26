@@ -100,6 +100,34 @@ export type InteractionEvent = {
   error?: string | null;
 };
 
+export type InteractionThreadKind = "main" | "talk" | "internal";
+
+export type InteractionTranscriptThread = {
+  key: string;
+  label: string;
+  kind: InteractionThreadKind;
+  items: InteractionEvent[];
+};
+
+export type InteractionTranscriptCycle = {
+  cycle: number;
+  total: number;
+  threads: InteractionTranscriptThread[];
+};
+
+export type InteractionTurnTranscript = {
+  turn: number;
+  total: number;
+  cycles: InteractionTranscriptCycle[];
+};
+
+export type InteractionNodeTabSummary = {
+  key: "inbound" | "outbound" | "self";
+  label: string;
+  count: number;
+  preview: string;
+};
+
 export type InteractionGraphNode = {
   id: string;
   label: string;

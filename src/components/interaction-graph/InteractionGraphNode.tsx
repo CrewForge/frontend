@@ -2,6 +2,8 @@ import React from "react";
 import { Handle, Position, type NodeProps } from "reactflow";
 import { Badge } from "../ui/badge";
 import { cn } from "../ui/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import type { InteractionNodeTabSummary } from "../../lib/experiments/types";
 
 type SelfLoopBubble = {
   edgeId: string;
@@ -14,6 +16,7 @@ type GraphNodeData = {
   label: string;
   nodeKind: "meta" | "agent" | "common";
   messageCount: number;
+  tabs?: InteractionNodeTabSummary[];
   selfLoop?: SelfLoopBubble;
   onSelfLoopClick?: (edgeId: string) => void;
   onSelfLoopHoverChange?: (edgeId: string, hovered: boolean) => void;
@@ -36,9 +39,11 @@ function kindLabel(kind: GraphNodeData["nodeKind"]) {
 }
 
 export function InteractionGraphNode({ data }: NodeProps<GraphNodeData>) {
+  const tabs = data.tabs ?? [];
+  const defaultTab = tabs.find((tab) => tab.count > 0)?.key ?? "inbound";
   return (
     <div
-      className={`interaction-graph-node-card relative flex flex-col items-center justify-center gap-1 rounded-lg border text-center shadow-sm ${nodeClasses(data.nodeKind)}`}
+      className={`interaction-graph-node-card relative flex flex-col gap-1.5 rounded-lg border text-left shadow-sm ${nodeClasses(data.nodeKind)}`}
     >
       {data.selfLoop && (
         <button
@@ -70,11 +75,31 @@ export function InteractionGraphNode({ data }: NodeProps<GraphNodeData>) {
       <Handle id="in-right" type="target" position={Position.Right} className="interaction-graph-node-handle !border-0 !bg-current" />
       <Handle id="in-bottom" type="target" position={Position.Bottom} className="interaction-graph-node-handle !border-0 !bg-current" />
       <Handle id="in-left" type="target" position={Position.Left} className="interaction-graph-node-handle !border-0 !bg-current" />
-      <span className="max-w-full break-words text-center text-xs font-semibold leading-tight">{data.label}</span>
-      <Badge variant="secondary" className="shrink-0 px-1 py-0 text-xs leading-none">
-        {data.messageCount}
-      </Badge>
-      <span className="text-xs uppercase leading-tight tracking-wide opacity-80">{kindLabel(data.nodeKind)}</span>
+      <div className="flex items-start justify-between gap-1">
+        <span className="max-w-full break-words text-xs font-semibold leading-tight">{data.label}</span>
+        <Badge variant="secondary" className="shrink-0 px-1 py-0 text-xs leading-none">
+          {data.messageCount}
+        </Badge>
+      </div>
+      <span className="text-[10px] uppercase leading-tight tracking-wide opacity-80">{kindLabel(data.nodeKind)}</span>
+      {tabs.length > 0 && (
+        <Tabs defaultValue={defaultTab} className="nodrag nopan w-full">
+          <TabsList className="h-6 w-full rounded-md bg-background/50 p-0.5">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.key} value={tab.key} className="h-5 px-1 text-[9px]">
+                {tab.label} ({tab.count})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {tabs.map((tab) => (
+            <TabsContent key={tab.key} value={tab.key} className="mt-0.5">
+              <p className="line-clamp-2 min-h-[2.2em] text-[10px] leading-tight text-foreground/85">
+                {tab.preview}
+              </p>
+            </TabsContent>
+          ))}
+        </Tabs>
+      )}
       <Handle id="out-top" type="source" position={Position.Top} className="interaction-graph-node-handle !border-0 !bg-current" />
       <Handle id="out-right" type="source" position={Position.Right} className="interaction-graph-node-handle !border-0 !bg-current" />
       <Handle id="out-bottom" type="source" position={Position.Bottom} className="interaction-graph-node-handle !border-0 !bg-current" />

@@ -3,6 +3,7 @@ import dagre from "dagre";
 import type { Edge, Node } from "reactflow";
 import { Position } from "reactflow";
 import type { InteractionGraphData, InteractionGraphEdge } from "../../lib/experiments/types";
+import { buildEdgeCardModel, buildNodeTabSummary } from "./interactionCardModel";
 
 const META_HINT = "meta";
 const COMMON_SPACE_ID = "CommonSpace";
@@ -12,8 +13,8 @@ const COMMON_SPACE_ID = "CommonSpace";
  * Dagre uses these so spacing reflows when nodes/edges change.
  */
 /** Compact cards; Dagre uses these for rank/node spacing (visual may be slightly narrower for short labels). */
-export const GRAPH_NODE_LAYOUT_W = 136;
-export const GRAPH_NODE_LAYOUT_H = 76;
+export const GRAPH_NODE_LAYOUT_W = 232;
+export const GRAPH_NODE_LAYOUT_H = 154;
 
 const NODE_W = GRAPH_NODE_LAYOUT_W;
 const NODE_H = GRAPH_NODE_LAYOUT_H;
@@ -136,38 +137,39 @@ function buildReactFlowEdges(
       };
     }
 
+    const edgeCard = buildEdgeCardModel(
+      {
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        data: {
+          weight: e.weight,
+          kinds: e.kinds,
+          samples: e.samples,
+          lastTimestamp: e.lastTimestamp,
+        },
+      } as Edge,
+      focus,
+    );
     return {
       id: e.id,
       source: e.source,
       target: e.target,
       sourceHandle: handles.sourceHandle,
       targetHandle: handles.targetHandle,
-      type: "smoothstep",
+      type: "interactionEdge",
       pathOptions: {
         borderRadius: 14,
         offset: EDGE_PAD + laneOffset,
       },
       animated: focus !== null ? stepActive : e.weight > 6,
-      label: `${e.weight}`,
-      labelShowBg: true,
-      labelBgPadding: [5, 2],
-      labelBgBorderRadius: 999,
-      labelBgStyle: {
-        fill: "color-mix(in oklab, var(--card) 92%, var(--muted))",
-        fillOpacity: 1,
-        stroke: "color-mix(in oklab, var(--border) 82%, transparent)",
-        strokeWidth: 1,
-      },
-      labelStyle: {
-        fill: "var(--foreground)",
-        fontSize: 10,
-        fontWeight: 700,
-      },
       data: {
         weight: e.weight,
         kinds: e.kinds,
         samples: e.samples,
         lastTimestamp: e.lastTimestamp,
+        preview: edgeCard?.preview ?? "(no messages)",
+        focusTurn: focus,
         baseStyle: style,
       },
       style,
@@ -189,6 +191,12 @@ function nodeData(n: { id: string; label: string; messageCount: number }, kind: 
     label: n.label,
     nodeKind: kind as "meta" | "agent" | "common",
     messageCount: n.messageCount,
+    tabs: [] as {
+      key: "inbound" | "outbound" | "self";
+      label: string;
+      count: number;
+      preview: string;
+    }[],
   };
 }
 
@@ -385,16 +393,25 @@ export function buildFlowGraph(
 
   const edges = buildReactFlowEdges(graph, focusTurn, positions);
 
+  const compactEdges = graph.edges.map((e) => ({
+    source: e.source,
+    target: e.target,
+    samples: e.samples,
+  }));
   const nodes: Node[] = graph.nodes.map((n) => {
     const kind = nodeTypeFor(n.label);
     const pos = positions.get(n.id) ?? { x: 0, y: 0 };
+    const tabSummary = buildNodeTabSummary(n.id, compactEdges);
     return {
       id: n.id,
       type: "interactionNode",
       position: pos,
       sourcePosition: Position.Bottom,
       targetPosition: Position.Top,
-      data: nodeData(n, kind),
+      data: {
+        ...nodeData(n, kind),
+        tabs: tabSummary,
+      },
     };
   });
 

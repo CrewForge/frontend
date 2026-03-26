@@ -3,6 +3,7 @@ import ReactFlow, {
   Background,
   Controls,
   MiniMap,
+  Panel,
   useEdgesState,
   useNodesInitialized,
   useNodesState,
@@ -19,11 +20,12 @@ import {
   graphTopologySignature,
 } from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
-import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
 import type { InteractionGraphData, InteractionEvent } from "../../lib/experiments/types";
-import { StepMessagesOutline } from "./StepMessagesOutline";
+import { InteractionGraphEdge } from "./InteractionGraphEdge";
+import { UnifiedGraphDetailCard } from "./UnifiedGraphDetailCard";
 
 const nodeTypes = { interactionNode: InteractionGraphNode };
+const edgeTypes = { interactionEdge: InteractionGraphEdge };
 
 /** Refit when the graph becomes visible or resizes (e.g. layout / sidebar). */
 function FlowFitWhenVisible({
@@ -146,6 +148,18 @@ export function InteractionGraphView({
                   ),
                 }
               : baseStyle,
+          data: {
+            ...(e.data as Record<string, unknown>),
+            onBubbleClick: (edgeId: string) => {
+              if (edgeId !== e.id) return;
+              userClearedSelectionRef.current = false;
+              setSelectedEdge(e);
+            },
+            onBubbleHoverChange: (edgeId: string, hover: boolean) => {
+              if (edgeId !== e.id) return;
+              setHoveredEdgeId((current) => (hover ? edgeId : current === edgeId ? null : current));
+            },
+          },
         };
       }),
     [hoveredEdgeId, selectedEdge?.id],
@@ -227,6 +241,7 @@ export function InteractionGraphView({
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           fitView
@@ -251,6 +266,13 @@ export function InteractionGraphView({
           {layout === "default" ? <MiniMap pannable zoomable /> : null}
           <Controls showInteractive={false} className={layout === "sideColumn" ? "scale-90" : undefined} />
           <Background gap={18} />
+          <Panel position="bottom-right">
+            <UnifiedGraphDetailCard
+              selectedEdge={selectedEdge}
+              focusTurn={evidenceFocusTurn}
+              events={interactionEvents ?? []}
+            />
+          </Panel>
         </ReactFlow>
       </div>
     </Card>
@@ -262,20 +284,9 @@ export function InteractionGraphView({
         <div className="interaction-graph-flow-slot">
           {shell}
         </div>
-        <div className="interaction-graph-evidence-scroll">
-          <EdgeEvidencePanel edge={selectedEdge} focusTurn={evidenceFocusTurn} />
-        </div>
-        {interactionEvents && (
-          <StepMessagesOutline events={interactionEvents} focusTurn={evidenceFocusTurn} />
-        )}
       </div>
     );
   }
 
-  return (
-    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_320px]">
-      {shell}
-      <EdgeEvidencePanel edge={selectedEdge} focusTurn={evidenceFocusTurn} />
-    </div>
-  );
+  return shell;
 }

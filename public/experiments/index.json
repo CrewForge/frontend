@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T07:06:06.836Z",
+  "generatedAt": "2026-03-26T19:29:19.980Z",
   "source": "/experiments",
   "totalDatasets": 32,
   "entries": [
@@ -422,6 +422,21 @@
       "path": "/experiments/parallel_session_20260325_123017/ep_single_gemini-3-flash-preview_1/datasets/single_agent_unknown_ep_single_gemini-3-flash-previ_20260325_163019_302422d7.json"
     },
     {
+      "id": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1_14bc3611",
+      "experimentId": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1",
+      "systemType": "multi_agent",
+      "envType": "chess",
+      "metaModel": "gemini-3.1-pro-preview",
+      "crewModel": "gemini-3.1-pro-preview",
+      "startedAt": "2026-03-25T16:30:19.501599+00:00",
+      "endedAt": "2026-03-25T18:34:08.051752+00:00",
+      "durationSeconds": 7428.550153,
+      "totalTokens": 715585,
+      "totalMoves": 55,
+      "result": "1-0",
+      "path": "/experiments/parallel_session_20260325_123017/multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1/datasets/multi_agent_gemini-3-1-pro-previ-gemini-3-1-pro-previ_multi_agent_gemini-3-1-pro-pre_20260325_163019_dfba584c.json"
+    },
+    {
       "id": "single_gemini-3-flash-preview_1_12c7bb0f",
       "experimentId": "single_gemini-3-flash-preview_1",
       "systemType": "single_agent",
@@ -450,21 +465,6 @@
       "totalMoves": 54,
       "result": "incomplete",
       "path": "/experiments/parallel_session_20260325_123017/single_gemini-3.1-pro-preview_1/datasets/single_agent_unknown_single_gemini-3-1-pro-preview__20260325_163019_6237d7b6.json"
-    },
-    {
-      "id": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1_14bc3611",
-      "experimentId": "multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1",
-      "systemType": "multi_agent",
-      "envType": "chess",
-      "metaModel": "gemini-3.1-pro-preview",
-      "crewModel": "gemini-3.1-pro-preview",
-      "startedAt": "2026-03-25T16:30:19.501599+00:00",
-      "endedAt": "2026-03-25T18:34:08.051752+00:00",
-      "durationSeconds": 7428.550153,
-      "totalTokens": 715585,
-      "totalMoves": 55,
-      "result": "1-0",
-      "path": "/experiments/parallel_session_20260325_123017/multi_agent_gemini-3.1-pro-preview_crew_gemini-3.1-pro-preview_1/datasets/multi_agent_gemini-3-1-pro-previ-gemini-3-1-pro-previ_multi_agent_gemini-3-1-pro-pre_20260325_163019_dfba584c.json"
     },
     {
       "id": "ep_single_gemini-3.1-flash-lite-preview_1_877350e9",

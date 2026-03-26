@@ -428,9 +428,9 @@
   flex-grow: 0;
   position: relative;
   width: 100%;
-  height: min(360px, 42vh);
-  min-height: 280px;
-  max-height: min(360px, 42vh);
+  height: min(560px, 68vh);
+  min-height: 420px;
+  max-height: min(560px, 68vh);
   background: color-mix(in oklab, var(--muted) 20%, transparent);
   transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1), min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
     max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
@@ -438,24 +438,325 @@
 
 /* Right column ~80% wide: give the React Flow pane twice the default side-column height */
 .sandbox-graph-flow-side--expanded {
-  height: min(720px, 84vh);
-  min-height: 560px;
-  max-height: min(720px, 84vh);
+  height: min(820px, 88vh);
+  min-height: 660px;
+  max-height: min(820px, 88vh);
 }
 
 .sandbox-graph-flow-default {
   position: relative;
   width: 100%;
-  height: 460px;
+  height: min(620px, 74vh);
+}
+
+.g6-graph-shell {
+  position: relative;
+}
+
+.g6-graph-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.g6-graph-inline-card {
+  position: absolute;
+  z-index: 11;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.g6-graph-inline-card--expanded {
+  inset: clamp(14px, 3.2%, 28px);
+  transform: none;
+  animation: g6-expand-in 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes g6-expand-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.g6-expand-card {
+  border: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
+  background: color-mix(in oklab, var(--card) 98%, var(--muted));
+  box-shadow: 0 10px 30px -20px color-mix(in oklab, var(--foreground) 45%, transparent);
+}
+
+.g6-expand-card--full {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.g6-expand-card--full [data-slot="tabs"] {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.g6-expand-card__tab-content {
+  min-height: 0;
+  height: 100%;
+}
+
+.g6-expand-card__scroll {
+  height: calc(100% - 2px);
+  max-height: none;
+  overflow-y: auto;
+}
+
+.g6-expand-card__close {
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  border-radius: 0.4rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.65rem;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--background) 95%, var(--muted));
+}
+
+.g6-expand-card__close:hover {
+  background: color-mix(in oklab, var(--muted) 55%, var(--background));
+  color: var(--foreground);
+}
+
+.g6-graph-node-card {
+  box-sizing: border-box;
+  width: 190px;
+  min-height: 112px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 98%, var(--muted));
+  box-shadow: 0 2px 10px -7px color-mix(in oklab, var(--foreground) 20%, transparent);
+  padding: 0.3rem 0.34rem 0.32rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  position: relative;
+}
+
+.g6-graph-thought-bubble {
+  position: absolute;
+  top: -1.2rem;
+  right: -1.5rem;
+  min-width: 2.2rem;
+  height: 1.34rem;
+  border-radius: 999px;
+  border: 2px solid color-mix(in oklab, var(--foreground) 85%, transparent);
+  background: color-mix(in oklab, var(--background) 98%, var(--card));
+  color: color-mix(in oklab, var(--foreground) 92%, var(--muted-foreground));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--background) 85%, transparent),
+    0 4px 12px -7px rgba(0, 0, 0, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  animation: g6-thought-bubble-pulse 2.2s ease-in-out infinite;
+  z-index: 3;
+  transform: scaleX(-1);
+}
+
+.g6-graph-thought-bubble::before,
+.g6-graph-thought-bubble::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  border: 2px solid color-mix(in oklab, var(--foreground) 85%, transparent);
+  background: color-mix(in oklab, var(--background) 98%, var(--card));
+}
+
+.g6-graph-thought-bubble::before {
+  width: 0.44rem;
+  height: 0.44rem;
+  right: 0.34rem;
+  bottom: -0.34rem;
+}
+
+.g6-graph-thought-bubble::after {
+  width: 0.28rem;
+  height: 0.28rem;
+  right: 0.12rem;
+  bottom: -0.54rem;
+}
+
+.g6-graph-thought-bubble:hover {
+  transform: translateY(-1px) scale(1.03) scaleX(-1);
+  border-color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+  color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--primary) 20%, transparent),
+    0 5px 14px -7px color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+@keyframes g6-thought-bubble-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--background) 85%, transparent),
+      0 4px 12px -7px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent),
+      0 5px 14px -7px color-mix(in oklab, var(--primary) 48%, transparent);
+  }
+}
+
+.g6-expand-card pre {
+  max-width: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.g6-graph-node-card--meta {
+  border-color: color-mix(in oklab, var(--primary) 52%, var(--border));
+  background: color-mix(in oklab, var(--primary) 10%, var(--card));
+}
+
+.g6-graph-node-card--common {
+  border-color: color-mix(in oklab, #f59e0b 48%, var(--border));
+  background: color-mix(in oklab, #f59e0b 10%, var(--card));
+}
+
+.g6-graph-node-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+.g6-graph-node-card__label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--foreground);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.g6-graph-node-card__count {
+  padding: 0.06rem 0.28rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  background: color-mix(in oklab, var(--background) 96%, var(--muted));
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.g6-graph-node-card__kind {
+  margin-top: 0.1rem;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  font-weight: 700;
+}
+
+.g6-graph-node-card__tabs {
+  margin-top: 0.2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+
+.g6-graph-node-card__tabs > span {
+  display: block;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  background: color-mix(in oklab, var(--background) 94%, var(--muted));
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-align: center;
+  padding: 0.1rem 0.14rem;
+}
+
+.g6-graph-node-card__preview {
+  margin-top: 0.2rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: color-mix(in oklab, var(--background) 95%, var(--muted));
+  font-size: 0.5rem;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--foreground) 88%, var(--muted-foreground));
+  padding: 0.14rem 0.2rem;
+  min-height: 1.5rem;
 }
 
 /* Compact: shrink-wrap short labels; cap width for Dagre alignment (GRAPH_NODE_LAYOUT_W ≈ 8.5rem) */
 .interaction-graph-node-card {
   box-sizing: border-box;
-  width: max-content;
-  max-width: 8.5rem;
+  width: 14.5rem;
+  max-width: 14.5rem;
   min-width: 0;
-  padding: 0.2rem 0.45rem;
+  padding: 0.4rem 0.5rem;
+}
+
+.interaction-graph-edge-bubble {
+  position: absolute;
+  z-index: 5;
+  max-width: 14rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 94%, var(--muted));
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.14);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.4rem 0.2rem;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.interaction-graph-edge-bubble:hover {
+  border-color: color-mix(in oklab, var(--primary) 55%, var(--border));
+  background: color-mix(in oklab, var(--primary) 10%, var(--card));
+}
+
+.interaction-graph-edge-bubble--selected {
+  border-color: color-mix(in oklab, var(--primary) 70%, var(--border));
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--primary) 28%, transparent),
+    0 1px 8px rgba(0, 0, 0, 0.16);
+}
+
+.interaction-graph-edge-bubble__weight {
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  background: color-mix(in oklab, var(--background) 95%, var(--muted));
+  padding: 0.07rem 0.3rem;
+}
+
+.interaction-graph-edge-bubble__preview {
+  font-size: 0.62rem;
+  line-height: 1.1;
+  max-width: 10.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in oklab, var(--foreground) 86%, var(--muted-foreground));
+}
+
+.unified-graph-detail-card [data-slot="collapsible-trigger"][data-state="open"] .unified-graph-detail-card__chev {
+  transform: rotate(90deg);
+}
+
+.unified-graph-detail-card--minimized {
+  opacity: 0.95;
 }
 
 .interaction-graph-thought-bubble {
