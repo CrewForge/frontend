@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LandingPage } from './components/LandingPage';
-import { LoginScreen } from './components/LoginScreen';
 import { DashboardPage } from './components/DashboardPage';
 import { SandboxPage } from './components/SandboxPage';
 import type { AuthSession } from './lib/api';
-import { revokeAuthToken } from './lib/api';
+import { createStandaloneSession, isStandaloneSession, revokeAuthToken } from './lib/api';
 
-type Page = 'landing' | 'login' | 'dashboard' | 'sandbox';
+type Page = 'landing' | 'dashboard' | 'sandbox';
 const STORAGE_KEY = 'crewforge_auth';
 
 export default function App() {
@@ -37,10 +36,10 @@ export default function App() {
   useEffect(() => {
     if (!bootstrapped) return;
     if (!session && currentPage === 'dashboard') {
-      setCurrentPage('login');
+      setCurrentPage('landing');
     }
     if (!session && !demoMode && currentPage === 'sandbox') {
-      setCurrentPage('login');
+      setCurrentPage('landing');
       setSelectedEnvironment(null);
     }
   }, [bootstrapped, currentPage, demoMode, session]);
@@ -50,10 +49,11 @@ export default function App() {
     setSession(null);
   };
 
-  const handleAuthSuccess = (authSession: AuthSession) => {
-    setSession(authSession);
+  const handleEnterWorkspace = () => {
+    const next = createStandaloneSession();
+    setSession(next);
     setDemoMode(false);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(authSession));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     setCurrentPage('dashboard');
   };
 
@@ -76,7 +76,7 @@ export default function App() {
     clearStoredSession();
     setDemoMode(false);
     setSelectedEnvironment(null);
-    setCurrentPage('login');
+    setCurrentPage('landing');
   };
 
   const handleEnvironmentSelect = (envId: string) => {
@@ -93,13 +93,6 @@ export default function App() {
     setCurrentPage('sandbox');
   };
 
-  const handleGoToLogin = () => {
-    setDemoMode(false);
-    setSelectedEnvironment(null);
-    setSandboxSource('sample');
-    setCurrentPage('login');
-  };
-
   const handleBackToDashboard = () => {
     setCurrentPage(demoMode ? 'landing' : 'dashboard');
     setSelectedEnvironment(null);
@@ -107,6 +100,8 @@ export default function App() {
   };
 
   const username = useMemo(() => session?.username ?? '', [session]);
+
+  const backendLiveAvailable = session != null && !isStandaloneSession(session);
 
   if (!bootstrapped) {
     return (
@@ -122,18 +117,7 @@ export default function App() {
   return (
     <>
       {currentPage === 'landing' && (
-        <LandingPage onSignIn={handleGoToLogin} onViewDemo={handleOpenDemo} />
-      )}
-
-      {currentPage === 'login' && (
-        <LoginScreen
-          onLoginSuccess={handleAuthSuccess}
-          onBack={() => {
-            setDemoMode(false);
-            setSelectedEnvironment(null);
-            setCurrentPage('landing');
-          }}
-        />
+        <LandingPage onEnterWorkspace={handleEnterWorkspace} onViewDemo={handleOpenDemo} />
       )}
 
       {currentPage === 'dashboard' && session && (
@@ -152,7 +136,8 @@ export default function App() {
           dataSource={sandboxSource}
           onSetDataSource={setSandboxSource}
           onBack={handleBackToDashboard}
-          onAuthFailure={handleAuthFailure}
+          backendLiveAvailable={backendLiveAvailable}
+          onAuthFailure={backendLiveAvailable ? handleAuthFailure : undefined}
         />
       )}
     </>

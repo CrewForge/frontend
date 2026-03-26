@@ -60,6 +60,7 @@ export function EvalPlusSandboxPage({
   dataSource = 'sample',
   onSetDataSource,
   onAuthFailure,
+  backendLiveAvailable = true,
 }: ChessSandboxPageProps) {
   const environmentLabel = 'EvalPlus workspace';
 
@@ -188,6 +189,10 @@ export function EvalPlusSandboxPage({
   );
 
   const startLiveStream = useCallback(async () => {
+    if (!backendLiveAvailable) {
+      setAutoError('Live stream is not available in this build. Use Replay.');
+      return;
+    }
     if (!token) {
       setAutoError('Missing authentication token.');
       return;
@@ -285,7 +290,7 @@ export function EvalPlusSandboxPage({
       setIsPlaying(false);
       abortControllerRef.current = null;
     }
-  }, [appendSystemLog, buildResultsSummary, onAuthFailure, processLine, resetState, token]);
+  }, [appendSystemLog, backendLiveAvailable, buildResultsSummary, onAuthFailure, processLine, resetState, token]);
 
   const handleStopStream = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -415,6 +420,11 @@ export function EvalPlusSandboxPage({
   }, [dataSource, loadEvalSample]);
 
   useEffect(() => {
+    if (backendLiveAvailable || dataSource !== 'live') return;
+    onSetDataSource?.('sample');
+  }, [backendLiveAvailable, dataSource, onSetDataSource]);
+
+  useEffect(() => {
     if (!samplePlaybackPlaying || dataSource !== 'sample') return;
     if (moves.length === 0) return;
     if (stepIndex >= moves.length - 1) {
@@ -474,7 +484,9 @@ export function EvalPlusSandboxPage({
                   <Badge variant="secondary">EvalPlus</Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                  Code submissions and diffs are rendered from bundled sample events and do not require a backend process.
+                  {backendLiveAvailable
+                    ? 'Code submissions and diffs are rendered from bundled sample events; live streaming uses the API when enabled.'
+                    : 'Standalone build: submissions and diffs use bundled sample events only.'}
                 </p>
               </div>
 
@@ -501,7 +513,8 @@ export function EvalPlusSandboxPage({
                       size="sm"
                       className="h-8"
                       onClick={handleSwitchToLive}
-                      disabled={dataSource === 'live'}
+                      disabled={dataSource === 'live' || !backendLiveAvailable}
+                      title={!backendLiveAvailable ? 'Not available without a CrewForge API server' : undefined}
                     >
                       Live
                     </Button>

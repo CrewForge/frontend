@@ -5,11 +5,11 @@ import { Badge } from './ui/badge';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface LandingPageProps {
-  onSignIn: () => void;
+  onEnterWorkspace: () => void;
   onViewDemo: () => void;
 }
 
-export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
+export function LandingPage({ onEnterWorkspace, onViewDemo }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10">
       <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -28,8 +28,8 @@ export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
             <Button variant="outline" onClick={onViewDemo}>
               Open Preview
             </Button>
-            <Button onClick={onSignIn}>
-              Sign In
+            <Button onClick={onEnterWorkspace}>
+              Open workspace
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -39,17 +39,17 @@ export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
       <section className="landing-page-shell landing-section px-4 sm:px-8">
         <div className="landing-hero-panel mx-auto max-w-4xl text-center">
           <Badge className="mb-6" variant="secondary">
-            Workspace Preview
+            Standalone workspace
           </Badge>
           <h1 className="landing-hero-title mb-4 font-semibold">
             Multi-Agent Results Workspace
           </h1>
           <p className="landing-hero-copy mx-auto mb-8 max-w-3xl text-muted-foreground">
-            CrewForge presents backend run output in a polished workspace built for review, playback, and operational visibility.
+            Review and replay run output in the browser with bundled sample sessions—no server required.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" onClick={onSignIn}>
-              Sign In
+            <Button size="lg" onClick={onEnterWorkspace}>
+              Open workspace
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" onClick={onViewDemo}>
@@ -57,22 +57,22 @@ export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
             </Button>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            Open a prepared session instantly, or sign in to access the full workspace.
+            Preview jumps straight into a session; workspace opens the environment chooser with full replay controls.
           </p>
         </div>
 
         <div className="landing-feature-grid mt-10">
           <Card className="landing-feature-card">
             <div className="text-sm font-semibold">Prepared session replay</div>
-            <p className="mt-1 text-sm text-muted-foreground">A stable preview path aligned to the backend event contract.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Bundled JSON aligned to the runner event contract, playable offline.</p>
           </Card>
           <Card className="landing-feature-card">
-            <div className="text-sm font-semibold">Workspace access</div>
-            <p className="mt-1 text-sm text-muted-foreground">Review runs inside the authenticated workspace with the same playback experience.</p>
+            <div className="text-sm font-semibold">Local workspace</div>
+            <p className="mt-1 text-sm text-muted-foreground">A local profile is stored in your browser—no account server.</p>
           </Card>
           <Card className="landing-feature-card">
-            <div className="text-sm font-semibold">Live source support</div>
-            <p className="mt-1 text-sm text-muted-foreground">Live backend streaming remains available when runtime dependencies are configured.</p>
+            <div className="text-sm font-semibold">Optional API</div>
+            <p className="mt-1 text-sm text-muted-foreground">If you connect a CrewForge API and use a server-issued token, live streams can be enabled.</p>
           </Card>
         </div>
 
@@ -80,19 +80,19 @@ export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
           <div className="landing-note-grid text-sm text-muted-foreground">
             <div className="landing-note-item">
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-              <span>The viewer prioritizes backend-derived results over decorative or inferred claims.</span>
+              <span>The viewer prioritizes recorded results over decorative or inferred claims.</span>
             </div>
             <div className="landing-note-item">
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-              <span>The default preview path is stable and self-contained.</span>
+              <span>The default path is stable and works as static files or via any static host.</span>
             </div>
             <div className="landing-note-item">
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-              <span>Live backend playback can still be tested separately when runtime dependencies are available.</span>
+              <span>Live streaming is optional and requires a running CrewForge API plus a non-local token.</span>
             </div>
             <div className="landing-note-item">
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-              <span>Designed for a concise product flow: landing, workspace, and session playback.</span>
+              <span>Flow: landing, workspace, session playback.</span>
             </div>
           </div>
         </Card>
@@ -102,7 +102,7 @@ export function LandingPage({ onSignIn, onViewDemo }: LandingPageProps) {
         <div className="landing-page-shell px-4 sm:px-8">
           <div className="text-center text-sm text-muted-foreground">
             <p>CrewForge Workspace • McMaster University</p>
-            <p className="mt-1">Prepared replay is the recommended preview mode.</p>
+            <p className="mt-1">Replay mode is the default; no backend is required.</p>
           </div>
         </div>
       </footer>

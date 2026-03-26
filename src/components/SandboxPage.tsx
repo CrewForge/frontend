@@ -10,6 +10,8 @@ export interface SandboxPageProps {
   onSetDataSource?: (source: 'live' | 'sample') => void;
   /** Clears session when stream returns 401 (expired / invalid token). */
   onAuthFailure?: () => void;
+  /** When false, only bundled replay is available (standalone / no API). */
+  backendLiveAvailable?: boolean;
 }
 
 export function SandboxPage({
@@ -19,8 +21,9 @@ export function SandboxPage({
   dataSource = 'sample',
   onSetDataSource,
   onAuthFailure,
+  backendLiveAvailable = true,
 }: SandboxPageProps) {
-  const shared = { token, onBack, dataSource, onSetDataSource, onAuthFailure };
+  const shared = { token, onBack, dataSource, onSetDataSource, onAuthFailure, backendLiveAvailable };
 
   if (environment === 'evalplus') {
     return <EvalPlusSandboxPage {...shared} />;

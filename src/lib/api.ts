@@ -5,6 +5,32 @@ export type AuthSession = {
   username: string;
 };
 
+/** Marks a browser-only session with no CrewForge API server. */
+export const STANDALONE_SESSION_TOKEN_PREFIX = "crewforge-local:";
+
+export function isStandaloneToken(token: string): boolean {
+  return token.startsWith(STANDALONE_SESSION_TOKEN_PREFIX);
+}
+
+export function isStandaloneSession(session: AuthSession | null | undefined): boolean {
+  return !!session?.token && isStandaloneToken(session.token);
+}
+
+/** Offline workspace identity — no network authentication. */
+export function createStandaloneSession(username = "Guest"): AuthSession {
+  const tokenTtlSeconds = 60 * 60 * 24 * 365 * 10;
+  const suffix =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  return {
+    token: `${STANDALONE_SESSION_TOKEN_PREFIX}${suffix}`,
+    expiresAt: Date.now() + tokenTtlSeconds * 1000,
+    tokenTtlSeconds,
+    username,
+  };
+}
+
 const DEFAULT_API_BASE = "http://localhost:8080";
 const rawBase = import.meta.env.VITE_API_BASE_URL?.trim();
 /** Empty env falls back to direct backend URL. Set to `/api` when using Vite dev proxy. */
@@ -97,6 +123,9 @@ export async function loginUser(username: string, password: string): Promise<Aut
 }
 
 export function authHeaders(token: string): HeadersInit {
+  if (isStandaloneToken(token)) {
+    return {};
+  }
   return {
     Authorization: `Bearer ${token}`,
   };
@@ -112,6 +141,9 @@ export async function throwIfResponseNotOk(response: Response): Promise<void> {
 }
 
 export async function revokeAuthToken(token: string) {
+  if (isStandaloneToken(token)) {
+    return { revoked: true };
+  }
   return request<{ revoked: boolean }>("/auth/token", {
     method: "DELETE",
     headers: authHeaders(token),

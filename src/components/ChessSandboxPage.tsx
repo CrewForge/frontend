@@ -22,6 +22,8 @@ export interface ChessSandboxPageProps {
   onSetDataSource?: (source: 'live' | 'sample') => void;
   /** Clears session when stream returns 401 (expired / invalid token). */
   onAuthFailure?: () => void;
+  /** When false, only bundled replay is available (standalone build). */
+  backendLiveAvailable?: boolean;
 }
 
 type MoveLogEntry = {
@@ -141,7 +143,14 @@ const buildBoardState = (game: Chess, lastMove?: { from: string; to: string } | 
 
 const createInitialBoard = () => buildBoardState(new Chess(), null);
 
-export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDataSource, onAuthFailure }: ChessSandboxPageProps) {
+export function ChessSandboxPage({
+  token,
+  onBack,
+  dataSource = 'sample',
+  onSetDataSource,
+  onAuthFailure,
+  backendLiveAvailable = true,
+}: ChessSandboxPageProps) {
   const mode: 'user' | 'stockfish' = 'stockfish';
   const environmentLabel = 'Strategy Workspace';
   const [isPlaying, setIsPlaying] = useState(false);
@@ -341,6 +350,10 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
   );
 
   const startAutoStream = useCallback(async () => {
+    if (!backendLiveAvailable) {
+      setAutoError('Live stream is not available in this build. Use Replay.');
+      return;
+    }
     if (!token) {
       setAutoError('Missing authentication token.');
       return;
@@ -438,7 +451,7 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
       setIsPlaying(false);
       abortControllerRef.current = null;
     }
-  }, [onAuthFailure, processLine, resetBoardState, token]);
+  }, [backendLiveAvailable, onAuthFailure, processLine, resetBoardState, token]);
 
   const handleStopStream = useCallback(() => {
     if (abortControllerRef.current) {
@@ -618,6 +631,11 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
     });
   }, [dataSource, loadChessSample]);
 
+  useEffect(() => {
+    if (backendLiveAvailable || dataSource !== 'live') return;
+    onSetDataSource?.('sample');
+  }, [backendLiveAvailable, dataSource, onSetDataSource]);
+
   /** Keep move log pinned to the latest entry (bottom) as new moves stream in. */
   useEffect(() => {
     const el = moveLogScrollRef.current;
@@ -732,14 +750,17 @@ export function ChessSandboxPage({ token, onBack, dataSource = 'sample', onSetDa
                   size="sm"
                   className="h-8"
                   onClick={handleSwitchToLive}
-                  disabled={dataSource === 'live'}
+                  disabled={dataSource === 'live' || !backendLiveAvailable}
+                  title={!backendLiveAvailable ? 'Not available without a CrewForge API server' : undefined}
                 >
                   Live
                 </Button>
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Sample replay uses bundled JSON; live stream uses the environment API.
+              {backendLiveAvailable
+                ? 'Sample replay uses bundled JSON; live stream uses the environment API.'
+                : 'Standalone build: replay uses bundled JSON only. Connect a CrewForge API server to enable live streams.'}
             </p>
 
             <div className="sandbox-metrics-strip mt-2.5">
