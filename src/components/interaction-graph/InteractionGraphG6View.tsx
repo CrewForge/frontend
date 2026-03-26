@@ -132,6 +132,7 @@ export function InteractionGraphG6View({
         return;
       }
       sceneRef.current = scene;
+      await scene.relayoutAndFit();
       if (selectedEdge?.id) {
         await scene.selectEdgeById(selectedEdge.id);
       }
@@ -154,6 +155,22 @@ export function InteractionGraphG6View({
     if (!scene) return;
     scene.selectEdgeById(selectedEdge?.id ?? null);
   }, [selectedEdge?.id]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const scene = sceneRef.current;
+    if (!scene) return;
+    let cancelled = false;
+    // Let panel width animation settle one frame, then relayout + fit.
+    const raf = requestAnimationFrame(() => {
+      if (cancelled) return;
+      scene.relayoutAndFit();
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [sideColumnExpanded, layout, visible, graph]);
 
   const flowShell =
     layout === "sideColumn"

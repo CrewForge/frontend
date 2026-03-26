@@ -150,8 +150,8 @@ export async function createG6GraphScene(
     layout: {
       type: "antv-dagre",
       rankdir: "TB",
-      ranksep: 74,
-      nodesep: 54,
+      ranksep: 62,
+      nodesep: 44,
     },
     node: {
       state: {
@@ -226,14 +226,14 @@ export async function createG6GraphScene(
   });
 
   await graph.render();
-  graph.fitView();
+  graph.fitView({ animation: false, padding: [56, 24, 24, 24] });
   await applyEdgeState(graph, selectedEdgeId, hoveredEdgeId);
 
   const resizeObserver = new ResizeObserver(() => {
     const nextW = Math.max(320, Math.floor(container.clientWidth || 320));
     const nextH = Math.max(280, Math.floor(container.clientHeight || 280));
     graph.resize(nextW, nextH);
-    graph.fitView({ animation: false });
+    graph.fitView({ animation: false, padding: [56, 24, 24, 24] });
   });
   resizeObserver.observe(container);
 
@@ -255,6 +255,10 @@ export async function createG6GraphScene(
         x: typeof pos?.x === "number" ? pos.x : 0,
         y: typeof pos?.y === "number" ? pos.y : 0,
       };
+    },
+    relayoutAndFit: async () => {
+      await graph.layout();
+      graph.fitView({ animation: false, padding: [56, 24, 24, 24] });
     },
   };
 }
