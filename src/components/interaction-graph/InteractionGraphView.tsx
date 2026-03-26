@@ -13,7 +13,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { Card } from "../ui/card";
-import { buildFlowGraph } from "./graphLayout";
+import { buildFlowGraph, graphTopologySignature } from "./graphLayout";
 import { InteractionGraphNode } from "./InteractionGraphNode";
 import { EdgeEvidencePanel } from "./EdgeEvidencePanel";
 import type { InteractionGraphData } from "../../lib/experiments/types";
@@ -83,10 +83,7 @@ export function InteractionGraphView({
     setEdges(built.edges);
   }, [built, setNodes, setEdges]);
 
-  const graphSignature = useMemo(
-    () => `${nodes.length}:${edges.length}:${graph.edges?.length ?? 0}`,
-    [nodes.length, edges.length, graph.edges?.length],
-  );
+  const topologySig = useMemo(() => graphTopologySignature(graph), [graph]);
 
   if (built.nodes.length === 0) {
     return (
@@ -105,6 +102,7 @@ export function InteractionGraphView({
     <Card className="overflow-hidden">
       <div className={flowShell}>
         <ReactFlow
+          key={topologySig}
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
@@ -115,7 +113,7 @@ export function InteractionGraphView({
           onPaneClick={() => setSelectedEdge(null)}
           proOptions={{ hideAttribution: true }}
         >
-          <FlowFitWhenVisible visible={visible} graphSignature={graphSignature} />
+          <FlowFitWhenVisible visible={visible} graphSignature={topologySig} />
           {layout === "default" ? <MiniMap pannable zoomable /> : null}
           <Controls showInteractive={false} className={layout === "sideColumn" ? "scale-90" : undefined} />
           <Background gap={18} />

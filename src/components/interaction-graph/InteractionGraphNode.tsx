@@ -18,20 +18,24 @@ function nodeClasses(kind: GraphNodeData["nodeKind"]) {
   return "border-border bg-card text-foreground";
 }
 
+function kindLabel(kind: GraphNodeData["nodeKind"]) {
+  if (kind === "meta") return "meta model";
+  if (kind === "common") return "shared memory";
+  return "crew";
+}
+
 export function InteractionGraphNode({ data }: NodeProps<GraphNodeData>) {
   return (
-    <div className={`min-w-[140px] rounded-xl border px-2.5 py-2 shadow-sm ${nodeClasses(data.nodeKind)}`}>
-      <Handle type="target" position={Position.Top} className="!h-2 !w-2 !border-0 !bg-current" />
-      <div className="flex items-center justify-between gap-2">
-        <span className="line-clamp-2 text-xs font-semibold leading-tight">{data.label}</span>
-        <Badge variant="secondary" className="text-[10px]">
-          {data.messageCount}
-        </Badge>
-      </div>
-      <div className="mt-1 text-[10px] uppercase tracking-wide opacity-80">
-        {data.nodeKind === "meta" ? "meta model" : data.nodeKind === "common" ? "shared memory" : "crew"}
-      </div>
-      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-0 !bg-current" />
+    <div
+      className={`interaction-graph-node-card flex flex-col items-center justify-center gap-1 rounded-lg border text-center shadow-sm ${nodeClasses(data.nodeKind)}`}
+    >
+      <Handle type="target" position={Position.Top} className="interaction-graph-node-handle !border-0 !bg-current" />
+      <span className="max-w-full break-words text-center text-xs font-semibold leading-tight">{data.label}</span>
+      <Badge variant="secondary" className="shrink-0 px-1 py-0 text-xs leading-none">
+        {data.messageCount}
+      </Badge>
+      <span className="text-xs uppercase leading-tight tracking-wide opacity-80">{kindLabel(data.nodeKind)}</span>
+      <Handle type="source" position={Position.Bottom} className="interaction-graph-node-handle !border-0 !bg-current" />
     </div>
   );
 }

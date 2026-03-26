@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import type { ExperimentDataset } from "../../lib/experiments/types";
 import { buildInteractionGraph, extractInteractionEvents } from "../../lib/experiments/normalize";
+import { graphTopologySignature } from "./graphLayout";
 import { InteractionGraphView } from "./InteractionGraphView";
 
 export function InteractionGraphSection({
@@ -22,12 +23,8 @@ export function InteractionGraphSection({
 
   const graph = useMemo(() => buildInteractionGraph(allEvents), [allEvents]);
 
-  /** Remount graph when topology changes; fixes React Flow useNodesState sticking to an empty first mount. */
-  const graphViewKey = useMemo(
-    () =>
-      `${graph.nodes.length}-${graph.edges.length}-${graph.nodes.map((n) => n.id).join(",")}-${graph.edges.map((e) => e.id).join(",")}`,
-    [graph],
-  );
+  /** Remount + full Dagre relayout whenever an agent (node) or edge is created or destroyed. */
+  const graphViewKey = useMemo(() => graphTopologySignature(graph), [graph]);
 
   return (
     <div className={className ?? "space-y-3"}>

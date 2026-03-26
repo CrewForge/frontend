@@ -6,9 +6,16 @@ import type { InteractionGraphData } from "../../lib/experiments/types";
 const META_HINT = "meta";
 const COMMON_SPACE_ID = "CommonSpace";
 
-/** Must match approximate measured size of `InteractionGraphNode` for layout + fitView. */
-const NODE_W = 168;
-const NODE_H = 96;
+/**
+ * Approximate outer size of `InteractionGraphNode` (centered label + badge + role).
+ * Dagre uses these so spacing reflows when nodes/edges change.
+ */
+/** Compact cards; Dagre uses these for rank/node spacing (visual may be slightly narrower for short labels). */
+export const GRAPH_NODE_LAYOUT_W = 136;
+export const GRAPH_NODE_LAYOUT_H = 76;
+
+const NODE_W = GRAPH_NODE_LAYOUT_W;
+const NODE_H = GRAPH_NODE_LAYOUT_H;
 
 function normalizeLabel(v: string) {
   return v.toLowerCase();
@@ -147,31 +154,39 @@ function manualLayoutPositions(graph: InteractionGraphData): Map<string, { x: nu
 
   const CANVAS_W = 440;
   const centerX = () => CANVAS_W / 2 - NODE_W / 2;
-  const COL_X = 28;
-  const ROW_H = 88;
+  const COL_X = 20;
+  const rowGap = NODE_H + 24;
 
   const out = new Map<string, { x: number; y: number }>();
-  let yCursor = 20;
+  let yCursor = 16;
 
   if (meta) {
     out.set(meta.id, { x: centerX(), y: yCursor });
-    yCursor = 108;
+    yCursor += NODE_H + 28;
   } else {
-    yCursor = 36;
+    yCursor = 24;
   }
 
   agents.forEach((a, i) => {
-    out.set(a.id, { x: COL_X, y: yCursor + i * ROW_H });
+    out.set(a.id, { x: COL_X, y: yCursor + i * rowGap });
   });
 
-  const agentsBlockH = agents.length * ROW_H;
-  const commonY = Math.max(yCursor + agentsBlockH + 36, 280);
+  const agentsBlockH = agents.length * rowGap;
+  const commonY = Math.max(yCursor + agentsBlockH + 40, 300);
 
   if (common) {
     out.set(common.id, { x: centerX(), y: commonY });
   }
 
   return out;
+}
+
+/** Stable signature when agents/edges are added or removed — use for keys + fitView. */
+export function graphTopologySignature(graph: InteractionGraphData): string {
+  if (graph.nodes.length === 0 && graph.edges.length === 0) return "∅";
+  const nodeIds = [...graph.nodes].map((n) => n.id).sort().join("\u0001");
+  const edgeIds = [...graph.edges].map((e) => e.id).sort().join("\u0001");
+  return `N:${nodeIds}|E:${edgeIds}`;
 }
 
 export function buildFlowGraph(graph: InteractionGraphData): { nodes: Node[]; edges: Edge[] } {

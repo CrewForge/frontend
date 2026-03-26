@@ -350,6 +350,22 @@
   height: 460px;
 }
 
+/* Compact: shrink-wrap short labels; cap width for Dagre alignment (GRAPH_NODE_LAYOUT_W ≈ 8.5rem) */
+.interaction-graph-node-card {
+  box-sizing: border-box;
+  width: max-content;
+  max-width: 8.5rem;
+  min-width: 0;
+  padding: 0.2rem 0.45rem;
+}
+
+.interaction-graph-node-card .interaction-graph-node-handle {
+  width: 6px !important;
+  height: 6px !important;
+  min-width: 6px !important;
+  min-height: 6px !important;
+}
+
 /* Edge evidence: collapsible chevron follows Radix data-state on trigger */
 [data-slot="collapsible-trigger"][data-state="open"] .interaction-edge-collapse-chevron {
   transform: rotate(180deg);
@@ -357,6 +373,10 @@
 
 .interaction-edge-collapse-chevron {
   transition: transform 0.15s ease;
+}
+
+.interaction-edge-bubble {
+  padding: 0.875rem 1rem;
 }
 
 .interaction-edge-main-scroll {

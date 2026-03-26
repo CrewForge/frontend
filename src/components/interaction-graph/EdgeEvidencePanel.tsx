@@ -42,13 +42,13 @@ function MessageBubble({
       type="button"
       onClick={onToggle}
       className={cn(
-        "interaction-edge-bubble w-full rounded-2xl border border-border/80 bg-background px-3 py-2.5 text-left text-xs shadow-sm transition hover:border-primary/35 hover:bg-muted/30",
+        "interaction-edge-bubble box-border w-full rounded-2xl border border-border/80 bg-background text-center text-xs shadow-sm transition hover:border-primary/35 hover:bg-muted/30",
         expanded && "ring-1 ring-primary/30",
       )}
     >
-      <div className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
+      <div className="mb-2 flex flex-wrap items-center justify-center gap-1.5 text-[10px] text-muted-foreground">
         <span className="font-medium text-foreground">turn {sample.turn}</span>
-        <span>·</span>
+        <span aria-hidden>·</span>
         <span>cycle {sample.cycle}</span>
         <Badge variant="outline" className="text-[9px] uppercase">
           {sample.kind}
@@ -58,7 +58,7 @@ function MessageBubble({
         {expanded ? body : previewText(body)}
       </p>
       {body.length > PREVIEW_CHARS ? (
-        <span className="mt-1.5 block text-[10px] font-medium text-primary">
+        <span className="mt-2 block text-[10px] font-medium text-primary">
           {expanded ? "Click to collapse" : "Click to read full message"}
         </span>
       ) : null}
