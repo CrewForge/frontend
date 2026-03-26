@@ -874,7 +874,7 @@ export function ChessSandboxPage({
               />
               <SandboxSideLogCard
                 title="Move log"
-                subtitle="Moves, eval, and reasoning"
+                subtitle="Moves, eval, and timing"
                 entryCount={chessMovesTotal > 0 ? chessMovesTotal : moveLogEntries.length}
               >
                 <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
