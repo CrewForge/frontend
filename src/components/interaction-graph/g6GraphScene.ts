@@ -58,6 +58,7 @@ function buildG6Data(source: InteractionGraphData, focusTurn?: number | null): G
       const tabs = buildNodeTabSummary(node.id, compactEdges);
       const latestPreview = buildNodeLatestPreview(node.id, compactEdges, focusTurn);
       const selfEdge = source.edges.find((edge) => edge.source === node.id && edge.target === node.id);
+      const selfEdgeStepActive = focus != null && !!selfEdge && hasTurn(selfEdge, focus);
       return {
         id: node.id,
         type: "html",
@@ -69,7 +70,7 @@ function buildG6Data(source: InteractionGraphData, focusTurn?: number | null): G
         },
         style: {
           size: [200, 122],
-          innerHTML: renderNodeCardHtml(node, tabs, latestPreview, selfEdge?.id ?? null),
+          innerHTML: renderNodeCardHtml(node, tabs, latestPreview, selfEdge?.id ?? null, selfEdgeStepActive),
           dx: -100,
           dy: -61,
           cursor: "pointer",
@@ -150,8 +151,8 @@ export async function createG6GraphScene(
     layout: {
       type: "antv-dagre",
       rankdir: "TB",
-      ranksep: 62,
-      nodesep: 44,
+      ranksep: 40,
+      nodesep: 34,
     },
     node: {
       state: {

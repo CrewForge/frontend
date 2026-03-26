@@ -35,6 +35,7 @@ export function renderNodeCardHtml(
   summaries: InteractionNodeTabSummary[],
   latestPreview: string,
   selfEdgeId?: string | null,
+  selfEdgeStepActive?: boolean,
 ): string {
   const kind = nodeKindFor(node.label);
   const inbound = summaries.find((s) => s.key === "inbound");
@@ -47,7 +48,7 @@ export function renderNodeCardHtml(
         ? "g6-graph-node-card g6-graph-node-card--common"
         : "g6-graph-node-card g6-graph-node-card--agent";
   const thoughtBubble = selfEdgeId
-    ? `<button class="g6-graph-thought-bubble" type="button" data-self-edge-id="${escapeHtml(selfEdgeId)}" aria-label="Open self messages for ${escapeHtml(node.label)}">...</button>`
+    ? `<button class="g6-graph-thought-bubble${selfEdgeStepActive ? " g6-graph-thought-bubble--step-active" : ""}" type="button" data-self-edge-id="${escapeHtml(selfEdgeId)}" aria-label="Open self messages for ${escapeHtml(node.label)}">...</button>`
     : "";
   return `
     <div class="${classes}">

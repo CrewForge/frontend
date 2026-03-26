@@ -596,6 +596,33 @@
     0 5px 14px -7px color-mix(in oklab, var(--primary) 55%, transparent);
 }
 
+/* Replay step: self-loop bubble matches edge “traffic this turn” styling */
+.g6-graph-thought-bubble--step-active {
+  border-color: color-mix(in oklab, var(--primary) 56%, var(--border));
+  background: color-mix(in oklab, var(--primary) 14%, var(--card));
+  color: var(--primary);
+  filter: drop-shadow(0 0 0.22rem color-mix(in oklab, var(--primary) 50%, transparent));
+  animation: none;
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--primary) 22%, transparent),
+    0 4px 14px -6px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+.g6-graph-thought-bubble--step-active::before,
+.g6-graph-thought-bubble--step-active::after {
+  border-color: color-mix(in oklab, var(--primary) 56%, var(--border));
+  background: color-mix(in oklab, var(--primary) 14%, var(--card));
+}
+
+.g6-graph-thought-bubble--step-active:hover {
+  border-color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+  color: color-mix(in oklab, var(--primary) 85%, var(--foreground));
+  filter: drop-shadow(0 0 0.28rem color-mix(in oklab, var(--primary) 55%, transparent));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--primary) 26%, transparent),
+    0 5px 16px -6px color-mix(in oklab, var(--primary) 50%, transparent);
+}
+
 @keyframes g6-thought-bubble-pulse {
   0%,
   100% {
