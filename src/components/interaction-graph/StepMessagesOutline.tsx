@@ -170,26 +170,29 @@ function TranscriptRow({
             )}
           </div>
         </div>
-        {metaRight}
+        <div className="flex shrink-0 items-center gap-2">
+          {metaRight}
+          {expanded && hasBody ? (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className={cn(
+                "rounded border border-border/60 bg-background/90 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                copied && "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
+              )}
+              aria-label={copied ? "Copied message to clipboard" : "Copy message to clipboard"}
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          ) : null}
+        </div>
       </div>
       {hasBody && (
         <div className="mt-1 min-w-0 w-full border-t border-border/30 pt-1">
           {expanded ? (
             <div className="relative">
-              <button
-                type="button"
-                onClick={handleCopy}
-                className={cn(
-                  "absolute right-1.5 top-1.5 z-[2] rounded border border-border/60 bg-background/90 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  copied && "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
-                )}
-                style={{ top: 6, right: 6 }}
-                aria-label={copied ? "Copied message to clipboard" : "Copy message to clipboard"}
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
               <pre
-                className="max-h-[min(50vh,280px)] min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden rounded border border-border/35 bg-muted/40 px-1.5 py-1 pr-14 font-mono text-[10px] leading-snug text-foreground/95"
+                className="max-h-[min(50vh,280px)] min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden rounded border border-border/35 bg-muted/40 px-1.5 py-1 font-mono text-[10px] leading-snug text-foreground/95"
                 style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" }}
               >
                 {full}
