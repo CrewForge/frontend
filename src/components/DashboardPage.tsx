@@ -1,8 +1,7 @@
 import React from 'react';
 import { Card } from './ui/card';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Gamepad2, Users, Boxes, LogOut, Code2 } from 'lucide-react';
+import { LogOut, Code2 } from 'lucide-react';
 
 interface DashboardPageProps {
   username: string;
@@ -11,20 +10,37 @@ interface DashboardPageProps {
   onEnvironmentSelect: (envId: string) => void;
 }
 
+/** Chess piece (knight) SVG icon for the Strategy Workspace card. */
+function ChessKnightIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 21h10" />
+      <path d="M8 21v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <path d="M9 17V9.5a.5.5 0 0 1 .9-.3l1.4 1.86a.5.5 0 0 0 .7.1l1.5-1a.5.5 0 0 1 .7.1L16 13" />
+      <path d="M9 9.5C9 6.5 11 4 14 3c0 0-2 1-2 3.5" />
+      <circle cx="11.5" cy="7" r=".5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }: DashboardPageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 p-4 sm:p-8">
-      <div className="dashboard-shell mb-8 sm:mb-10">
-        <div className="dashboard-header-card p-5 sm:p-6">
-          <div className="dashboard-header-row mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 p-5 sm:p-10">
+      <div className="dashboard-shell mb-8 sm:mb-12">
+        <div className="dashboard-header-card p-6 sm:p-8">
+          <div className="dashboard-header-row">
             <div className="dashboard-header-copy">
-              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Welcome back, {username}</h1>
-              <p className="mt-1 text-muted-foreground">Choose an environment view for the workspace.</p>
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">CrewForge</h1>
             </div>
-            <div className="dashboard-header-actions">
-              <Badge variant="secondary" className="text-sm">
-                Workspace
-              </Badge>
+            <div className="dashboard-header-actions flex items-center">
               <Button variant="outline" size="sm" onClick={() => void onLogout()} disabled={!token}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign out
@@ -34,130 +50,34 @@ export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }
         </div>
       </div>
 
-      <div className="dashboard-shell">
-        <h2 className="mb-8 text-center text-xl font-semibold sm:mb-12 sm:text-2xl">Environments</h2>
-        <p className="mx-auto mb-8 max-w-3xl text-center text-sm text-muted-foreground">
-          Strategy and EvalPlus workspaces are available. Additional environments are staged for future updates.
-        </p>
-
-        <div className="dashboard-env-grid">
+      <div className="dashboard-shell mt-10 sm:mt-16">
+        <h2 className="mb-10 text-center text-2xl font-semibold sm:mb-14 sm:text-3xl tracking-tight">Choose an Environment</h2>
+        
+        <div className="mx-auto flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-12">
           <Card
-            className="dashboard-env-card group cursor-pointer p-6 transition-all hover:scale-[1.01] hover:border-primary/50 hover:shadow-lg"
+            className="dashboard-env-card flex flex-col justify-center items-center w-full max-w-[300px] h-[420px] rounded-xl border-2 group cursor-pointer p-8 transition-all hover:-translate-y-2 hover:border-primary/50 hover:shadow-2xl bg-card"
             onClick={() => onEnvironmentSelect('chess')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                <Gamepad2 className="h-8 w-8 text-primary" />
+              <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                <ChessKnightIcon className="h-12 w-12 text-primary" />
               </div>
-              <h2 className="dashboard-env-title mb-2">Strategy Workspace</h2>
-              <p className="dashboard-env-description mb-4">
-                Review structured session output, replay prepared results, and connect to a live backend stream when available.
-              </p>
-              <div className="flex w-full flex-col gap-2">
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Type</span>
-                  <span>Structured environment</span>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Complexity</span>
-                  <Badge variant="destructive" className="text-xs">High</Badge>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Status</span>
-                  <Badge variant="default" className="text-xs">Available</Badge>
-                </div>
-              </div>
+              <h2 className="dashboard-env-title text-2xl font-semibold tracking-tight">Strategy</h2>
+              <p className="mt-4 text-sm text-muted-foreground opacity-80 group-hover:opacity-100 transition-opacity">Chess against Stockfish</p>
             </div>
           </Card>
 
           <Card
-            className="dashboard-env-card group cursor-pointer p-6 transition-all hover:scale-[1.01] hover:border-primary/50 hover:shadow-lg"
+            className="dashboard-env-card flex flex-col justify-center items-center w-full max-w-[300px] h-[420px] rounded-xl border-2 group cursor-pointer p-8 transition-all hover:-translate-y-2 hover:border-primary/50 hover:shadow-2xl bg-card"
             onClick={() => onEnvironmentSelect('evalplus')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                <Code2 className="h-8 w-8 text-primary" />
+              <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                <Code2 className="h-12 w-12 text-primary" />
               </div>
-              <h2 className="dashboard-env-title mb-2">EvalPlus workspace</h2>
-              <p className="dashboard-env-description mb-4">
-                Replay experiment JSON from CrewForge runs: code submissions, line diffs between steps, and pass@k from the environment result.
-              </p>
-              <div className="flex w-full flex-col gap-2">
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Type</span>
-                  <span>Code benchmark</span>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Complexity</span>
-                  <Badge variant="destructive" className="text-xs">High</Badge>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Status</span>
-                  <Badge variant="default" className="text-xs">Available</Badge>
-                </div>
-              </div>
+              <h2 className="dashboard-env-title text-2xl font-semibold tracking-tight">Code</h2>
+              <p className="mt-4 text-sm text-muted-foreground opacity-80 group-hover:opacity-100 transition-opacity">Code against EvalPlus</p>
             </div>
-          </Card>
-
-          <Card className="dashboard-env-card group cursor-not-allowed border-dashed p-6 opacity-70" aria-disabled="true">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="dashboard-env-title mb-2">Negotiation Simulation</h2>
-              <p className="dashboard-env-description mb-4">
-                Shared decision-making environment for structured negotiation workflows.
-              </p>
-              <div className="flex w-full flex-col gap-2">
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Type</span>
-                  <span>Social Simulation</span>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Complexity</span>
-                  <Badge className="text-xs bg-yellow-500">Medium</Badge>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Status</span>
-                  <Badge variant="secondary" className="text-xs">Coming soon</Badge>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="dashboard-env-card group cursor-not-allowed border-dashed p-6 opacity-70" aria-disabled="true">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                <Boxes className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="dashboard-env-title mb-2">Collaborative Maze</h2>
-              <p className="dashboard-env-description mb-4">
-                Multi-agent coordination environment for planning, routing, and shared execution.
-              </p>
-              <div className="flex w-full flex-col gap-2">
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Type</span>
-                  <span>Coordination Task</span>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Complexity</span>
-                  <Badge className="text-xs bg-green-500">Low</Badge>
-                </div>
-                <div className="dashboard-meta-row">
-                  <span className="font-medium text-muted-foreground">Status</span>
-                  <Badge variant="secondary" className="text-xs">Coming soon</Badge>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Card className="dashboard-header-card bg-muted/30 p-6">
-            <h3 className="mb-3">Platform rollout</h3>
-            <p className="text-muted-foreground max-w-3xl mx-auto">
-              The workspace is designed to support multiple environments behind a consistent results and telemetry experience. Additional modules will appear here as they become available.
-            </p>
           </Card>
         </div>
       </div>

@@ -28,11 +28,25 @@ export function InteractionGraphSection({
   return (
     <div className={className ?? "space-y-3"}>
       <div className="px-0.5">
-        <h3 className="text-sm font-semibold leading-tight">Agent interaction graph</h3>
-        <p className="mt-0.5 text-[11px] text-muted-foreground">
-          Nodes are crew agents and shared space (CommonSpace); edges aggregate talk, shared memory, and deliberation.
-          Replay scopes message text to the current step.
-        </p>
+        <h3 className="text-sm font-semibold leading-tight">Crew Interactions</h3>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full border border-border/80 bg-primary/20" />
+            Agent
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full border border-violet-400/60 bg-violet-500/20" />
+            Shared Space
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-block h-0.5 w-3.5 rounded bg-muted-foreground/50" />
+            Communication
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-block h-0.5 w-3.5 rounded bg-primary" />
+            Active
+          </span>
+        </div>
       </div>
       <InteractionGraphG6View
         graph={graph}

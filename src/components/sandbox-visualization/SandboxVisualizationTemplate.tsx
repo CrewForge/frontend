@@ -17,7 +17,7 @@ type SandboxVisualizationRootProps = {
 export function SandboxVisualizationRoot({ children }: SandboxVisualizationRootProps) {
   return (
     <div className={SANDBOX_PAGE_GRADIENT}>
-      <div className="sandbox-shell flex min-h-screen flex-col px-3 py-2 sm:px-4 sm:py-3 lg:px-5">
+      <div className="sandbox-shell flex min-h-screen flex-col px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
         <div className="sandbox-chrome-card rounded-2xl border border-border/70 shadow-sm backdrop-blur-sm">
           {children}
         </div>
@@ -83,55 +83,21 @@ export function SandboxEnvironmentHeader({
   metricsStrip,
 }: SandboxEnvironmentHeaderProps) {
   const hasErr = !!errorMessage;
-  const statusLabel = hasErr ? 'Error' : playbackActive ? 'Playing' : 'Ready';
 
   return (
-    <div className="sandbox-env-header border-b border-border/60 px-3 py-2.5 sm:px-5">
-      <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
-        <Button variant="outline" size="sm" onClick={onBack} className="shrink-0">
-          ← Back
-        </Button>
-        <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{title}</h1>
-        {contextBadge}
-        <Badge variant={hasErr ? 'destructive' : playbackActive ? 'default' : 'secondary'}>{statusLabel}</Badge>
-        <div
-          className="inline-flex shrink-0 whitespace-nowrap rounded-lg border border-border/60 bg-muted/50 p-0.5 shadow-inner"
-          role="group"
-          aria-label="Data source"
-        >
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'h-7 rounded-md px-2.5 text-xs font-medium sm:px-3',
-              dataSource === 'sample' && 'bg-background text-foreground shadow-sm',
-            )}
-            onClick={onSwitchToSample}
-            disabled={dataSource === 'sample'}
-          >
-            Dataset
+    <div className="sandbox-env-header border-b border-border/60 px-8 py-4 sm:px-10 sm:py-5">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-4 sm:gap-6">
+        <div className="flex items-center gap-3 sm:gap-4 ml-2">
+          <Button variant="outline" size="sm" onClick={onBack} className="shrink-0 px-3 py-1.5">
+            ← Back
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'h-7 rounded-md px-2.5 text-xs font-medium sm:px-3',
-              dataSource === 'live' && 'bg-background text-foreground shadow-sm',
-            )}
-            onClick={onSwitchToLive}
-            disabled={dataSource === 'live' || !backendLiveAvailable}
-            title={!backendLiveAvailable ? 'Not available without a CrewForge API server' : undefined}
-          >
-            Live stream
-          </Button>
+          <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{title}</h1>
+          {contextBadge}
         </div>
+        <div className="shrink-0 mr-2">{metricsStrip}</div>
       </div>
-      <p className="mt-1.5 max-w-3xl text-xs leading-relaxed text-muted-foreground">{subtitle}</p>
-      {metricsStrip}
       {hasErr && errorMessage && (
-        <div className="mt-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5 text-xs text-destructive sm:text-sm">
+        <div className="mt-3 rounded-lg border border-destructive/20 bg-destructive/5 px-3.5 py-2 text-xs text-destructive sm:text-sm">
           {errorMessage}
         </div>
       )}
@@ -157,17 +123,8 @@ export function SandboxVizToolbarBlock({
   onFullReset,
   fullResetLabel = 'Full reset',
 }: SandboxVizToolbarBlockProps) {
-  const hasErr = !!errorMessage;
   return (
     <div className="sandbox-viz-toolbar">
-      <div className="sandbox-viz-toolbar__badges">
-        <Badge variant="outline" className="border-border/70 bg-muted/30">
-          {dataSource === 'live' ? 'Live stream' : 'Dataset'}
-        </Badge>
-        <Badge variant={hasErr ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
-          {hasErr ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
-        </Badge>
-      </div>
       <div className="sandbox-viz-toolbar__playback-row">
         <div className="sandbox-viz-toolbar__playback-wrap">{playbackControls}</div>
         <div className="sandbox-viz-toolbar__actions">
@@ -234,13 +191,14 @@ type SandboxPrimaryCardProps = {
 
 /** Primary visualization card (board / code) — shared chrome. */
 export function SandboxPrimaryCard({ title, description, toolbar, children, className }: SandboxPrimaryCardProps) {
+  const hasDescription = description != null && description !== '' && description !== false;
   return (
     <Card className={className ?? 'sandbox-primary-card min-w-0 overflow-hidden'}>
-      <div className="border-b border-border/60 bg-muted/25 px-3 py-2 sm:px-4">
+      <div className="border-b border-border/60 bg-muted/25 px-4 py-2.5 sm:px-5">
         <h3 className="text-sm font-semibold sm:text-base">{title}</h3>
-        <div className="text-xs text-muted-foreground [&_p]:mt-0">{description}</div>
+        {hasDescription && <div className="mt-0.5 text-xs text-muted-foreground [&_p]:mt-0">{description}</div>}
       </div>
-      <div className="min-w-0 bg-card/80 px-3 pb-2.5 pt-2 sm:px-4 sm:pb-3 sm:pt-2.5">
+      <div className="min-w-0 bg-card/80 px-4 pb-3 pt-2.5 sm:px-5 sm:pb-4 sm:pt-3">
         {toolbar}
         {children}
       </div>
@@ -260,10 +218,10 @@ type SandboxSideLogCardProps = {
 export function SandboxSideLogCard({ title, subtitle, entryCount, children, className }: SandboxSideLogCardProps) {
   return (
     <Card className={className ?? 'sandbox-move-log sandbox-log-panel gap-0'}>
-      <div className="sandbox-move-log__header mb-0.5 flex flex-wrap items-center justify-between gap-1.5">
+      <div className="sandbox-move-log__header mb-1 flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
           <h3 className="sandbox-log-title">{title}</h3>
-          <p className="sandbox-log-subtitle">{subtitle}</p>
+          <p className="sandbox-log-subtitle mt-0.5">{subtitle}</p>
         </div>
         <Badge variant="outline" className="shrink-0 text-[10px] font-normal">
           {entryCount} entries
@@ -292,10 +250,10 @@ export function SandboxSecondaryPanel({
 }: SandboxSecondaryPanelProps) {
   return (
     <Card className={className}>
-      <div className="mb-3 flex items-center justify-between gap-3">
+      <div className="mb-3.5 flex items-center justify-between gap-3">
         <div>
           <h3 className="sandbox-log-title">{title}</h3>
-          <p className="sandbox-log-subtitle">{subtitle}</p>
+          <p className="sandbox-log-subtitle mt-0.5">{subtitle}</p>
         </div>
         {headerRight}
       </div>

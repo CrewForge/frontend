@@ -117,7 +117,6 @@ export function EdgeEvidencePanel({
           <h3 className="sandbox-log-title">
             {edge.source} → {edge.target}
           </h3>
-          <p className="sandbox-log-subtitle mb-0">Last activity: {formatWhen(payload.lastTimestamp ?? 0)}</p>
         </div>
         <Badge variant="outline" className="shrink-0 text-[10px]">
           {payload.weight ?? 0} msgs

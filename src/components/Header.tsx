@@ -10,9 +10,9 @@ interface HeaderProps {
 
 export function Header({ onSettingsClick, currentProject }: HeaderProps) {
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-2">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 sm:px-8">
+        <div className="flex items-center gap-6 sm:gap-8">
+          <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M10 2L3 7V13L10 18L17 13V7L10 2Z" fill="white" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -30,7 +30,7 @@ export function Header({ onSettingsClick, currentProject }: HeaderProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3.5">
         <Button 
           variant="ghost" 
           size="icon"

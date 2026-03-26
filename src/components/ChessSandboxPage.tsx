@@ -22,7 +22,6 @@ import { scrollChildIntoContainer } from '../lib/scrollChildIntoContainer';
 import {
   SandboxVisualizationRoot,
   SandboxEnvironmentHeader,
-  SandboxMetricsStrip,
   SandboxVizToolbarBlock,
   SandboxPrimaryCard,
   SandboxSideLogCard,
@@ -739,20 +738,6 @@ export function ChessSandboxPage({
     return moveLogEntries.length;
   }, [dataSource, chessMovesTotal, moveLogEntries.length]);
 
-  const chessMetricsItems = useMemo(
-    () => [
-      { key: 'status', label: 'Status', value: statusMessage },
-      { key: 'moves', label: 'Moves', value: movesMetricValue },
-      { key: 'last', label: 'Last', value: latestMove?.san ?? '—' },
-      {
-        key: 'latency',
-        label: 'Avg latency',
-        value: typeof averageLatencyMs === 'number' ? `${averageLatencyMs} ms` : '—',
-        mutedSuffix: <span className="text-muted-foreground"> ({INFERRED_NOTE})</span>,
-      },
-    ],
-    [averageLatencyMs, latestMove?.san, movesMetricValue, statusMessage],
-  );
 
   return (
     <>
@@ -772,28 +757,23 @@ export function ChessSandboxPage({
               : 'Bundled datasets only. Add a CrewForge API server to enable live streams.'
           }
           metricsStrip={
-            <>
-              <SandboxMetricsStrip items={chessMetricsItems} />
-              <div className="mt-2.5">
-                <ExperimentPicker
-                  entries={manifestEntries}
-                  envType="chess"
-                  selectedPath={selectedDatasetPath}
-                  onSelectPath={setSelectedDatasetPath}
-                />
-              </div>
-            </>
+            <ExperimentPicker
+              entries={manifestEntries}
+              envType="chess"
+              selectedPath={selectedDatasetPath}
+              onSelectPath={setSelectedDatasetPath}
+            />
           }
         />
 
-        <div className="sandbox-main-stage p-3 sm:p-4">
+        <div className="sandbox-main-stage p-4 sm:p-5">
           <div
             className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
           >
             <div className="min-w-0">
               <SandboxPrimaryCard
-                  title="Board & analysis"
-                  description="UCI stream · chess.js SAN · eval from centipawns"
+                  title="Board"
+                  description=""
                   toolbar={
                     <SandboxVizToolbarBlock
                       dataSource={dataSource}
@@ -863,9 +843,9 @@ export function ChessSandboxPage({
                 </SandboxPrimaryCard>
             </div>
 
-            <aside className="min-w-0 flex flex-col gap-3">
+            <aside className="min-w-0 flex flex-col gap-4">
               <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
-              <div className="sandbox-side-stack min-w-0">
+              <div className="sandbox-side-stack min-w-0 gap-3.5">
               <InteractionGraphSection
                 dataset={activeDataset}
                 layout="sideColumn"
@@ -881,7 +861,7 @@ export function ChessSandboxPage({
               >
                 <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
                   {moveLogEntries.length === 0 ? (
-                    <div className="rounded-md border border-dashed px-2 py-2 text-xs leading-snug text-muted-foreground">
+                    <div className="rounded-md border border-dashed px-3 py-2.5 text-xs leading-snug text-muted-foreground">
                       No moves yet. Start a live stream or replay the loaded experiment.
                     </div>
                   ) : (
