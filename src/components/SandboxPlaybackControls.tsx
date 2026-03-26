@@ -51,6 +51,12 @@ export function SandboxPlaybackControls({
   onSeekChange,
   seekLabel = 'Position',
 }: SandboxPlaybackControlsProps) {
+  const SPEED_STOPS = [0.01, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4];
+  const currentSpeedIndex = SPEED_STOPS.reduce(
+    (bestIdx, stop, idx) =>
+      Math.abs(stop - speed) < Math.abs(SPEED_STOPS[bestIdx] - speed) ? idx : bestIdx,
+    0,
+  );
   const stepDisabled = isLive && hideStepControls;
   const seekUsable =
     !stepDisabled && typeof onSeekChange === 'function' && seekMax > seekMin;
@@ -138,12 +144,15 @@ export function SandboxPlaybackControls({
             <span className="sandbox-playback-bar__speed-label">Speed</span>
             <input
               type="range"
-              min={0.25}
-              max={4}
-              step={0.25}
-              value={speed}
+              min={0}
+              max={SPEED_STOPS.length - 1}
+              step={1}
+              value={currentSpeedIndex}
               disabled={disabled || isLive}
-              onChange={(e) => onSpeedChange(Number(e.target.value))}
+              onChange={(e) => {
+                const idx = Number(e.target.value);
+                onSpeedChange(SPEED_STOPS[idx] ?? speed);
+              }}
               aria-label="Playback speed"
             />
             <span className="sandbox-playback-bar__speed-value">{speed.toFixed(2)}×</span>
