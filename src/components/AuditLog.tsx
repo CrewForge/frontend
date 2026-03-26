@@ -60,15 +60,15 @@ export function AuditLog({ entries, compact = false }: AuditLogProps) {
         {entriesList.map((entry) => (
           <div
             key={entry.id}
-            className={`p-3 rounded-lg border-l-4 bg-muted/30 ${getLevelColor(
+            className={`p-3.5 rounded-xl border-l-4 bg-muted/30 ${getLevelColor(
               entry.level
             )}`}
           >
             <div className="flex items-start gap-3">
               {getLevelIcon(entry.level)}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <Clock className="w-3 h-3 text-muted-foreground" />
+                <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                  <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                   <span className="text-xs text-muted-foreground">
                     {entry.timestamp}
                   </span>
@@ -81,9 +81,9 @@ export function AuditLog({ entries, compact = false }: AuditLogProps) {
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm">{entry.message}</p>
+                <p className="text-sm leading-relaxed">{entry.message}</p>
                 {entry.details && !compact && (
-                  <p className="text-xs text-muted-foreground mt-1 font-mono">
+                  <p className="text-xs text-muted-foreground mt-1.5 font-mono leading-relaxed">
                     {entry.details}
                   </p>
                 )}
@@ -99,15 +99,15 @@ export function AuditLog({ entries, compact = false }: AuditLogProps) {
     return <div>{renderEntries(entries)}</div>;
   }
 
-  return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3>Audit Log</h3>
-        <Badge variant="secondary">{entries.length} entries</Badge>
-      </div>
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3>Audit Log</h3>
+          <Badge variant="secondary">{entries.length} entries</Badge>
+        </div>
 
-      <Tabs defaultValue="all">
-        <TabsList className="grid w-full grid-cols-4 mb-4">
+        <Tabs defaultValue="all">
+          <TabsList className="grid w-full grid-cols-4 mb-5">
           <TabsTrigger value="all">
             All ({filteredEntries.all.length})
           </TabsTrigger>

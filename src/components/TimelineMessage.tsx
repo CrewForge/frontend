@@ -23,13 +23,13 @@ export function TimelineMessage({ event, onClick, isHighlighted }: TimelineMessa
   return (
     <div 
       className={`
-        flex gap-3 p-3 rounded-lg cursor-pointer transition-all
+        flex gap-3 p-3.5 rounded-xl cursor-pointer transition-all
         ${isHighlighted ? 'bg-accent' : 'hover:bg-accent/50'}
       `}
       onClick={onClick}
     >
       <div 
-        className="w-1 rounded-full flex-shrink-0"
+        className="w-1 rounded-full flex-shrink-0 self-stretch"
         style={{ backgroundColor: event.agentColor }}
       />
       <AgentAvatar 
@@ -39,14 +39,14 @@ export function TimelineMessage({ event, onClick, isHighlighted }: TimelineMessa
         color={event.agentColor}
       />
       <div className="flex-1 min-w-0">
-        <div className="flex items-baseline gap-2 mb-1">
-          <span style={{ color: event.agentColor }}>{event.agentName}</span>
+        <div className="flex items-baseline gap-2 mb-1.5">
+          <span className="font-medium" style={{ color: event.agentColor }}>{event.agentName}</span>
           <span className="text-xs text-muted-foreground">{event.timestamp}</span>
           {event.moveNotation && (
-            <span className="text-xs px-2 py-0.5 bg-muted rounded">{event.moveNotation}</span>
+            <span className="text-xs px-2 py-0.5 bg-muted rounded-md font-mono">{event.moveNotation}</span>
           )}
         </div>
-        <p className="text-sm text-foreground/80">{event.message}</p>
+        <p className="text-sm text-foreground/80 leading-relaxed">{event.message}</p>
       </div>
     </div>
   );
