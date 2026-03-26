@@ -382,8 +382,31 @@
   transition: transform 0.15s ease;
 }
 
+/* Edge evidence card: denser than generic sandbox log panels.
+   Card root uses gap-6 by default — EdgeEvidencePanel passes gap-1.5 to override. */
+.interaction-edge-panel.sandbox-log-panel {
+  padding: 0.4rem 0.5rem 0.45rem;
+}
+
+.interaction-edge-panel .sandbox-log-title {
+  font-size: 0.88rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.interaction-edge-panel .sandbox-log-subtitle {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  margin: 0.08rem 0 0;
+}
+
+.interaction-edge-panel > p {
+  margin-block: 0;
+}
+
 .interaction-edge-bubble {
-  padding: 0.875rem 1rem;
+  padding: 0.3rem 0.4rem;
+  text-align: left;
 }
 
 .interaction-edge-main-scroll {
