@@ -556,7 +556,6 @@ export function EvalPlusSandboxPage({
         <SandboxEnvironmentHeader
           onBack={onBack}
           title={environmentLabel}
-          contextBadge={<Badge variant="secondary">EvalPlus</Badge>}
           dataSource={dataSource}
           playbackActive={playbackActive}
           errorMessage={autoError}
@@ -565,8 +564,8 @@ export function EvalPlusSandboxPage({
           onSwitchToLive={handleSwitchToLive}
           subtitle={
             backendLiveAvailable
-              ? 'Code submissions and diffs use experiment JSON datasets; live streaming uses the API when enabled.'
-              : 'Standalone build: submissions and diffs use experiment JSON datasets only.'
+              ? 'Step through bundled runs or connect the API for a live stream.'
+              : 'Bundled datasets only. Add a CrewForge API server to enable live streams.'
           }
           metricsStrip={
             <>
@@ -583,7 +582,7 @@ export function EvalPlusSandboxPage({
           }
         />
 
-        <div className="p-3 sm:p-4">
+        <div className="sandbox-main-stage p-3 sm:p-4">
           <div
             className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
           >

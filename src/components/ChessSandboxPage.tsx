@@ -758,7 +758,6 @@ export function ChessSandboxPage({
         <SandboxEnvironmentHeader
           onBack={onBack}
           title={environmentLabel}
-          contextBadge={<Badge variant="secondary">Workspace</Badge>}
           dataSource={dataSource}
           playbackActive={playbackActive}
           errorMessage={autoError}
@@ -767,8 +766,8 @@ export function ChessSandboxPage({
           onSwitchToLive={handleSwitchToLive}
           subtitle={
             backendLiveAvailable
-              ? 'Replay uses experiment JSON datasets; live stream uses the environment API.'
-              : 'Standalone build: replay uses experiment JSON datasets only. Connect a CrewForge API server to enable live streams.'
+              ? 'Load bundled experiment JSON, or connect the API for a live stream.'
+              : 'Bundled datasets only. Add a CrewForge API server to enable live streams.'
           }
           metricsStrip={
             <>
@@ -785,7 +784,7 @@ export function ChessSandboxPage({
           }
         />
 
-        <div className="p-3 sm:p-4">
+        <div className="sandbox-main-stage p-3 sm:p-4">
           <div
             className={`sandbox-main-grid sandbox-main-grid--with-graph${wideSidePanel ? ' sandbox-main-grid--side-focus' : ''}`}
           >

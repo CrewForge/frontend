@@ -154,6 +154,41 @@
   margin: 0 auto;
 }
 
+/* Outer card: soft gradient + depth so the workspace isn’t flat white */
+.sandbox-chrome-card {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--card) 100%, var(--primary)) 0%,
+    color-mix(in oklab, var(--card) 93%, var(--muted)) 100%
+  );
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--foreground) 5%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--foreground) 4%, transparent),
+    0 22px 48px -26px color-mix(in oklab, var(--primary) 24%, transparent);
+}
+
+.sandbox-env-header {
+  background: linear-gradient(
+    92deg,
+    color-mix(in oklab, var(--primary) 9%, transparent) 0%,
+    color-mix(in oklab, var(--muted) 38%, var(--background)) 48%,
+    color-mix(in oklab, var(--card) 100%, transparent) 100%
+  );
+  border-top-left-radius: calc(1rem - 1px);
+  border-top-right-radius: calc(1rem - 1px);
+}
+
+.sandbox-main-stage {
+  background: color-mix(in oklab, var(--muted) 16%, transparent);
+  border-bottom-left-radius: calc(1rem - 3px);
+  border-bottom-right-radius: calc(1rem - 3px);
+}
+
+.sandbox-primary-card {
+  border-color: color-mix(in oklab, var(--border) 78%, var(--primary));
+  box-shadow: 0 2px 14px -6px color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
 .sandbox-top-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -191,6 +226,10 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  padding: 0.45rem 0.5rem;
+  border-radius: 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 32%, transparent);
 }
 
 .sandbox-viz-toolbar__badges {
@@ -435,10 +474,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.1rem 0.05rem 0.5rem;
-  margin-bottom: 0.1rem;
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  padding: 0.45rem 0.5rem 0.55rem;
+  margin-bottom: 0.35rem;
   flex-shrink: 0;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  background: linear-gradient(
+    95deg,
+    color-mix(in oklab, var(--primary) 7%, transparent),
+    color-mix(in oklab, var(--muted) 40%, transparent)
+  );
 }
 
 /* Fixed log height: slightly taller than the primary board/code column (~28rem) */
