@@ -3,7 +3,6 @@ import { ChessBoard, BoardState, type BoardMoveAnimation } from './ChessBoard';
 import { GameResultsDialog } from './GameResultsDialog';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Card } from './ui/card';
 import { SandboxPlaybackControls } from './SandboxPlaybackControls';
 import { motion, useReducedMotion } from 'motion/react';
 import { Chess } from 'chess.js';
@@ -14,6 +13,14 @@ import type { GameResultsSummary } from './GameResultsDialog';
 import { ChessEvalBar } from './ChessEvalBar';
 import { ChessMoveList } from './ChessMoveList';
 import { ChessMaterial } from './ChessMaterial';
+import {
+  SandboxVisualizationRoot,
+  SandboxEnvironmentHeader,
+  SandboxMetricsStrip,
+  SandboxVizToolbarBlock,
+  SandboxPrimaryCard,
+  SandboxSideLogCard,
+} from './sandbox-visualization/SandboxVisualizationTemplate';
 
 export interface ChessSandboxPageProps {
   token: string;
@@ -718,132 +725,80 @@ export function ChessSandboxPage({
 
   const seekEnabled = dataSource === 'sample' && replayPayloads.length > 0;
 
+  const chessMetricsItems = useMemo(
+    () => [
+      { key: 'status', label: 'Status', value: statusMessage },
+      { key: 'moves', label: 'Moves', value: moveCount },
+      { key: 'last', label: 'Last', value: latestMove?.san ?? '—' },
+      {
+        key: 'latency',
+        label: 'Avg latency',
+        value: typeof averageLatencyMs === 'number' ? `${averageLatencyMs} ms` : '—',
+        mutedSuffix: <span className="text-muted-foreground"> ({INFERRED_NOTE})</span>,
+      },
+    ],
+    [averageLatencyMs, latestMove?.san, moveCount, statusMessage],
+  );
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#eef2ff_0%,#ffffff_40%)]">
-      <div className="sandbox-shell flex min-h-screen flex-col px-3 py-2 sm:px-4 sm:py-3 lg:px-5">
-        <div className="rounded-2xl border bg-card/95 shadow-sm backdrop-blur">
-          <div className="border-b px-3 py-2.5 sm:px-5">
-            <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
-              <Button variant="outline" size="sm" onClick={onBack} className="shrink-0">
-                ← Back
-              </Button>
-              <h1 className="text-lg font-semibold tracking-tight sm:text-xl">{environmentLabel}</h1>
-              <Badge variant="secondary">Workspace</Badge>
-              <Badge variant="outline">{dataSource === 'live' ? 'Live' : 'Replay'}</Badge>
-              <Badge variant={autoError ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
-                {autoError ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
-              </Badge>
-              <div className="flex flex-wrap gap-1">
-                <Button
-                  type="button"
-                  variant={dataSource === 'sample' ? 'secondary' : 'outline'}
-                  size="sm"
-                  className="h-8"
-                  onClick={handleSwitchToSample}
-                  disabled={dataSource === 'sample'}
-                >
-                  Replay
-                </Button>
-                <Button
-                  type="button"
-                  variant={dataSource === 'live' ? 'secondary' : 'outline'}
-                  size="sm"
-                  className="h-8"
-                  onClick={handleSwitchToLive}
-                  disabled={dataSource === 'live' || !backendLiveAvailable}
-                  title={!backendLiveAvailable ? 'Not available without a CrewForge API server' : undefined}
-                >
-                  Live
-                </Button>
-              </div>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {backendLiveAvailable
-                ? 'Sample replay uses bundled JSON; live stream uses the environment API.'
-                : 'Standalone build: replay uses bundled JSON only. Connect a CrewForge API server to enable live streams.'}
-            </p>
+    <>
+      <SandboxVisualizationRoot>
+        <SandboxEnvironmentHeader
+          onBack={onBack}
+          title={environmentLabel}
+          contextBadge={<Badge variant="secondary">Workspace</Badge>}
+          dataSource={dataSource}
+          playbackActive={playbackActive}
+          errorMessage={autoError}
+          backendLiveAvailable={backendLiveAvailable}
+          onSwitchToSample={handleSwitchToSample}
+          onSwitchToLive={handleSwitchToLive}
+          subtitle={
+            backendLiveAvailable
+              ? 'Sample replay uses bundled JSON; live stream uses the environment API.'
+              : 'Standalone build: replay uses bundled JSON only. Connect a CrewForge API server to enable live streams.'
+          }
+          metricsStrip={<SandboxMetricsStrip items={chessMetricsItems} />}
+        />
 
-            <div className="sandbox-metrics-strip mt-2.5">
-              <span>
-                <span className="sandbox-metrics-strip__k">Status</span> {statusMessage}
-              </span>
-              <span className="sandbox-metrics-strip__sep" aria-hidden>
-                ·
-              </span>
-              <span>
-                <span className="sandbox-metrics-strip__k">Moves</span> {moveCount}
-              </span>
-              <span className="sandbox-metrics-strip__sep" aria-hidden>
-                ·
-              </span>
-              <span>
-                <span className="sandbox-metrics-strip__k">Last</span> {latestMove?.san ?? '—'}
-              </span>
-              <span className="sandbox-metrics-strip__sep" aria-hidden>
-                ·
-              </span>
-              <span>
-                <span className="sandbox-metrics-strip__k">Avg latency</span>{' '}
-                {typeof averageLatencyMs === 'number' ? `${averageLatencyMs} ms` : '—'}{' '}
-                <span className="text-muted-foreground">({INFERRED_NOTE})</span>
-              </span>
-            </div>
-            {autoError && (
-              <div className="mt-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5 text-xs text-destructive sm:text-sm">
-                {autoError}
-              </div>
-            )}
-          </div>
-
-          <div className="sandbox-main-grid p-3 sm:p-4">
-            <div className="min-w-0">
-              <Card className="min-w-0 overflow-hidden">
-                <div className="border-b px-3 py-2 sm:px-4">
-                  <h3 className="text-sm font-semibold sm:text-base">Board &amp; analysis</h3>
-                  <p className="text-xs text-muted-foreground">
-                    UCI stream · chess.js SAN · eval from centipawns
-                  </p>
-                </div>
-                <div className="min-w-0 px-3 pb-2.5 pt-2 sm:px-4 sm:pb-3 sm:pt-2.5">
-                  <div className="sandbox-viz-toolbar">
-                    <div className="sandbox-viz-toolbar__badges">
-                      <Badge variant="outline">{dataSource === 'live' ? 'Live stream' : 'Prepared replay'}</Badge>
-                      <Badge variant={autoError ? 'destructive' : playbackActive ? 'default' : 'secondary'}>
-                        {autoError ? 'Error' : playbackActive ? 'Playing' : 'Ready'}
-                      </Badge>
-                    </div>
-                    <div className="sandbox-viz-toolbar__playback-row">
-                      <div className="sandbox-viz-toolbar__playback-wrap">
-                        <SandboxPlaybackControls
-                          isLive={dataSource === 'live'}
-                          isPlaying={playbackActive}
-                          onPlay={() => void handlePlaybackPlay()}
-                          onPause={handlePlaybackPause}
-                          onRestart={handlePlaybackRestart}
-                          onPrev={goReplayPrev}
-                          onNext={goReplayNext}
-                          canPrev={canReplayPrev}
-                          canNext={canReplayNext}
-                          speed={playbackSpeed}
-                          onSpeedChange={setPlaybackSpeed}
-                          positionLabel={replayPositionLabel}
-                          disabled={!!autoError}
-                          hideStepControls={dataSource === 'live'}
-                          seekMin={seekEnabled ? -1 : 0}
-                          seekMax={seekEnabled ? replayPayloads.length - 1 : 0}
-                          seekValue={replayCursor}
-                          onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
-                          seekLabel="Move"
-                        />
-                      </div>
-                      <div className="sandbox-viz-toolbar__actions">
-                        <Button variant="outline" size="sm" onClick={handleResetBoard}>
-                          Full reset
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="sandbox-chess-compact chess-board-workspace">
+        <div className="sandbox-main-grid p-3 sm:p-4">
+          <div className="min-w-0">
+            <SandboxPrimaryCard
+              title="Board & analysis"
+              description="UCI stream · chess.js SAN · eval from centipawns"
+              toolbar={
+                <SandboxVizToolbarBlock
+                  dataSource={dataSource}
+                  playbackActive={playbackActive}
+                  errorMessage={autoError}
+                  onFullReset={handleResetBoard}
+                  playbackControls={
+                    <SandboxPlaybackControls
+                      isLive={dataSource === 'live'}
+                      isPlaying={playbackActive}
+                      onPlay={() => void handlePlaybackPlay()}
+                      onPause={handlePlaybackPause}
+                      onRestart={handlePlaybackRestart}
+                      onPrev={goReplayPrev}
+                      onNext={goReplayNext}
+                      canPrev={canReplayPrev}
+                      canNext={canReplayNext}
+                      speed={playbackSpeed}
+                      onSpeedChange={setPlaybackSpeed}
+                      positionLabel={replayPositionLabel}
+                      disabled={!!autoError}
+                      hideStepControls={dataSource === 'live'}
+                      seekMin={seekEnabled ? -1 : 0}
+                      seekMax={seekEnabled ? replayPayloads.length - 1 : 0}
+                      seekValue={replayCursor}
+                      onSeekChange={seekEnabled ? handlePlaybackSeek : undefined}
+                      seekLabel="Move"
+                    />
+                  }
+                />
+              }
+            >
+              <div className="sandbox-chess-compact chess-board-workspace">
                     <ChessMaterial
                       whiteIcons={material.whiteIcons}
                       blackIcons={material.blackIcons}
@@ -877,51 +832,46 @@ export function ChessSandboxPage({
                       }))}
                     />
                   </div>
-                </div>
-              </Card>
-            </div>
+            </SandboxPrimaryCard>
+          </div>
 
-            <div className="min-w-0">
-              <Card className="sandbox-move-log sandbox-log-panel gap-0 p-3">
-                <div className="sandbox-move-log__header mb-1 flex flex-wrap items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="sandbox-log-title">Move log</h3>
-                    <p className="sandbox-log-subtitle">Moves, eval, and reasoning</p>
+          <div className="min-w-0">
+            <SandboxSideLogCard
+              title="Move log"
+              subtitle="Moves, eval, and reasoning"
+              entryCount={moveLogEntries.length}
+            >
+              <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
+                {moveLogEntries.length === 0 ? (
+                  <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    No moves yet. Start a live stream or replay the sample run.
                   </div>
-                  <Badge variant="outline">{moveLogEntries.length} entries</Badge>
-                </div>
-                <div ref={moveLogScrollRef} className="sandbox-move-log-scroll">
-                  {moveLogEntries.length === 0 ? (
-                    <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
-                      No moves yet. Start a live stream or replay the sample run.
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {moveLogEntries.map((entry, idx) => (
-                        <div key={`${entry.ply}-${entry.uci}-${idx}`} className="sandbox-move-item">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <div className="sandbox-move-uci">
-                              {entry.ply + 1}. {entry.san}{' '}
-                              <span className="font-normal text-muted-foreground">({entry.uci.toUpperCase()})</span>
-                            </div>
-                            <Badge variant="secondary">{entry.player}</Badge>
+                ) : (
+                  <div className="space-y-2">
+                    {moveLogEntries.map((entry, idx) => (
+                      <div key={`${entry.ply}-${entry.uci}-${idx}`} className="sandbox-move-item">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="sandbox-move-uci">
+                            {entry.ply + 1}. {entry.san}{' '}
+                            <span className="font-normal text-muted-foreground">({entry.uci.toUpperCase()})</span>
                           </div>
-                          <div className="sandbox-move-meta mt-1.5">
-                            <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
-                            <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
-                            <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>
-                          </div>
-                          {entry.reasoning && <p className="sandbox-reasoning">{entry.reasoning}</p>}
+                          <Badge variant="secondary">{entry.player}</Badge>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </div>
+                        <div className="sandbox-move-meta mt-1.5">
+                          <span>eval {formatEvalPawns(entry.centipawnsTotal)}</span>
+                          <span>Δ {formatCentipawnDelta(entry.centipawnsCurrent)}</span>
+                          <span>latency {typeof entry.latencyMs === 'number' ? `${entry.latencyMs} ms` : '—'}</span>
+                        </div>
+                        {entry.reasoning && <p className="sandbox-reasoning">{entry.reasoning}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </SandboxSideLogCard>
           </div>
         </div>
-      </div>
+      </SandboxVisualizationRoot>
 
       <GameResultsDialog
         open={resultsOpen && gameResults !== null}
@@ -930,6 +880,6 @@ export function ChessSandboxPage({
         results={gameResults}
         mode={mode}
       />
-    </div>
+    </>
   );
 }
