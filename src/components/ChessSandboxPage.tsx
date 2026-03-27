@@ -807,29 +807,31 @@ export function ChessSandboxPage({
                   }
                 >
                   <div className="sandbox-chess-compact chess-board-workspace">
-                    <ChessMaterial
-                      whiteIcons={material.whiteIcons}
-                      blackIcons={material.blackIcons}
-                      whitePlus={material.whitePlus}
-                      blackPlus={material.blackPlus}
-                    >
-                      <div className="chess-board-and-eval">
-                        <ChessEvalBar
-                          centipawnsTotal={latestMove?.centipawnsTotal ?? null}
-                          evalDeltaCp={evalDeltaCp}
-                          moveKey={moveLogEntries.length}
-                        />
-                        <motion.div
-                          className="chess-board-and-eval__board"
-                          key={moveLogEntries.length}
-                          initial={{ opacity: 0.9, scale: 0.992 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <ChessBoard board={board} moveAnim={moveAnim} />
-                        </motion.div>
-                      </div>
-                    </ChessMaterial>
+                    <div data-sandbox-svg-capture="chess-viz" className="min-w-0">
+                      <ChessMaterial
+                        whiteIcons={material.whiteIcons}
+                        blackIcons={material.blackIcons}
+                        whitePlus={material.whitePlus}
+                        blackPlus={material.blackPlus}
+                      >
+                        <div className="chess-board-and-eval">
+                          <ChessEvalBar
+                            centipawnsTotal={latestMove?.centipawnsTotal ?? null}
+                            evalDeltaCp={evalDeltaCp}
+                            moveKey={moveLogEntries.length}
+                          />
+                          <motion.div
+                            className="chess-board-and-eval__board"
+                            key={moveLogEntries.length}
+                            initial={{ opacity: 0.9, scale: 0.992 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <ChessBoard board={board} moveAnim={moveAnim} />
+                          </motion.div>
+                        </div>
+                      </ChessMaterial>
+                    </div>
                     <ChessMoveList
                       className="chess-movelist--clamped"
                       entries={moveLogEntries.map((e) => ({
@@ -846,14 +848,16 @@ export function ChessSandboxPage({
             <aside className="min-w-0 flex flex-col gap-4">
               <SandboxSidePanelHeader expanded={wideSidePanel} onToggle={() => setWideSidePanel((v) => !v)} />
               <div className="sandbox-side-stack min-w-0 gap-3.5">
-              <InteractionGraphSection
-                dataset={activeDataset}
-                layout="sideColumn"
-                sideColumnExpanded={wideSidePanel}
-                evidenceFocusTurn={
-                  activeDataset && replayCursor >= 0 ? turnAtChessReplayStep(activeDataset, replayCursor) : null
-                }
-              />
+              <div data-sandbox-svg-capture="interaction-graph" className="min-w-0">
+                <InteractionGraphSection
+                  dataset={activeDataset}
+                  layout="sideColumn"
+                  sideColumnExpanded={wideSidePanel}
+                  evidenceFocusTurn={
+                    activeDataset && replayCursor >= 0 ? turnAtChessReplayStep(activeDataset, replayCursor) : null
+                  }
+                />
+              </div>
               <SandboxSideLogCard
                 title="Move log"
                 subtitle="Moves, eval, and timing"

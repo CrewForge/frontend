@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react';
-import { getFontEmbedCSS, toSvg } from 'html-to-image';
+import { toSvg } from 'html-to-image';
 import { toast } from 'sonner';
 import { ImageDown, Loader2 } from 'lucide-react';
+import { mergeSvgDataUrlsHorizontal } from '../lib/mergeSvgDataUrls';
+import { SVG_EXPORT_STYLE_PROPERTIES } from '../lib/svgExportStyleProperties';
 
 /** Class used by html-to-image filter so the export control is not part of the snapshot. */
 export const SVG_EXPORT_BTN_CLASS = 'svg-export-btn';
@@ -19,6 +21,36 @@ function downloadSvgDataUrl(dataUrl: string, filename: string) {
   a.click();
 }
 
+function pickExportBackground(el: HTMLElement): string {
+  const bg = window.getComputedStyle(el).backgroundColor;
+  if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+    return bg;
+  }
+  const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+  if (bodyBg && bodyBg !== 'rgba(0, 0, 0, 0)') {
+    return bodyBg;
+  }
+  return '#ffffff';
+}
+
+function regionPixelSize(el: HTMLElement): { width: number; height: number } {
+  const w = Math.ceil(Math.max(el.scrollWidth, el.offsetWidth, el.clientWidth));
+  const h = Math.ceil(Math.max(el.scrollHeight, el.offsetHeight, el.clientHeight));
+  return { width: Math.max(1, w), height: Math.max(1, h) };
+}
+
+/** Browser extensions often inject nodes into the page; excluding them cuts noise and file size. */
+function isExtensionInjected(node: Element): boolean {
+  const tag = node.tagName?.toLowerCase() ?? '';
+  if (tag.includes('protonpass')) return true;
+  if (tag.includes('grammarly')) return true;
+  if (tag.includes('lastpass')) return true;
+  if (node.hasAttribute('data-protonpass-role')) return true;
+  const cls = typeof node.className === 'string' ? node.className : '';
+  if (cls.includes('grammarly')) return true;
+  return false;
+}
+
 export function SvgExportButton({ forceShow = false }: SvgExportButtonProps) {
   const [busy, setBusy] = useState(false);
 
@@ -30,60 +62,54 @@ export function SvgExportButton({ forceShow = false }: SvgExportButtonProps) {
   const handleExport = useCallback(async () => {
     if (busy) return;
 
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    if (w < 2 || h < 2) {
-      console.warn('[svg-export] viewport too small to capture', { w, h });
-      toast.error('Cannot export: viewport is too small.');
-      return;
-    }
+    const chessEl = document.querySelector<HTMLElement>('[data-sandbox-svg-capture="chess-viz"]');
+    const graphEl = document.querySelector<HTMLElement>('[data-sandbox-svg-capture="interaction-graph"]');
 
-    const root = document.getElementById('root');
-    if (!root || root.childElementCount === 0) {
-      console.warn('[svg-export] #root has no content');
-      toast.error('Nothing to capture yet.');
+    if (!chessEl && !graphEl) {
+      console.warn('[svg-export] no chess/diagram regions in DOM (open Strategy workspace)');
+      toast.error('Open the Strategy workspace to export the board and interaction diagram.');
       return;
     }
 
     setBusy(true);
     try {
-      const bg = window.getComputedStyle(document.body).backgroundColor || '#ffffff';
+      const captureRegion = async (el: HTMLElement) => {
+        const { width, height } = regionPixelSize(el);
+        return toSvg(el, {
+          width,
+          height,
+          backgroundColor: pickExportBackground(el),
+          includeStyleProperties: SVG_EXPORT_STYLE_PROPERTIES,
+          skipFonts: true,
+          cacheBust: true,
+          pixelRatio: 1,
+          filter: (node) => {
+            if (!(node instanceof Element)) return true;
+            if (node.classList.contains(SVG_EXPORT_BTN_CLASS)) return false;
+            if (isExtensionInjected(node)) return false;
+            return true;
+          },
+          onImageErrorHandler: (event) => {
+            console.warn('[svg-export] embedded image failed (often CORS or blocked URL)', event);
+          },
+        });
+      };
 
-      let fontEmbedCSS: string | undefined;
-      try {
-        fontEmbedCSS = await getFontEmbedCSS(document.body);
-      } catch (fontErr) {
-        console.warn('[svg-export] could not embed font CSS (cross-origin fonts may look wrong)', fontErr);
-      }
+      const parts: string[] = [];
+      if (chessEl) parts.push(await captureRegion(chessEl));
+      if (graphEl) parts.push(await captureRegion(graphEl));
 
-      const dataUrl = await toSvg(document.body, {
-        width: w,
-        height: h,
-        backgroundColor: bg,
-        ...(fontEmbedCSS ? { fontEmbedCSS } : {}),
-        cacheBust: true,
-        pixelRatio: 1,
-        filter: (node) => {
-          if (!(node instanceof Element)) return true;
-          return !node.classList.contains(SVG_EXPORT_BTN_CLASS);
-        },
-        style: {
-          transform: `translate(${-window.scrollX}px, ${-window.scrollY}px)`,
-        },
-        onImageErrorHandler: (event) => {
-          console.warn('[svg-export] embedded image failed (often CORS or blocked URL)', event);
-        },
-      });
+      const merged = mergeSvgDataUrlsHorizontal(parts, 28);
 
-      if (!dataUrl || dataUrl.length < 64) {
+      if (!merged || merged.length < 64) {
         console.warn('[svg-export] empty or invalid SVG output');
-        toast.error('No content could be captured.');
+        toast.error('Nothing could be exported.');
         return;
       }
 
-      const filename = `ui-snapshot-${Date.now()}.svg`;
-      downloadSvgDataUrl(dataUrl, filename);
-      toast.success('SVG snapshot downloaded.');
+      const filename = `chess-snapshot-${Date.now()}.svg`;
+      downloadSvgDataUrl(merged, filename);
+      toast.success('Chess + diagram exported as SVG.');
     } catch (err) {
       console.error('[svg-export] failed', err);
       toast.error('SVG export failed. Check the console for details.');
@@ -103,8 +129,8 @@ export function SvgExportButton({ forceShow = false }: SvgExportButtonProps) {
       onClick={handleExport}
       disabled={busy}
       aria-busy={busy}
-      aria-label="Export viewport as SVG"
-      title="Export current viewport as SVG (dev tool)"
+      aria-label="Export chess board and interaction diagram as SVG"
+      title="Export chess + Crew Interactions diagram only (no chrome)"
     >
       {busy ? (
         <Loader2 className="svg-export-btn__icon svg-export-btn__icon--spin" aria-hidden />
