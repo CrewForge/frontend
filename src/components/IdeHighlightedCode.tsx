@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { EVALPLUS_CODE_AREA_CLASS } from '../lib/evalplusWorkspace';
 import { highlightFullCode } from '../lib/syntaxHighlight';
 import { CopyCodeButton } from './CopyCodeButton';
 
@@ -35,7 +36,7 @@ export function IdeHighlightedCode({
 
   if (contentOnly) {
     return (
-      <div className="evalplus-ide-solution-only evalplus-code-area overflow-hidden">{inner}</div>
+      <div className={`evalplus-ide-solution-only ${EVALPLUS_CODE_AREA_CLASS} overflow-hidden`}>{inner}</div>
     );
   }
 

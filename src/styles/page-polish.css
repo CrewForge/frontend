@@ -1948,9 +1948,11 @@
 /*
  * EvalPlus — Tokyo Night–inspired IDE surfaces (explicit CSS; Tailwind snapshot omits many hues).
  * Palette reference: Tokyo Night (dark UI / Neovim theme family).
+ *
+ * Code typography: diff + full-file both use --evalplus-code-font-size / --evalplus-code-line-height
+ * from .evalplus-ide-panel (single source; gutter + hljs inherit via inherit / scoped rules).
  */
-/* Shared code typography + viewport height for diff + full solution */
-.evalplus-code-area,
+.evalplus-ide-panel .evalplus-code-area,
 .evalplus-ide-panel .evalplus-ide-readonly {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: var(--evalplus-code-font-size);
@@ -1970,7 +1972,7 @@
 }
 
 .evalplus-code-area .evalplus-ide-body {
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5em;
 }
 
 .evalplus-code-area .evalplus-ide-readonly,
@@ -1982,7 +1984,8 @@
 }
 
 .evalplus-ide-panel {
-  --evalplus-code-font-size: 13px;
+  --evalplus-code-font-size-base: 13px;
+  --evalplus-code-font-size: var(--evalplus-code-font-size-base);
   --evalplus-code-line-height: 1.6;
   --evalplus-code-view-height: min(32rem, 68vh);
   --ide-bg: #16161e;
@@ -2008,6 +2011,12 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: var(--evalplus-code-font-size);
   line-height: var(--evalplus-code-line-height);
+}
+
+/* Expanded right column: code strip is narrow — type at 20% of base (line boxes scale via em-based diff/layout, not rem) */
+.sandbox-main-grid--with-graph.sandbox-main-grid--side-focus .evalplus-ide-panel {
+  --evalplus-code-font-size: calc(var(--evalplus-code-font-size-base) * 0.2);
+  --evalplus-code-line-height: 1.6;
 }
 
 .evalplus-ide-chrome {
@@ -2143,7 +2152,8 @@
 }
 
 .evalplus-ide-body {
-  padding: 0.65rem 0.75rem 0.85rem;
+  /* em: scales with code font (diff + merged view) — rem left huge row gaps when font was shrunk */
+  padding: 0.65em 0.75em 0.85em;
 }
 
 .evalplus-ide-body--flush {
@@ -2151,7 +2161,7 @@
 }
 
 .evalplus-ide-empty {
-  padding: 0 0.75rem 0.5rem;
+  padding: 0 0.75em 0.5em;
   font-size: 10px;
   color: var(--ide-fg-dim);
 }
@@ -2165,7 +2175,7 @@
 /* Full-file view — font from shared block; merged path scrolls on .evalplus-code-area parent */
 .evalplus-ide-readonly {
   margin: 0;
-  padding: 0.85rem 1rem;
+  padding: 0.85em 1em;
   background: var(--ide-bg-line);
   color: var(--ide-fg-muted);
   tab-size: 4;
@@ -2192,18 +2202,18 @@
   overflow-x: hidden;
 }
 
-/* Diff rows */
+/* Diff rows — em/rem: row height + gutters track code font size (critical when --evalplus-code-font-size is scaled down) */
 .evalplus-diff-line {
   display: flex;
-  min-height: 1.35rem;
-  padding-left: 0.35rem;
+  min-height: 1.35em;
+  padding-left: 0.35em;
   align-items: flex-start;
-  border-radius: 0.15rem;
+  border-radius: 0.15em;
   min-width: 0;
 }
 
 .evalplus-diff-line--same {
-  border-left: 2px solid transparent;
+  border-left: max(1px, 0.12em) solid transparent;
   background-color: transparent;
   color: var(--ide-fg-muted);
 }
@@ -2213,7 +2223,7 @@
 }
 
 .evalplus-diff-line--add {
-  border-left: 3px solid var(--ide-add);
+  border-left: max(1px, 0.18em) solid var(--ide-add);
   background: linear-gradient(90deg, var(--ide-add-glow) 0%, transparent 72%);
   color: var(--ide-fg);
 }
@@ -2225,10 +2235,10 @@
 }
 
 .evalplus-diff-gutter {
-  width: 1.35rem;
+  width: 1.35em;
   flex-shrink: 0;
   user-select: none;
-  font-size: var(--evalplus-code-font-size, 13px);
+  font-size: var(--evalplus-code-font-size, var(--evalplus-code-font-size-base, 13px));
   font-weight: 700;
   font-family: inherit;
   line-height: var(--evalplus-code-line-height, 1.6);

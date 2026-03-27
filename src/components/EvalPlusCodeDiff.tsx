@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { EVALPLUS_CODE_AREA_CLASS } from '../lib/evalplusWorkspace';
 import { diffLines, type DiffLine } from '../lib/lineDiff';
 import { detectLanguage, highlightLine } from '../lib/syntaxHighlight';
 
@@ -61,12 +62,12 @@ export function EvalPlusCodeDiff({
 
   if (contentOnly) {
     return (
-      <div className={`evalplus-ide-diff evalplus-code-area text-left ${className ?? ''}`}>{body}</div>
+      <div className={`evalplus-ide-diff ${EVALPLUS_CODE_AREA_CLASS} text-left ${className ?? ''}`}>{body}</div>
     );
   }
 
   return (
-    <div className={`evalplus-ide-panel evalplus-ide-diff evalplus-code-area text-left ${className ?? ''}`}>
+    <div className={`evalplus-ide-panel evalplus-ide-diff ${EVALPLUS_CODE_AREA_CLASS} text-left ${className ?? ''}`}>
       <div className="evalplus-ide-chrome">
         <span className="evalplus-ide-chrome-label">Diff</span>
         <div className="evalplus-ide-chrome-trail">
