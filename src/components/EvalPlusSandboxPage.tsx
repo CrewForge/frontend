@@ -433,11 +433,11 @@ export function EvalPlusSandboxPage({
       }
     }
     const total = movesRef.current.length;
-    if (total > 0 && stepIndex >= total - 1) {
-      setStepIndex(0);
+    if (total > 0) {
+      setStepIndex((i) => (i >= total - 1 ? 0 : i));
     }
     setSamplePlaybackPlaying(true);
-  }, [dataSource, loadEvalSample, startLiveStream, stepIndex]);
+  }, [dataSource, loadEvalSample, startLiveStream]);
 
   const handlePlaybackPause = useCallback(() => {
     if (dataSource === 'live') {
@@ -479,14 +479,19 @@ export function EvalPlusSandboxPage({
   useEffect(() => {
     if (!samplePlaybackPlaying || dataSource !== 'sample') return;
     if (moves.length === 0) return;
-    if (stepIndex >= moves.length - 1) {
-      setSamplePlaybackPlaying(false);
-      return;
-    }
     const base = 480;
     const delay = Math.max(50, base / playbackSpeed);
+    const last = moves.length - 1;
     const id = window.setTimeout(() => {
-      setStepIndex((i) => Math.min(Math.max(0, moves.length - 1), i + 1));
+      setStepIndex((i) => {
+        if (i >= last) {
+          queueMicrotask(() => {
+            setSamplePlaybackPlaying(false);
+          });
+          return i;
+        }
+        return i + 1;
+      });
     }, delay);
     return () => clearTimeout(id);
   }, [samplePlaybackPlaying, stepIndex, playbackSpeed, dataSource, moves.length]);
