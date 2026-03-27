@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { DashboardPage } from './components/DashboardPage';
 import { SandboxPage } from './components/SandboxPage';
+import { SvgExportButton } from './components/SvgExportButton';
 import type { AuthSession } from './lib/api';
 import { createStandaloneSession, isStandaloneSession, revokeAuthToken } from './lib/api';
 
@@ -140,6 +141,8 @@ export default function App() {
           onAuthFailure={backendLiveAvailable ? handleAuthFailure : undefined}
         />
       )}
+
+      <SvgExportButton />
     </>
   );
 }
