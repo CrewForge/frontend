@@ -77,7 +77,7 @@ export function EvalPlusSandboxPage({
   onAuthFailure,
   backendLiveAvailable = true,
 }: ChessSandboxPageProps) {
-  const environmentLabel = 'Code Workspace';
+  const environmentLabel = 'Code Dataspace';
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [moves, setMoves] = useState<EvalPlusRunnerMove[]>([]);

@@ -10,7 +10,7 @@ interface DashboardPageProps {
   onEnvironmentSelect: (envId: string) => void;
 }
 
-/** Chess piece (knight) SVG icon for the Strategy Workspace card. */
+/** Chess piece (knight) SVG icon for the Strategy Dataspace card. */
 function ChessKnightIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -36,8 +36,15 @@ export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 p-5 sm:p-10">
       <div className="dashboard-shell mb-8 sm:mb-12">
         <div className="dashboard-header-card p-6 sm:p-8">
-          <div className="dashboard-header-row">
-            <div className="dashboard-header-copy">
+          <div className="dashboard-header-row flex items-center justify-between">
+            <div className="dashboard-header-copy flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+                  <path d="M20 4L6 14V26L20 36L34 26V14L20 4Z" fill="white" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
+                  <circle cx="20" cy="20" r="4" fill="white"/>
+                  <path d="M20 16V12M20 28V24M16 20H12M28 20H24" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
               <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">CrewForge</h1>
             </div>
             <div className="dashboard-header-actions flex items-center">
@@ -51,8 +58,11 @@ export function DashboardPage({ username, token, onLogout, onEnvironmentSelect }
       </div>
 
       <div className="dashboard-shell mt-10 sm:mt-16">
-        <h2 className="mb-10 text-center text-2xl font-semibold sm:mb-14 sm:text-3xl tracking-tight">Choose an Environment</h2>
-        
+        <br></br>
+        <h2 className="mb-10 text-center text-2xl font-semibold sm:mb-14 sm:text-3xl tracking-tight">Environment Selection</h2>
+        <br>
+        </br>
+        <br></br>
         <div className="mx-auto flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-12">
           <Card
             className="dashboard-env-card flex flex-col justify-center items-center w-full max-w-[300px] h-[420px] rounded-xl border-2 group cursor-pointer p-8 transition-all hover:-translate-y-2 hover:border-primary/50 hover:shadow-2xl bg-card"

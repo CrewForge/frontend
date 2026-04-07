@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LandingPage } from './components/LandingPage';
+import { LoginPage } from './components/LoginPage';
 import { DashboardPage } from './components/DashboardPage';
 import { SandboxPage } from './components/SandboxPage';
 import { SvgExportButton } from './components/SvgExportButton';
 import type { AuthSession } from './lib/api';
-import { createStandaloneSession, isStandaloneSession, revokeAuthToken } from './lib/api';
+import { isStandaloneSession, revokeAuthToken } from './lib/api';
 
-type Page = 'landing' | 'dashboard' | 'sandbox';
+type Page = 'landing' | 'login' | 'dashboard' | 'sandbox';
 const STORAGE_KEY = 'crewforge_auth';
 
 export default function App() {
@@ -14,7 +15,6 @@ export default function App() {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState<string | null>(null);
   const [sandboxSource, setSandboxSource] = useState<'live' | 'sample'>('sample');
-  const [demoMode, setDemoMode] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
 
   useEffect(() => {
@@ -39,22 +39,28 @@ export default function App() {
     if (!session && currentPage === 'dashboard') {
       setCurrentPage('landing');
     }
-    if (!session && !demoMode && currentPage === 'sandbox') {
+    if (!session && currentPage === 'sandbox') {
       setCurrentPage('landing');
       setSelectedEnvironment(null);
     }
-  }, [bootstrapped, currentPage, demoMode, session]);
+  }, [bootstrapped, currentPage, session]);
 
   const clearStoredSession = () => {
     window.localStorage.removeItem(STORAGE_KEY);
     setSession(null);
   };
 
-  const handleEnterWorkspace = () => {
-    const next = createStandaloneSession();
-    setSession(next);
-    setDemoMode(false);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  const handleGoToLogin = () => {
+    setCurrentPage('login');
+  };
+
+  const handleBackToLanding = () => {
+    setCurrentPage('landing');
+  };
+
+  const handleLoginSuccess = (s: AuthSession) => {
+    setSession(s);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
     setCurrentPage('dashboard');
   };
 
@@ -68,34 +74,24 @@ export default function App() {
       }
     }
     clearStoredSession();
-    setDemoMode(false);
     setSelectedEnvironment(null);
     setCurrentPage('landing');
   };
 
   const handleAuthFailure = () => {
     clearStoredSession();
-    setDemoMode(false);
     setSelectedEnvironment(null);
     setCurrentPage('landing');
   };
 
   const handleEnvironmentSelect = (envId: string) => {
-    setDemoMode(false);
     setSelectedEnvironment(envId);
     setSandboxSource('sample');
     setCurrentPage('sandbox');
   };
 
-  const handleOpenDemo = () => {
-    setDemoMode(true);
-    setSelectedEnvironment('chess');
-    setSandboxSource('sample');
-    setCurrentPage('sandbox');
-  };
-
   const handleBackToDashboard = () => {
-    setCurrentPage(demoMode ? 'landing' : 'dashboard');
+    setCurrentPage('dashboard');
     setSelectedEnvironment(null);
     setSandboxSource('sample');
   };
@@ -118,7 +114,11 @@ export default function App() {
   return (
     <>
       {currentPage === 'landing' && (
-        <LandingPage onEnterWorkspace={handleEnterWorkspace} onViewDemo={handleOpenDemo} />
+        <LandingPage onLogin={handleGoToLogin} />
+      )}
+
+      {currentPage === 'login' && (
+        <LoginPage onBack={handleBackToLanding} onLoginSuccess={handleLoginSuccess} />
       )}
 
       {currentPage === 'dashboard' && session && (
@@ -130,10 +130,10 @@ export default function App() {
         />
       )}
 
-      {currentPage === 'sandbox' && selectedEnvironment && (session || demoMode) && (
+      {currentPage === 'sandbox' && selectedEnvironment && session && (
         <SandboxPage
           environment={selectedEnvironment}
-          token={session?.token ?? ''}
+          token={session.token}
           dataSource={sandboxSource}
           onSetDataSource={setSandboxSource}
           onBack={handleBackToDashboard}

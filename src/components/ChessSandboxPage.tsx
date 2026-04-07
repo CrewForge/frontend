@@ -165,7 +165,7 @@ export function ChessSandboxPage({
   backendLiveAvailable = true,
 }: ChessSandboxPageProps) {
   const mode: 'user' | 'stockfish' = 'stockfish';
-  const environmentLabel = 'Strategy Workspace';
+  const environmentLabel = 'Strategy Dataspace';
   const [isPlaying, setIsPlaying] = useState(false);
   const [board, setBoard] = useState<BoardState>(createInitialBoard());
   const [resultsOpen, setResultsOpen] = useState(false);

@@ -76,7 +76,7 @@ export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
       <div className="p-4 border-b">
         <h3>Agent activity view</h3>
         <p className="text-sm text-muted-foreground">
-          Compact view of the active coordination roles in this workspace
+          Compact view of the active coordination roles in this dataspace
         </p>
       </div>
 
@@ -152,7 +152,7 @@ export function AgentFlowChart({ nodes, connections }: AgentFlowChartProps) {
               <div>
                 <h4 className="text-sm font-medium">Communication paths</h4>
                 <p className="text-xs text-muted-foreground">
-                  Illustrative coordination links for the workspace layout
+                  Illustrative coordination links for the dataspace layout
                 </p>
               </div>
               <Badge variant="outline">{compactConnections.length} links</Badge>
